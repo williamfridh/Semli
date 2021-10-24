@@ -1,15 +1,16 @@
 import './App.css';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import HomePage from './containers/page/HomePage';
-import NavigationBar from './component/NavigationBar';
-import FeedPage from './containers/page/FeedPage';
-import LogInPage from './containers/page/LogInPage';
-import CreateAccountPage from './containers/page/CreateAccountPage';
-import SettingsPage from './containers/page/SettingsPage';
-import FeedPostPage from './containers/page/FeedPostPage';
-import ProfilePage from './containers/page/ProfilePage';
-import UserDependency from './containers/dependencies/online';
-import { FirebaseProvider } from './context/FirebaseAuthContext';
+import HomePage from '../../containers/page/HomePage';
+import FeedPage from '../../containers/page/FeedPage';
+import LogInPage from '../../containers/page/LogInPage';
+import CreateAccountPage from '../../containers/page/CreateAccountPage';
+import SettingsPage from '../../containers/page/SettingsPage';
+import FeedPostPage from '../../containers/page/FeedPostPage';
+import ProfilePage from '../../containers/page/ProfilePage';
+import UserDependency from '../../containers/dependencies/UserDependency';
+import { FirebaseProvider } from '../../context/FirebaseContext';
+import NavigationBar from '../NavigationBar';
+
 
 
 const App = () => {

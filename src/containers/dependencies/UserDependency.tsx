@@ -1,7 +1,18 @@
-import { useEffect } from "react";
 import { Redirect } from "react-router";
-import { useFirebase } from '../../context/FirebaseAuthContext';
-import { auth } from "../../firebase";
+import { useFirebase } from '../../context/FirebaseContext';
+
+
+
+/**
+ * Types.
+ */
+type UserDependencyProps = {
+	fallback	: string,
+	children	: JSX.Element,
+	status		: 'online'|'offline'
+}
+
+
 
 /**
  * Check if the user meets the right criteria to see the content.
@@ -11,7 +22,7 @@ import { auth } from "../../firebase";
  * @param children - Automatixaly provided by React. Children of the element to be returned on a successful check.
  * @returns the children.
  */
-const UserDependency = props => {
+const UserDependency = (props: UserDependencyProps) => {
 
 	/**
 	 * Collect data.
@@ -20,32 +31,10 @@ const UserDependency = props => {
 	let { status } = props;
 	const { currentUser } = useFirebase();
 
-	useEffect(() => {
-		// !! Run user authentication.
-	}, [currentUser]);
 
+	
 	/**
-	 * Prevent error(s).
-	 */
-	status = status.toLowerCase();
-	if (!status || ![`online`, `offline`].includes(status)) {
-		console.warn(`UserDependency >> No status was choosen, default (offline) will be used.`);
-		status = `offline`;
-	} else {
-
-	}
-	if (!fallback) {
-		console.warn(`UserDependency >> No fallback was choosen, default (/) will be used.`);
-		fallback = `/`;
-	}
-
-	/**
-	 * Setup.
-	 */
-
-
-	/**
-	 * Select fate.
+	 * Select fate depending on status and current user.
 	 */
 	if (
 		(status === `online` && currentUser) ||
@@ -54,7 +43,7 @@ const UserDependency = props => {
 		// All good.
 		return children;
 	} else {
-		// Something doesn't add up.
+		// Something doesn't add up...
 		return <Redirect to={fallback} />;
 	}
 

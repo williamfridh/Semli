@@ -1,5 +1,5 @@
 import { GoogleAuthProvider, signInWithPopup } from '@firebase/auth';
-import { useFirebase, useFirebaseProps } from '../context/FirebaseAuthContext';
+import { useFirebase, useFirebaseProps } from '../context/FirebaseContext';
 
 
 

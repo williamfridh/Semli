@@ -15,14 +15,14 @@ export type useFirebaseProps = {
 
 
 
-const FirebaseAuthContext = React.createContext <useFirebaseProps>({
+const FirebaseContext = React.createContext <useFirebaseProps>({
 	auth,
 	currentUser: null,
 	db
 });
 
 export const useFirebase = () => {
-	return useContext(FirebaseAuthContext);
+	return useContext(FirebaseContext);
 }
 
 export const FirebaseProvider = (props: any) => {
@@ -49,9 +49,9 @@ export const FirebaseProvider = (props: any) => {
 	};
 
 	return(
-		<FirebaseAuthContext.Provider value={value}>
+		<FirebaseContext.Provider value={value}>
 			{children}
-		</FirebaseAuthContext.Provider>
+		</FirebaseContext.Provider>
 	);
 
 }

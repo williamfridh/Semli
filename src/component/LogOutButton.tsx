@@ -1,5 +1,5 @@
 import { signOut } from "@firebase/auth";
-import { useFirebase } from "../context/FirebaseAuthContext";
+import { useFirebase } from "../context/FirebaseContext";
 
 
 /**
