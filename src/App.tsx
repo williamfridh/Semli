@@ -1,26 +1,69 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import HomePage from './containers/page/HomePage';
+import NavigationBar from './component/NavigationBar';
+import FeedPage from './containers/page/FeedPage';
+import LogInPage from './containers/page/LogInPage';
+import CreateAccountPage from './containers/page/CreateAccountPage';
+import SettingsPage from './containers/page/SettingsPage';
+import FeedPostPage from './containers/page/FeedPostPage';
+import ProfilePage from './containers/page/ProfilePage';
+import UserDependency from './containers/dependencies/online';
+import { FirebaseProvider } from './context/FirebaseAuthContext';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+const App = () => {
+	
+	return (
+		<div className="App">
+			<FirebaseProvider>
+				<BrowserRouter>
+
+					<NavigationBar />		
+
+						<Switch>
+
+							<Route exact path="/">
+								<HomePage />
+							</Route>
+
+							<Route exact path="/feed">
+								<FeedPage />
+							</Route>
+
+							<Route exact path="/feed/post">
+								<FeedPostPage />
+							</Route>
+
+							<Route exact path="/profile">
+								<ProfilePage />
+							</Route>
+
+							<Route exact path="/log_in">
+								<UserDependency status="offline" fallback="/feed">
+									<LogInPage />
+								</UserDependency>
+							</Route>
+
+							<Route exact path="/create_account">
+								<UserDependency status="offline" fallback="/feed">
+									<CreateAccountPage />
+								</UserDependency>
+							</Route>
+
+							<Route exact path="/settings">
+								<UserDependency status="online" fallback="/log_in">
+									<SettingsPage />
+								</UserDependency>
+							</Route>
+
+						</Switch>
+
+				</BrowserRouter>
+			</FirebaseProvider>
+		</div>
+	);
 }
 
 export default App;
+

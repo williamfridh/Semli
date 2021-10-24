@@ -1,0 +1,26 @@
+[
+	{
+		"text": "Home",
+		"url": "/"
+	},
+	{
+		"text": "Feed",
+		"url": "/feed"
+	},
+	{
+		"text": "Log In",
+		"url": "/log_in"
+	},
+	{
+		"text": "Create Account",
+		"url": "/create_account"
+	},
+	{
+		"text": "Settings",
+		"url": "/settings"
+	},
+	{
+		"text": "Profile",
+		"url": "/profile"
+	}
+]
