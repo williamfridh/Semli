@@ -1,4 +1,4 @@
-const FeedPostPage = () => {
+const CreatePostPage = () => {
 	return(
 		<div className="page">
 			<h1>Create Post</h1>
@@ -6,5 +6,5 @@ const FeedPostPage = () => {
 	);
 }
 
-export default FeedPostPage;
+export default CreatePostPage;
 

@@ -10,7 +10,7 @@ const FeedPage = () => {
 	 * Setup.
 	 */
 	
-	const { auth, db } = useFirebase();
+	const { db } = useFirebase();
 
 
 	const handleClick = async () => {

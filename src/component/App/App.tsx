@@ -5,7 +5,7 @@ import FeedPage from '../../containers/page/FeedPage';
 import LogInPage from '../../containers/page/LogInPage';
 import CreateAccountPage from '../../containers/page/CreateAccountPage';
 import SettingsPage from '../../containers/page/SettingsPage';
-import FeedPostPage from '../../containers/page/FeedPostPage';
+import CreatePostPage from '../../containers/page/CreatePostPage';
 import ProfilePage from '../../containers/page/ProfilePage';
 import UserDependency from '../../containers/dependencies/UserDependency';
 import { FirebaseProvider } from '../../context/FirebaseContext';
@@ -33,7 +33,7 @@ const App = () => {
 							</Route>
 
 							<Route exact path="/feed/post">
-								<FeedPostPage />
+								<CreatePostPage />
 							</Route>
 
 							<Route exact path="/profile">
