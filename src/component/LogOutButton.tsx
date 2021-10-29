@@ -1,5 +1,5 @@
-import { signOut } from "@firebase/auth";
-import { useFirebase } from "../context/FirebaseContext";
+import { logOut, useFirebase } from "../context/FirebaseContext";
+
 
 
 /**
@@ -13,7 +13,8 @@ const LogOutButton = () => {
 	 * Setup.
 	 */
 	
-	const { auth } = useFirebase();
+	const { auth, setCurrentUserDocSnap, setCurrentUserDocRef } = useFirebase();
+
 
 
 	/**
@@ -21,22 +22,18 @@ const LogOutButton = () => {
 	 * 
 	 * @returns nothing. 
 	 */
-	const handleClick = () => {
-		return signOut(auth).then(() => {
-			// Sign-out successful.
-			console.log("Logout: success");
-		  }).catch((error) => {
-			// An error happened.
-			console.log("Logout: failed");
-		  });
+	const handleLogoutClick = () => {
+		logOut(auth, setCurrentUserDocRef, setCurrentUserDocSnap);
 	}
+
+
 
 	/**
 	 * Return main content.
 	 */
 	return(
 		<div>
-			<button onClick={handleClick}>Logout</button>
+			<button onClick={handleLogoutClick}>Logout</button>
 		</div>
 	);
 }

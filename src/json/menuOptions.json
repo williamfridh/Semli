@@ -1,11 +1,13 @@
 [
 	{
 		"text": "Home",
-		"url": "/"
+		"url": "/",
+		"userStatus": "any"
 	},
 	{
 		"text": "Feed",
-		"url": "/feed"
+		"url": "/feed",
+		"userStatus": "online"
 	},
 	{
 		"text": "Log In",
@@ -23,8 +25,9 @@
 		"userStatus": "online"
 	},
 	{
-		"text": "Profile",
-		"url": "/profile"
+		"text": "My profile",
+		"url": "/profile/:currentUserUid",
+		"userStatus": "online"
 	}
 ]
 
