@@ -10,14 +10,14 @@ import { getFirestore } from "firebase/firestore"
 /**
  * Initilize Firebase app.
  */
-const app = initializeApp({
-	apiKey: "AIzaSyBwNDnIz6a_vIxaDAG_I2rhwZvw_Evk_J8",
-	authDomain: "semli-38800.firebaseapp.com",
-	projectId: "semli-38800",
-	storageBucket: "semli-38800.appspot.com",
-	messagingSenderId: "565706382715",
-	appId: "1:565706382715:web:9d88dd3d5d658038fa71de",
-	measurementId: "G-D40F9TCR8Q"
+const firebaseApp = initializeApp({
+	apiKey				: process.env.REACT_APP_FIREBASE_API_KEY,
+	authDomain			: process.env.REACT_APP_AUTH_DOMAIN,
+	projectId			: process.env.REACT_APP_PROJECT_ID,
+	storageBucket		: process.env.REACT_APP_STORAGE_BUCKET,
+	messagingSenderId	: process.env.REACT_APP_MESSAGING_SENDER_ID,
+	appId				: process.env.REACT_APP_FIREBASREACT_APP_APP_IDE_API_KEY,
+	measurementId		: process.env.REACT_APP_MEASUREMENT_ID
 });
 
 
@@ -28,16 +28,16 @@ const app = initializeApp({
  * 
  * These values are passed to the Firebase Context
  * to become accecible all over the app. This can
- * be done by imporing the db and auth in each file,
+ * be done by imporing the firestoreDatabase and auth in each file,
  * but this leads to issues with the hook useEffect.
  */
-export const db = getFirestore(app);
-export const auth = getAuth(app);
+export const firestoreDatabase = getFirestore(firebaseApp);
+export const auth = getAuth(firebaseApp);
 
 
 
 /**
  * Export Firebase app.
  */
-export default app;
+export default firebaseApp;
 

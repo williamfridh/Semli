@@ -1,35 +1,15 @@
-import { collection, addDoc } from "firebase/firestore";
-import { useFirebase } from "../../context/FirebaseContext";
-
+import { NavLink } from "react-router-dom";
+import Posts from "../../component/Posts";
 
 
 
 const FeedPage = () => {
 
-	/**
-	 * Setup.
-	 */
-	
-	const { db } = useFirebase();
-
-
-	const handleClick = async () => {
-			try {
-				const docRef = await addDoc(collection(db, "users"), {
-					first: "Ada",
-					last: "Lovelace",
-					born: 1815
-				});
-				console.log("Document written with ID: ", docRef.id);
-			} catch (e) {
-				console.error("Error adding document: ", e);
-			}
-	}
-
 	return(
 		<div className="page">
 			<h1>Feed</h1>
-			<button onClick={handleClick}>Test</button>
+			<NavLink to={`/post/create`}><button>Create Post</button></NavLink>
+			<Posts />
 		</div>
 	);
 

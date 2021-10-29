@@ -7,7 +7,7 @@
 	{
 		"text": "Feed",
 		"url": "/feed",
-		"userStatus": "any"
+		"userStatus": "online"
 	},
 	{
 		"text": "Log In",
@@ -25,9 +25,9 @@
 		"userStatus": "online"
 	},
 	{
-		"text": "Profile",
-		"url": "/profile",
-		"userStatus": "any"
+		"text": "My profile",
+		"url": "/profile/:currentUserUid",
+		"userStatus": "online"
 	}
 ]
 

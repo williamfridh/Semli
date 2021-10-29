@@ -7,9 +7,13 @@ import CreateAccountPage from '../../containers/page/CreateAccountPage';
 import SettingsPage from '../../containers/page/SettingsPage';
 import CreatePostPage from '../../containers/page/CreatePostPage';
 import ProfilePage from '../../containers/page/ProfilePage';
-import UserDependency from '../../containers/dependencies/UserDependency';
+import UserOnlineDependency from '../../containers/dependencies/UserOnlineDependency';
+import UserOfflineDependency from '../../containers/dependencies/UserOfflineDependency';
 import { FirebaseProvider } from '../../context/FirebaseContext';
 import NavigationBar from '../NavigationBar';
+import CompleteAccountPage from '../../containers/page/CompleteAccountPage';
+import UserCompleteProfileDependency from '../../containers/dependencies/UserCompleteProfileDependency';
+import HashtagPage from '../../containers/page/HashtagPage';
 
 
 
@@ -25,37 +29,63 @@ const App = () => {
 						<Switch>
 
 							<Route exact path="/">
-								<HomePage />
+								<UserCompleteProfileDependency>
+									<HomePage />
+								</UserCompleteProfileDependency>
 							</Route>
 
 							<Route exact path="/feed">
-								<FeedPage />
+								<UserOnlineDependency fallback="/log_in">
+									<UserCompleteProfileDependency>
+										<FeedPage />
+									</UserCompleteProfileDependency>
+								</UserOnlineDependency>
 							</Route>
 
-							<Route exact path="/feed/post">
-								<CreatePostPage />
+							<Route exact path="/hashtag/:hashtag">
+								<UserOnlineDependency fallback="/log_in">
+									<UserCompleteProfileDependency>
+										<HashtagPage />
+									</UserCompleteProfileDependency>
+								</UserOnlineDependency>
 							</Route>
 
-							<Route exact path="/profile">
-								<ProfilePage />
+							<Route exact path="/post/create">
+								<UserOnlineDependency fallback="/log_in">
+									<UserCompleteProfileDependency>
+										<CreatePostPage />
+									</UserCompleteProfileDependency>
+								</UserOnlineDependency>
+							</Route>
+
+							<Route exact path="/profile/complete">
+								<UserOnlineDependency fallback="/log_in">
+									<CompleteAccountPage />
+								</UserOnlineDependency>
+							</Route>
+
+							<Route exact path="/profile/:uid">
+								<UserCompleteProfileDependency>
+									<ProfilePage />
+								</UserCompleteProfileDependency>
 							</Route>
 
 							<Route exact path="/log_in">
-								<UserDependency status="offline" fallback="/feed">
+								<UserOfflineDependency fallback="/feed">
 									<LogInPage />
-								</UserDependency>
+								</UserOfflineDependency>
 							</Route>
 
 							<Route exact path="/create_account">
-								<UserDependency status="offline" fallback="/feed">
+								<UserOfflineDependency fallback="/feed">
 									<CreateAccountPage />
-								</UserDependency>
+								</UserOfflineDependency>
 							</Route>
 
 							<Route exact path="/settings">
-								<UserDependency status="online" fallback="/log_in">
+								<UserOnlineDependency fallback="/log_in">
 									<SettingsPage />
-								</UserDependency>
+								</UserOnlineDependency>
 							</Route>
 
 						</Switch>

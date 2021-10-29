@@ -1,5 +1,7 @@
-import { GoogleAuthProvider, signInWithPopup } from '@firebase/auth';
+import { GoogleAuthProvider, signInWithPopup, User } from '@firebase/auth';
+import { doc, getDoc, serverTimestamp, setDoc, updateDoc } from '@firebase/firestore';
 import { useFirebase } from '../context/FirebaseContext';
+import { NewUserDataProps, UpdateUserDataProps } from '../shared/types';
 
 
 
@@ -13,24 +15,100 @@ const LogInWithGoogleButton = () => {
 	/**
 	 * Setup.
 	 */
-	const { auth } = useFirebase();
+	const { auth, firestoreDatabase, setCurrentUserDocSnap, setCurrentUserDocRef } = useFirebase();
 
 
 
 	/**
-	 * Handle click.
+	 * Check user.
+	 * 
+	 * @param currentUser - user to be checked..
 	 */
-	const loginWithGoogleClick = () => {
+	const checkUser = async (currentUser: User) => {
+
+		/**
+		 * Target, get and check if user doc exists.
+		 */
+		const currentUserDocRef = doc(firestoreDatabase, 'users', currentUser.uid);
+		const currentUserDocSnap = await getDoc(currentUserDocRef);
+		const currentUserDocExists = currentUserDocSnap.exists();
+
+		if (currentUserDocExists) {
+			
+			/**
+			 * Update user doc.
+			 */
+			try {
+			
+				const updatedUserData: UpdateUserDataProps = {
+					lastActive: serverTimestamp()
+				};
+
+				await updateDoc(currentUserDocRef, updatedUserData);
+
+			} catch (e) {
+				console.error("Error adding document: ", e);
+			}
+			
+		} else {
+
+			/**
+			 * Add new user doc.
+			 */
+
+			try {
+			
+				const newUserData: NewUserDataProps = {
+					id: currentUser.uid,
+					email: currentUser.email,
+					created: serverTimestamp(),
+					lastActive: serverTimestamp()
+				};
+
+				await setDoc(doc(firestoreDatabase, `users`, currentUser.uid), newUserData);
+
+			} catch (e) {
+				console.error("Error adding document: ", e);
+			}
+
+			
+
+		}
+
+		if (setCurrentUserDocRef) {
+			setCurrentUserDocRef(currentUserDocRef);
+		}
+
+		if (setCurrentUserDocSnap) {
+			setCurrentUserDocSnap(currentUserDocSnap);
+		}
+
+	}
+
+
+
+	/**
+	 * Trigger Google sign in popup.
+	 */
+	const loginWithGoogleClick = async () => {
+
+		/**
+		 * Create auth provider and let the user log in.
+		 */
 		const authProvider = new GoogleAuthProvider();
-		return signInWithPopup(auth, authProvider)
+
+		await signInWithPopup(auth, authProvider)
 			.then((result) => {
 				// ?? Maybe store result in Firebase context?
 				// This gives you a Google Access Token. You can use it to access the Google API.
 				//const credential = GoogleAuthProvider.credentialFromResult(result);
 				//const token = credential?.accessToken;
 				// The signed-in user info.
-				//const user = result.user;
+				const currentUser = result.user;
 				// ...
+
+				checkUser(currentUser);
+
 			}).catch((error) => {
 				// !! Add error handling.
 				// Handle Errors here.
@@ -42,6 +120,7 @@ const LogInWithGoogleButton = () => {
 				//const credential = GoogleAuthProvider.credentialFromError(error);
 				// ...
 			});
+			
 	}
 
 
@@ -54,6 +133,7 @@ const LogInWithGoogleButton = () => {
 			<button onClick={loginWithGoogleClick}>Log In With Google</button>
 		</div>
 	);
+
 }
 
 export default LogInWithGoogleButton;

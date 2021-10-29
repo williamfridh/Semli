@@ -1,17 +1,23 @@
-import { Auth, User } from '@firebase/auth';
-import { Firestore } from '@firebase/firestore';
+import { Auth, signOut, User } from '@firebase/auth';
+import { DocumentData, DocumentReference, DocumentSnapshot, Firestore } from '@firebase/firestore';
 import React, { useContext, useEffect, useState } from 'react';
-import { auth, db } from '../firebase';
+import { auth, firestoreDatabase } from '../firebase';
 
 
 
 /**
  * Types.
+ * 
+ * To check if a user is online (on client side), check if currentUserDocSnap exists.
  */
 type useFirebaseProps = {
 	auth: Auth,
 	currentUser: User|null,
-	db: Firestore
+	currentUserDocRef: DocumentReference<DocumentData>|null,
+	setCurrentUserDocRef: React.Dispatch<React.SetStateAction<DocumentReference<DocumentData> | null>>|null,
+	currentUserDocSnap: DocumentSnapshot<DocumentData>|null,
+	setCurrentUserDocSnap: React.Dispatch<React.SetStateAction<DocumentSnapshot<DocumentData> | null>>|null,
+	firestoreDatabase: Firestore
 }
 type FirebaseProviderProps = {
 	children: JSX.Element
@@ -22,10 +28,14 @@ type FirebaseProviderProps = {
 /**
  * Create context.
  */
-const FirebaseContext = React.createContext <useFirebaseProps>({
+const FirebaseContext = React.createContext<useFirebaseProps>({
 	auth,
 	currentUser: null,
-	db
+	currentUserDocRef: null,
+	setCurrentUserDocRef: null,
+	currentUserDocSnap: null,
+	setCurrentUserDocSnap: null,
+	firestoreDatabase
 });
 
 
@@ -54,6 +64,8 @@ export const FirebaseProvider = (props: FirebaseProviderProps) => {
 	 */
 	const { children } = props;
 	const [currentUser, setCurrentUser] = useState<User|null>(null);
+	const [currentUserDocSnap, setCurrentUserDocSnap] = useState<DocumentSnapshot<DocumentData>|null>(null);
+	const [currentUserDocRef, setCurrentUserDocRef] = useState<DocumentReference<DocumentData>|null>(null);
 
 
 
@@ -76,7 +88,11 @@ export const FirebaseProvider = (props: FirebaseProviderProps) => {
 	const value: useFirebaseProps = {
 		auth,
 		currentUser,
-		db
+		currentUserDocRef,
+		setCurrentUserDocRef,
+		currentUserDocSnap,
+		setCurrentUserDocSnap,
+		firestoreDatabase
 	};
 
 
@@ -90,5 +106,33 @@ export const FirebaseProvider = (props: FirebaseProviderProps) => {
 		</FirebaseContext.Provider>
 	);
 
+}
+
+
+
+/**
+ * Log out function to be used.
+ * 
+ * @param auth - the current auth object used by Firebase for authentication.
+ * @param setCurrentUserDocSnap - a setter for current user doc snap.
+ */
+export const logOut = async (
+	auth: Auth,
+	setCurrentUserDocRef: React.Dispatch<React.SetStateAction<DocumentReference<DocumentData> | null>>|null,
+	setCurrentUserDocSnap: React.Dispatch<React.SetStateAction<DocumentSnapshot<DocumentData> | null>>|null
+	) => {
+	try {
+		await signOut(auth);
+		// Sign-out successful.
+		if (setCurrentUserDocSnap) {
+			setCurrentUserDocSnap(null);
+		}
+		if (setCurrentUserDocRef) {
+			setCurrentUserDocRef(null);
+		}
+	} catch (err) {
+		// An error happened.
+		console.log("Logout: failed");
+	}
 }
 

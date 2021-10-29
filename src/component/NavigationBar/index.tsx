@@ -29,7 +29,7 @@ const NavigationBar = () => {
 	/**
 	 * Setup.
 	 */
-	const { currentUser } = useFirebase();
+	const { currentUserDocSnap, currentUser } = useFirebase();
 
 
 
@@ -38,22 +38,27 @@ const NavigationBar = () => {
 	 */
 	return(
 		<div className="navigation-bar">
-			{menuOptions.map(({ text, url, userStatus }: MenuObject, key) => {
+			{menuOptions.map(({ text, url, userStatus }: MenuObject, key: number) => {
 
 				// Determine fate of specific button.
 				let display;
 				switch(userStatus) {
 					case('online'):
-						display = currentUser ? true : false;
+						display = currentUserDocSnap ? true : false;
 						break;
 					case('offline'):
-						display = currentUser ? false : true;
+						display = currentUserDocSnap ? false : true;
 						break;
 					default:
 						if (userStatus !== 'any') {
 							console.warn(`NavigationBar >> an object with userStatus that did't match with "online", "offline", or "any" was detected. It'll be treated as "any".`);
 						}
 						display = true;
+				}
+
+				
+				if (currentUser) {
+					url = url.replace(`:currentUserUid`, currentUser.uid);
 				}
 
 				// Return button.
