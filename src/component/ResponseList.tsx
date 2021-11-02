@@ -1,36 +1,18 @@
-import { ResponseProps } from "../shared/types";
+import { FunctionComponent } from "react";
+import { ResponseListProps, ResponseProps } from "../shared/types";
 
 
 
-/**
- * Types.
- */
-type ResponseListProps = {
-	list: ResponseProps[]
-}
+const ResponseList: FunctionComponent<ResponseListProps> = (props): JSX.Element=> {
 
-
-
-const ResponseList = (props: ResponseListProps) => {
-
-	/**
-	 *  Setup.
-	 */
 	const { list } = props;
 
+	const responseCollection: React.ReactNode = list.map((obj: ResponseProps, key: number) => {
+		const {body, type} = obj;
+		return <div className={`response `+type} key={key}>{body}</div>;
+	});
 
-
-	/**
-	 * Main content.
-	 */
-	return(
-		<div className="response-list">
-			{list.map((obj: ResponseProps, key: number) => {
-				const {body, type} = obj;
-				return <div className={`response `+type} key={key}>{body}</div>;
-			})}
-		</div>
-	);
+	return <div className="response-list">{responseCollection}</div>;
 
 }
 

@@ -1,6 +1,6 @@
-import { User } from "@firebase/auth";
-import { doc, getDoc } from "@firebase/firestore";
-import { useEffect, useState } from "react";
+import { User } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { FunctionComponent, useEffect, useState } from "react";
 import { Redirect } from "react-router";
 import { logOut, useFirebase } from '../../context/FirebaseContext';
 import { UserDependencyProps } from "../../shared/types";
@@ -13,30 +13,25 @@ import { UserDependencyProps } from "../../shared/types";
  * @param children - Automatixaly provided by React. Children of the element to be returned on a successful check.
  * @returns the children.
  */
-const UserCompleteProfileDependency = (props: UserDependencyProps) => {
+const UserCompleteProfileDependency: FunctionComponent<UserDependencyProps> = (props): JSX.Element => {
 
-	/**
-	 * Collect data.
-	 */
 	const { children } = props;
 	let { auth, currentUser, firestoreDatabase, setCurrentUserDocSnap, setCurrentUserDocRef } = useFirebase();
 	let { currentUserDocSnap } = useFirebase();
 	const [isLoading, setIsloading] = useState(false);
 	const currentUserDocSnapPreExists = currentUserDocSnap ? true : false;
 
-
-
 	/**
 	 * Check user.
 	 * 
 	 * @param currentUser - the currentUser object from the Firebase context.
 	 */
-	const checkUser = async (currentUser: User) => {
+	const checkUser = async (currentUser: User): Promise<void>=> {
 
 		/**
 		 * Target, get and check if user doc exists.
 		 */
-		if (!currentUserDocSnap || !currentUserDocSnap.exists()) {
+		if ((!currentUserDocSnap || !currentUserDocSnap.exists())) {
 			setIsloading(true);
 			const currentUserDocRef = doc(firestoreDatabase, 'users', currentUser.uid);
 			currentUserDocSnap = await getDoc(currentUserDocRef);
@@ -55,8 +50,6 @@ const UserCompleteProfileDependency = (props: UserDependencyProps) => {
 
 	}
 
-
-
 	/**
 	 * Trigger use effect on different changes.
 	 */
@@ -67,11 +60,6 @@ const UserCompleteProfileDependency = (props: UserDependencyProps) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentUser, currentUserDocSnap]);
 
-
-
-	/**
-	 * Decide fate.
-	 */
 	if (currentUser) {
 
 		if (isLoading || !currentUserDocSnap) {
@@ -91,7 +79,7 @@ const UserCompleteProfileDependency = (props: UserDependencyProps) => {
 
 	}
 
-	return children;
+	return <div>{children}</div>;
 
 }
 

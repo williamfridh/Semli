@@ -1,23 +1,15 @@
-import { doc, DocumentData, DocumentSnapshot, getDoc, QueryDocumentSnapshot, updateDoc } from "@firebase/firestore";
+import { doc, DocumentData, QueryDocumentSnapshot, updateDoc } from "firebase/firestore";
 import { FunctionComponent, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useFirebase } from "../context/FirebaseContext";
-import { PostLikeProps, PostInterface } from "../shared/types";
+import { PostLikeProps, PostProps } from "../shared/types";
 
+const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 
-
-const Post: FunctionComponent<PostInterface> = (props): JSX.Element => {
-
-
-	/**
-	 * Setup.
-	 */
 	const { id, body, hashtags, likes } = props;
 	const { currentUser, firestoreDatabase, currentUserDocRef, currentUserDocSnap } = useFirebase();
-	const [postLikes, setPostLikes] = useState<PostLikeProps[]>(likes ? likes : []);
+	const [postLikes, setPostLikes] = useState(likes ? likes : [] as PostLikeProps[]);
 	const postDocRef = doc(firestoreDatabase, `posts/${id}`);
-
-
 
 	/**
 	 * Handle like click.
@@ -25,25 +17,15 @@ const Post: FunctionComponent<PostInterface> = (props): JSX.Element => {
 	 * @param e - event of the click.
 	 * @returns nothing.
 	 */
-	const handleLikeClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
+	const handleLikeClick = async (e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
 
 		if (!currentUser || !currentUserDocRef) {
 			return;
 		}
 
 		let action: 'add'|'remove';
-
-		const postDocSnap = await getDoc(postDocRef);
-
-		const postDocSnapData: DocumentData|undefined = postDocSnap?.data();
-
-		if (!postDocSnapData) {
-			return;
-		}
 		
-		const likesFromServer = postDocSnapData['likes'];
-		
-		if (likesFromServer && likesFromServer.find((like: DocumentSnapshot<DocumentData>) => like !== currentUserDocSnap)) {
+		if (postLikes && postLikes.find((like: PostLikeProps) => like !== currentUserDocSnap)) {
 			action = 'remove';
 		} else {
 			action = 'add';
@@ -54,13 +36,13 @@ const Post: FunctionComponent<PostInterface> = (props): JSX.Element => {
 		switch(action) {
 			case('add'):
 				if (postNewLikes) {
-					postNewLikes = [...likesFromServer, currentUserDocRef];
+					postNewLikes = [...postLikes, currentUserDocRef];
 				} else {
 					postNewLikes = [currentUserDocRef];
 				}
 				break;
 			case('remove'):
-				postNewLikes = likesFromServer.filter((like: PostLikeProps) => like === currentUserDocSnap);
+				postNewLikes = postLikes.filter((like: PostLikeProps) => like === currentUserDocSnap);
 				break;
 		}
 
@@ -74,21 +56,23 @@ const Post: FunctionComponent<PostInterface> = (props): JSX.Element => {
 
 	}
 
+	let likeOrDislikeButton: React.ReactNode =
+		postLikes &&
+		postLikes.find((like: PostLikeProps) => like !== currentUserDocSnap) ?
+		<button onClick={handleLikeClick}>Dislike</button> :
+		<button onClick={handleLikeClick}>Like</button>;
+
+	const hashtagsCollection: React.ReactNode = hashtags.map((hashtag: QueryDocumentSnapshot<DocumentData>, key: number) => {
+		return <NavLink to={`/hashtag/${hashtag}`} key={key}><span>#{hashtag}</span></NavLink>;
+	});
 
 
-	/**
-	 * Print content.
-	 */
 	return(
 		<div className="post">
 			<p>{body}</p>
-			{
-				hashtags.map((hashtag: QueryDocumentSnapshot<DocumentData>, key: number) => {
-					return <NavLink to={`/hashtag/${hashtag}`} key={key}><span>#{hashtag}</span></NavLink>;
-				})
-			}
+			{hashtagsCollection}
 			<span>Likes: {postLikes ? postLikes?.length : 0}</span>
-			<button onClick={handleLikeClick}>Like</button>
+			{likeOrDislikeButton}
 		</div>
 	);
 

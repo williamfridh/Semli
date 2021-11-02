@@ -1,9 +1,7 @@
-import './App.css';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import HomePage from '../../containers/page/HomePage';
 import FeedPage from '../../containers/page/FeedPage';
 import LogInPage from '../../containers/page/LogInPage';
-import CreateAccountPage from '../../containers/page/CreateAccountPage';
 import SettingsPage from '../../containers/page/SettingsPage';
 import CreatePostPage from '../../containers/page/CreatePostPage';
 import ProfilePage from '../../containers/page/ProfilePage';
@@ -14,10 +12,11 @@ import NavigationBar from '../NavigationBar';
 import CompleteAccountPage from '../../containers/page/CompleteAccountPage';
 import UserCompleteProfileDependency from '../../containers/dependencies/UserCompleteProfileDependency';
 import HashtagPage from '../../containers/page/HashtagPage';
+import SearchPage from '../../containers/page/SearchPage';
+import ErrorPage from '../../containers/page/ErrorPage';
+import { FunctionComponent } from 'react';
 
-
-
-const App = () => {
+const App: FunctionComponent = (): JSX.Element => {
 	
 	return (
 		<div className="App">
@@ -42,7 +41,15 @@ const App = () => {
 								</UserOnlineDependency>
 							</Route>
 
-							<Route exact path="/hashtag/:hashtag">
+							<Route exact path="/search">
+								<UserOnlineDependency fallback="/log_in">
+									<UserCompleteProfileDependency>
+										<SearchPage />
+									</UserCompleteProfileDependency>
+								</UserOnlineDependency>
+							</Route>
+
+							<Route exact path="/hashtag/:hashtagName">
 								<UserOnlineDependency fallback="/log_in">
 									<UserCompleteProfileDependency>
 										<HashtagPage />
@@ -76,16 +83,16 @@ const App = () => {
 								</UserOfflineDependency>
 							</Route>
 
-							<Route exact path="/create_account">
-								<UserOfflineDependency fallback="/feed">
-									<CreateAccountPage />
-								</UserOfflineDependency>
-							</Route>
-
 							<Route exact path="/settings">
 								<UserOnlineDependency fallback="/log_in">
-									<SettingsPage />
+									<UserCompleteProfileDependency>
+										<SettingsPage />
+									</UserCompleteProfileDependency>
 								</UserOnlineDependency>
+							</Route>
+
+							<Route exact path="/error/:code">
+								<ErrorPage />
 							</Route>
 
 						</Switch>

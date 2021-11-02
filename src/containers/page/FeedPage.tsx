@@ -1,8 +1,6 @@
 import { NavLink } from "react-router-dom";
 import Posts from "../../component/Posts";
 
-
-
 const FeedPage = () => {
 
 	return(

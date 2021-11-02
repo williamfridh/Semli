@@ -1,19 +1,8 @@
+import { FunctionComponent } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useFirebase } from '../../context/FirebaseContext';
 import menuOptions from '../../json/menuOptions.json';
-
-
-
-/**
- * Types.
- * 
- * !! userStatus should be 'online'|'offline'|'any'
- */
-type MenuObject = {
-	text		: string,
-	url			: string,
-	userStatus	: string
-}
+import { MenuObject } from '../../shared/types';
 
 
 
@@ -24,49 +13,39 @@ type MenuObject = {
  * 
  * @returns a navigation bar.
  */
-const NavigationBar = () => {
+const NavigationBar: FunctionComponent = (): JSX.Element => {
 
-	/**
-	 * Setup.
-	 */
 	const { currentUserDocSnap, currentUser } = useFirebase();
 
+	const navButtons = menuOptions.map((menuOpt: MenuObject, key: number): React.ReactNode => {
 
+		const { text } 				= menuOpt;
+		let { url, userStatus } 	= menuOpt;
 
-	/**
-	 * Main content.
-	 */
-	return(
-		<div className="navigation-bar">
-			{menuOptions.map(({ text, url, userStatus }: MenuObject, key: number) => {
+		userStatus = userStatus.toLowerCase();
+		url = currentUser ? url.replace(`:currentUserUid`, currentUser.uid) : url;
 
-				// Determine fate of specific button.
-				let display;
-				switch(userStatus) {
-					case('online'):
-						display = currentUserDocSnap ? true : false;
-						break;
-					case('offline'):
-						display = currentUserDocSnap ? false : true;
-						break;
-					default:
-						if (userStatus !== 'any') {
-							console.warn(`NavigationBar >> an object with userStatus that did't match with "online", "offline", or "any" was detected. It'll be treated as "any".`);
-						}
-						display = true;
-				}
+		let displayOrHide: boolean;
+		switch(userStatus) {
+			case('online'):
+				displayOrHide = currentUserDocSnap ? true : false;
+				break;
+			case('offline'):
+				displayOrHide = currentUserDocSnap ? false : true;
+				break;
+			case('any'):
+				displayOrHide = true;
+				break;
+			default:
+				console.warn(`NavigationBar >> an object with userStatus that did't match with "online", "offline", or "any" was detected. It wont be printed.`);
+				displayOrHide = false;
+		}
 
-				
-				if (currentUser) {
-					url = url.replace(`:currentUserUid`, currentUser.uid);
-				}
+		return displayOrHide && <NavLink to={url} style={{ textDecoration: 'none' }} key={key}>{text}</NavLink>;
 
-				// Return button.
-				return display && (<NavLink to={url} style={{ textDecoration: 'none' }} key={key}>{text}</NavLink>);
+	});
 
-			})}
-		</div>
-	);
+	return <div className="navigation-bar">{navButtons}</div>;
 }
 
 export default NavigationBar;

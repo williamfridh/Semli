@@ -1,5 +1,5 @@
-import { doc, getDoc, updateDoc, query, where, collection, getDocs } from "firebase/firestore";
-import { useState } from "react";
+import { getDoc, updateDoc, query, where, collection, getDocs, QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
+import { FunctionComponent, useState } from "react";
 import { Redirect } from "react-router";
 import ResponseList from "../../component/ResponseList";
 import { useFirebase } from "../../context/FirebaseContext";
@@ -14,18 +14,14 @@ import { ResponseProps, UpdateUserDataProps } from "../../shared/types";
  * 
  * @returns either a redirection to the users profile, or a form to complete the account.
  */
-const CompleteProfileForm = () => {
+const CompleteProfileForm: FunctionComponent = (): JSX.Element => {
 
-	/**
-	 * Setup.
-	 */
-	const { currentUser, firestoreDatabase, setCurrentUserDocSnap } = useFirebase();
-	const [username, setUsername] = useState('');
-	const [bio, setBio] = useState('');
-	const [isComplete, setIsComplete] = useState(false);
-	const [response, setResponse] = useState<ResponseProps[]>([]);
+	const { currentUser, firestoreDatabase, setCurrentUserDocSnap, currentUserDocRef } = useFirebase();
 
-
+	const [username, setUsername] 		= useState('');
+	const [bio, setBio] 				= useState('');
+	const [isComplete, setIsComplete] 	= useState(false);
+	const [response, setResponse] 		= useState([] as ResponseProps[]);
 
 	/**
 	 * handle username content change.
@@ -33,11 +29,8 @@ const CompleteProfileForm = () => {
 	 * @param e - event to track.
 	 */
 	const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-		const val = e.target.value;
-		setUsername(val);
+		setUsername(e.target.value);
 	}
-
-
 
 	/**
 	 * Handle bio change.
@@ -45,18 +38,15 @@ const CompleteProfileForm = () => {
 	 * @param e - event to track.
 	 */
 	const handleBioChange = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
-		const val = e.target.value;
-		setBio(val);
+		setBio(e.target.value);
 	}
-
-
 
 	/**
 	 * Handle post click.
 	 * 
 	 * Assemble the new post data and create a new doc in firestoreDatabase.
 	 */
-	const handlePostClick = async () => {
+	const handlePostClick = async (): Promise<void> => {
 
 		if (!currentUser) {
 			return;
@@ -64,20 +54,16 @@ const CompleteProfileForm = () => {
 
 		let newResponse: ResponseProps[] = [];
 
-
-
 		/**
 		 * Check input.
 		 */
 		if (username.length < 4) {
 			newResponse.push({body: 'Usernames must be minmum 4 characters long.', type: 'error'});
-			setResponse(newResponse);
 		}
 		if (bio.length < 10) {
 			newResponse.push({body: 'Bio must be minmum 10 characters long.', type: 'error'});
-			setResponse(newResponse);
 		}
-		if (newResponse.length > 0) {
+		if (newResponse.length) {
 			setResponse(newResponse);
 			return;
 		}
@@ -85,31 +71,22 @@ const CompleteProfileForm = () => {
 		const q = query(collection(firestoreDatabase, "users"), where("username", "==", username), where("id", "!=", currentUser.uid));
 		const qSnapshop = await getDocs(q);
 
-		qSnapshop.forEach((obj: any) => {
+		qSnapshop.forEach((obj: QueryDocumentSnapshot<DocumentData>) => {
 			const foundUsername = obj.data()['username'];
-			if (foundUsername === username) {
-				newResponse.push({body: 'Username already in use.', type: 'error'});
+			if (foundUsername === username)  {
+				setResponse([{body: 'Username already in use.', type: 'error'}]);
+				return;
 			}
-		})
-
-		if (newResponse.length > 0) {
-			setResponse(newResponse);
-			return;
-		}
-
-
+		});
 
 		/**
 		 * Target, get and check if user doc exists.
 		 */
-		 const currentUserDocRef = doc(firestoreDatabase, 'users', currentUser.uid);
-		 const currentUserDocSnap = await getDoc(currentUserDocRef);
-		 const currentUserDocExists = currentUserDocSnap.exists();
+		 const currentUserDocSnap = currentUserDocRef && await getDoc(currentUserDocRef);
+		 const currentUserDocExists = currentUserDocSnap && currentUserDocSnap.exists();
  
 		 if (currentUserDocExists) {
 			 
-
-
 			 /**
 			  * Update user doc.
 			  */
@@ -126,9 +103,7 @@ const CompleteProfileForm = () => {
 
 				// Update data.
 				const currentUserDocSnap = await getDoc(currentUserDocRef);
-				if (setCurrentUserDocSnap) {
-					setCurrentUserDocSnap(currentUserDocSnap);
-				}
+				setCurrentUserDocSnap && setCurrentUserDocSnap(currentUserDocSnap);
 
 			} catch (e) {
 				console.error("Error adding document: ", e);
@@ -138,26 +113,16 @@ const CompleteProfileForm = () => {
 
 	}
 
-
-
-	/**
-	 * Redirect the user to his/her profile.
-	 */
 	if (isComplete && currentUser) {
 		return <Redirect to={`/profile/${currentUser.uid}`} />;
 	}
 
-
-
-	/**
-	 * Main content.
-	 */
 	return(
 		<div className="form">
 			<input type="text" onChange={handleUsernameChange} value={username} />
 			<textarea onChange={handleBioChange} value={bio} />
 			<button onClick={handlePostClick}>Continue</button>
-			<ResponseList list={response} />
+			{response && <ResponseList list={response} />}
 		</div>
 	);
 	

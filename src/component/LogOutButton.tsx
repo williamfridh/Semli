@@ -1,3 +1,4 @@
+import { FunctionComponent } from "react";
 import { logOut, useFirebase } from "../context/FirebaseContext";
 
 
@@ -7,35 +8,20 @@ import { logOut, useFirebase } from "../context/FirebaseContext";
  * 
  * @returns a button.
  */
-const LogOutButton = () => {
+const LogOutButton: FunctionComponent = (): JSX.Element => {
 
-	/**
-	 * Setup.
-	 */
-	
 	const { auth, setCurrentUserDocSnap, setCurrentUserDocRef } = useFirebase();
-
-
 
 	/**
 	 * Handle logout button click.
 	 * 
 	 * @returns nothing. 
 	 */
-	const handleLogoutClick = () => {
+	const handleLogoutClick = (): void => {
 		logOut(auth, setCurrentUserDocRef, setCurrentUserDocSnap);
 	}
 
-
-
-	/**
-	 * Return main content.
-	 */
-	return(
-		<div>
-			<button onClick={handleLogoutClick}>Logout</button>
-		</div>
-	);
+	return <div><button onClick={handleLogoutClick}>Logout</button></div>;
 }
 
 export default LogOutButton;

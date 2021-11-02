@@ -1,25 +1,48 @@
-import { DocumentData, DocumentReference, FieldValue, QueryDocumentSnapshot } from '@firebase/firestore';
+import { Auth, User } from 'firebase/auth';
+import { DocumentData, DocumentReference, DocumentSnapshot, FieldValue, Firestore, QueryDocumentSnapshot } from 'firebase/firestore';
+import React, { SetStateAction } from 'react';
 
 
 
 /**
  * Types.
  */
+
+
+
+
+/**
+ * Types & .
+ * 
+ * To check if a user is online (on client side), check if currentUserDocSnap exists.
+ */
+ export type useFirebaseProps = {
+	auth					: Auth,
+	currentUser				: User|null,
+	currentUserDocRef		: DocumentReference<DocumentData>|null,
+	setCurrentUserDocRef	: React.Dispatch<React.SetStateAction<DocumentReference<DocumentData> | null>>|null,
+	currentUserDocSnap		: DocumentSnapshot<DocumentData>|null,
+	setCurrentUserDocSnap	: React.Dispatch<React.SetStateAction<DocumentSnapshot<DocumentData> | null>>|null,
+	firestoreDatabase		: Firestore
+}
+
+export type HashtagName = string|null;
+export type HashtagProps = {
+	name			: string|null,
+	amount			: number|null
+}
 export type NewPostDataProps = {
 	body			: string,
-	hashtags			: string[]|undefined,
+	hashtags		: HashtagName[]|null,
 	created			: FieldValue,
 	user			: DocumentReference<DocumentData>
 }
 export type UpdatePostDataProps = {
 	body			: string,
-	hashtags			: string[]|undefined,
+	hashtags		: HashtagName[]|null,
 	created			: FieldValue,
 	user			: DocumentReference<DocumentData>
 }
-
-
-
 export type NewUserDataProps = {
 	id				: string,
 	email			: string|null,
@@ -32,29 +55,75 @@ export type UpdateUserDataProps = {
 	bio?			: string
 }
 export type UserDependencyProps = {
-	fallback?		: string,
-	children		: JSX.Element,
+	children		: React.ReactNode,
+	fallback?		: string
 }
-
-
-
 export type ResponseProps = {
 	body			: string,
 	type			: 'success' | 'error'
 }
-
-
-export interface PostInterface {
-	id?				: string;
-	body			: QueryDocumentSnapshot<DocumentData>;
-	hashtags			: QueryDocumentSnapshot<DocumentData>[];
-	likes?			: PostLikeProps[];
-}
 export type PostProps = {
 	id?				: string,
 	body			: QueryDocumentSnapshot<DocumentData>,
-	hashtags			: QueryDocumentSnapshot<DocumentData>[],
+	hashtags		: QueryDocumentSnapshot<DocumentData>[],
 	likes?			: PostLikeProps[]
 }
 export type PostLikeProps = (QueryDocumentSnapshot<DocumentData>|DocumentReference<DocumentData>)
 
+
+export type MenuObject = {
+	text			: string,
+	url				: string,
+	userStatus		: string
+}
+
+
+export type ProfilePageParamsProps = {
+	uid				: string;
+}
+
+export type PostsProps = {
+	uid?			: string,
+	hashtagName?	: string
+}
+
+export type ProfileProps =  {
+	uid				: string
+}
+
+export type ResponseListProps = {
+	list			: ResponseProps[]
+}
+
+
+export type ErrorPageParams = {
+	code			: string
+}
+
+export type HashtagDataProps = {
+	hashtagName: HashtagName
+}
+
+export interface SaveHashtagInterface {
+	(
+		hashtag: HashtagName,
+		newPostDocRef: DocumentReference<DocumentData>
+	): Promise<void>
+}
+
+
+export interface LogOutInterface {
+	(
+		auth: Auth,
+		setCurrentUserDocRef: React.Dispatch<React.SetStateAction<DocumentReference<DocumentData> | null>>|null,
+		setCurrentUserDocSnap: React.Dispatch<React.SetStateAction<DocumentSnapshot<DocumentData> | null>>|null
+	): Promise<void>
+}
+
+
+
+export interface HandleSearchInterface {
+	(
+		e: React.ChangeEvent<HTMLInputElement>
+	): Promise<void>
+}

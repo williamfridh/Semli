@@ -1,17 +1,7 @@
 import { useParams } from "react-router";
 import Posts from "../../component/Posts";
 import Profile from "../../component/Profile";
-
-
-
-/**
- * Types.
- */
-type ProfilePageParamsProps = {
-	uid: string;
-}
-
-
+import { ProfilePageParamsProps } from "../../shared/types";
 
 /**
  * User profile page element.
@@ -21,16 +11,8 @@ type ProfilePageParamsProps = {
  */
 const ProfilePage = () => {
 
-	/**
-	 * Setup.
-	 */
   	const { uid }: ProfilePageParamsProps = useParams();
 
-
-
-	/**
-	 * Main content.
-	 */
 	return(
 		<div className="page">
 			<Profile uid={uid} />

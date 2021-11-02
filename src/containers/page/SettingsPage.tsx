@@ -1,8 +1,6 @@
 import LogOutButton from "../../component/LogOutButton";
 import EditProfileForm from "../form/EditProfileForm";
 
-
-
 const SettingsPage = () => {
 	return(
 		<div className="page">

@@ -10,13 +10,13 @@
 		"userStatus": "online"
 	},
 	{
-		"text": "Log In",
-		"url": "/log_in",
-		"userStatus": "offline"
+		"text": "Search",
+		"url": "/search",
+		"userStatus": "online"
 	},
 	{
-		"text": "Create Account",
-		"url": "/create_account",
+		"text": "Log In",
+		"url": "/log_in",
 		"userStatus": "offline"
 	},
 	{

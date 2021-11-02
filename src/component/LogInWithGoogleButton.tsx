@@ -1,5 +1,6 @@
-import { GoogleAuthProvider, signInWithPopup, User } from '@firebase/auth';
-import { doc, getDoc, serverTimestamp, setDoc, updateDoc } from '@firebase/firestore';
+import { GoogleAuthProvider, signInWithPopup, User } from 'firebase/auth';
+import { doc, getDoc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
+import { FunctionComponent } from 'react';
 import { useFirebase } from '../context/FirebaseContext';
 import { NewUserDataProps, UpdateUserDataProps } from '../shared/types';
 
@@ -10,34 +11,24 @@ import { NewUserDataProps, UpdateUserDataProps } from '../shared/types';
  * 
  * @returns a button.
  */
-const LogInWithGoogleButton = () => {
+const LogInWithGoogleButton: FunctionComponent = (): JSX.Element => {
 	
-	/**
-	 * Setup.
-	 */
 	const { auth, firestoreDatabase, setCurrentUserDocSnap, setCurrentUserDocRef } = useFirebase();
-
-
 
 	/**
 	 * Check user.
 	 * 
-	 * @param currentUser - user to be checked..
+	 * @param currentUser - user to be checked.
 	 */
-	const checkUser = async (currentUser: User) => {
+	const checkUser = async (currentUser: User): Promise<void> => {
 
-		/**
-		 * Target, get and check if user doc exists.
-		 */
-		const currentUserDocRef = doc(firestoreDatabase, 'users', currentUser.uid);
-		const currentUserDocSnap = await getDoc(currentUserDocRef);
-		const currentUserDocExists = currentUserDocSnap.exists();
+		const currentUserDocRef 	= doc(firestoreDatabase, 'users', currentUser.uid);
+		const currentUserDocSnap 	= await getDoc(currentUserDocRef);
+		const currentUserDocExists 	= currentUserDocSnap.exists();
 
 		if (currentUserDocExists) {
 			
-			/**
-			 * Update user doc.
-			 */
+			// Update user doc.
 			try {
 			
 				const updatedUserData: UpdateUserDataProps = {
@@ -52,17 +43,14 @@ const LogInWithGoogleButton = () => {
 			
 		} else {
 
-			/**
-			 * Add new user doc.
-			 */
-
+			// Add new user doc.
 			try {
 			
 				const newUserData: NewUserDataProps = {
-					id: currentUser.uid,
-					email: currentUser.email,
-					created: serverTimestamp(),
-					lastActive: serverTimestamp()
+					id			: currentUser.uid,
+					email		: currentUser.email,
+					created		: serverTimestamp(),
+					lastActive	: serverTimestamp()
 				};
 
 				await setDoc(doc(firestoreDatabase, `users`, currentUser.uid), newUserData);
@@ -75,64 +63,32 @@ const LogInWithGoogleButton = () => {
 
 		}
 
-		if (setCurrentUserDocRef) {
-			setCurrentUserDocRef(currentUserDocRef);
-		}
-
-		if (setCurrentUserDocSnap) {
-			setCurrentUserDocSnap(currentUserDocSnap);
-		}
+		// Update Firebase context.
+		setCurrentUserDocRef 	&& setCurrentUserDocRef(currentUserDocRef);
+		setCurrentUserDocSnap 	&& setCurrentUserDocSnap(currentUserDocSnap);
 
 	}
-
-
 
 	/**
 	 * Trigger Google sign in popup.
 	 */
-	const loginWithGoogleClick = async () => {
+	const loginWithGoogleClick = (): void => {
 
 		/**
 		 * Create auth provider and let the user log in.
 		 */
 		const authProvider = new GoogleAuthProvider();
 
-		await signInWithPopup(auth, authProvider)
+		signInWithPopup(auth, authProvider)
 			.then((result) => {
-				// ?? Maybe store result in Firebase context?
-				// This gives you a Google Access Token. You can use it to access the Google API.
-				//const credential = GoogleAuthProvider.credentialFromResult(result);
-				//const token = credential?.accessToken;
-				// The signed-in user info.
-				const currentUser = result.user;
-				// ...
-
-				checkUser(currentUser);
-
+				checkUser(result.user);
 			}).catch((error) => {
-				// !! Add error handling.
-				// Handle Errors here.
-				//const errorCode = error.code;
-				//const errorMessage = error.message;
-				// The email of the user's account used.
-				//const email = error.email;
-				// The AuthCredential type that was used.
-				//const credential = GoogleAuthProvider.credentialFromError(error);
-				// ...
+				console.error(`loginWithGoogleClick >> ${error}`);
 			});
 			
 	}
-
-
-
-	/**
-	 * Return main content.
-	 */
-	return(
-		<div>
-			<button onClick={loginWithGoogleClick}>Log In With Google</button>
-		</div>
-	);
+	
+	return <div><button onClick={loginWithGoogleClick}>Log In With Google</button></div>;
 
 }
 

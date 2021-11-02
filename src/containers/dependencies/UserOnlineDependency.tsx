@@ -1,3 +1,4 @@
+import { FunctionComponent } from "react";
 import { Redirect } from "react-router";
 import { useFirebase } from '../../context/FirebaseContext';
 import { UserDependencyProps } from "../../shared/types";
@@ -11,11 +12,8 @@ import { UserDependencyProps } from "../../shared/types";
  * @param children - Automatixaly provided by React. Children of the element to be returned on a successful check.
  * @returns the children.
  */
-const UserOnlineDependency = (props: UserDependencyProps) => {
+const UserOnlineDependency: FunctionComponent<UserDependencyProps> = (props): JSX.Element => {
 
-	/**
-	 * Collect data.
-	 */
 	const { fallback, children } = props;
 	const { currentUser } = useFirebase();
 
@@ -24,19 +22,15 @@ const UserOnlineDependency = (props: UserDependencyProps) => {
 	 * 
 	 * @returns the result of the user check.
 	 */
-	const triggerFallback = () => {		
+	const triggerFallback = (): JSX.Element => {		
 		if (fallback) {
 			return <Redirect to={fallback} />;
 		} else {
-			return null; // Hide content.
+			return <div></div>; // Hide content.
 		}
 	}
 
-	if (!currentUser) {
-		return triggerFallback();
-	}
-
-	return children;
+	return currentUser ? <div>{children}</div> : triggerFallback();
 
 }
 

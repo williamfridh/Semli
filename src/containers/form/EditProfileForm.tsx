@@ -1,10 +1,8 @@
-import { collection, doc, getDoc, getDocs, query, updateDoc, where } from "@firebase/firestore";
-import { useState } from "react";
+import { collection, doc, DocumentData, getDoc, getDocs, query, QueryDocumentSnapshot, updateDoc, where } from "firebase/firestore";
+import { FunctionComponent, useState } from "react";
 import ResponseList from "../../component/ResponseList";
 import { useFirebase } from "../../context/FirebaseContext";
 import { ResponseProps, UpdateUserDataProps } from "../../shared/types";
-
-
 
 /**
  * Form to complete account.
@@ -13,18 +11,15 @@ import { ResponseProps, UpdateUserDataProps } from "../../shared/types";
  * 
  * @returns either a redirection to the users profile, or a form to complete the account.
  */
-const EditProfileForm = () => {
+const EditProfileForm: FunctionComponent = (): JSX.Element => {
 
-	/**
-	 * Setup.
-	 */
 	const { currentUser, firestoreDatabase, currentUserDocSnap, setCurrentUserDocSnap } = useFirebase();
+
 	const userDataArr = currentUserDocSnap?.data();
-	const [username, setUsername] = useState(userDataArr?.username);
-	const [bio, setBio] = useState(userDataArr?.bio);
-	const [response, setResponse] = useState<ResponseProps[]>([]);
 
-
+	const [username, setUsername] 	= useState(userDataArr?.username);
+	const [bio, setBio] 			= useState(userDataArr?.bio);
+	const [response, setResponse] 	= useState([] as ResponseProps[]);
 
 	/**
 	 * handle username content change.
@@ -32,11 +27,8 @@ const EditProfileForm = () => {
 	 * @param e - event to track.
 	 */
 	const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-		const val = e.target.value;
-		setUsername(val);
+		setUsername(e.target.value);
 	}
-
-
 
 	/**
 	 * Handle bio change.
@@ -44,11 +36,8 @@ const EditProfileForm = () => {
 	 * @param e - event to track.
 	 */
 	const handleBioChange = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
-		const val = e.target.value;
-		setBio(val);
+		setBio(e.target.value);
 	}
-
-
 
 	/**
 	 * Handle post click.
@@ -63,8 +52,6 @@ const EditProfileForm = () => {
 
 		let newResponse: ResponseProps[] = [];
 
-
-
 		/**
 		 * Check input.
 		 */
@@ -76,7 +63,7 @@ const EditProfileForm = () => {
 			newResponse.push({body: 'Bio must be minmum 10 characters long.', type: 'error'});
 			setResponse(newResponse);
 		}
-		if (newResponse.length > 0) {
+		if (newResponse.length) {
 			setResponse(newResponse);
 			return;
 		}
@@ -84,19 +71,13 @@ const EditProfileForm = () => {
 		const q = query(collection(firestoreDatabase, "users"), where("username", "==", username), where("id", "!=", currentUser.uid));
 		const qSnapshop = await getDocs(q);
 
-		qSnapshop.forEach((obj: any) => {
+		qSnapshop.forEach((obj: QueryDocumentSnapshot<DocumentData>) => {
 			const foundUsername = obj.data()['username'];
 			if (foundUsername === username) {
-				newResponse.push({body: 'Username already in use.', type: 'error'});
+				setResponse([{body: 'Username already in use.', type: 'error'}]);
+				return;
 			}
 		})
-
-		if (newResponse.length > 0) {
-			setResponse(newResponse);
-			return;
-		}
-
-
 
 		/**
 		 * Target, get and check if user doc exists.
@@ -107,8 +88,6 @@ const EditProfileForm = () => {
  
 		 if (currentUserDocExists) {
 			 
-
-
 			 /**
 			  * Update user doc.
 			  */
@@ -121,14 +100,11 @@ const EditProfileForm = () => {
 	
 				await updateDoc(currentUserDocRef, updatedUserData);
 
-				newResponse.push({body: 'Saved.', type: 'success'});
-				setResponse(newResponse);
+				setResponse([{body: 'Saved.', type: 'success'}]);
 
 				// Update data.
 				const currentUserDocSnap = await getDoc(currentUserDocRef);
-				if (setCurrentUserDocSnap) {
-					setCurrentUserDocSnap(currentUserDocSnap);
-				}
+				setCurrentUserDocSnap && setCurrentUserDocSnap(currentUserDocSnap);
 
 			} catch (e) {
 				console.error("Error adding document: ", e);
@@ -138,17 +114,12 @@ const EditProfileForm = () => {
 
 	}
 
-
-
-	/**
-	 * Main content.
-	 */
 	return(
 		<div className="form">
 			<input type="text" onChange={handleUsernameChange} value={username} />
 			<textarea onChange={handleBioChange} value={bio} />
 			<button onClick={handlePostClick}>Continue</button>
-			<ResponseList list={response} />
+			{response && <ResponseList list={response} />}
 		</div>
 	);
 	

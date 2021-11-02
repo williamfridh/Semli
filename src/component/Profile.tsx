@@ -1,44 +1,31 @@
-import { doc, DocumentData, getDoc } from "@firebase/firestore";
-import { useEffect, useState } from "react";
+import { doc, DocumentData, getDoc } from "firebase/firestore";
+import { FunctionComponent, useEffect, useState } from "react";
+import { Redirect } from "react-router";
 import { useFirebase } from "../context/FirebaseContext";
-
-/**
- * Types.
- */
-type ProfileProps = {
-	uid: string
-}
+import { ProfileProps } from "../shared/types";
 
 
 
 /**
+ * Profile element.
  * 
- * @param props 
+ * @param props - Containing uid (user id.)
  * @returns 
  */
-const Profile = (props: ProfileProps) => {
+const Profile: FunctionComponent<ProfileProps> = (props): JSX.Element=> {
 
-	/**
-	 * Setup.
-	 */
-	let { uid } = props;
-	let { firestoreDatabase } = useFirebase();
-	const [userData, setUserData] = useState<DocumentData|undefined>(undefined);
-	const [isLoading, setIsLoading] = useState(true);
+	const { uid } = props;
+	const { firestoreDatabase } = useFirebase();
+	
+	const [userData, setUserData] 			= useState({} as DocumentData);
+	const [isLoading, setIsLoading] 		= useState(true);
+	const [failedLoading, setFailedLoading] = useState(false);
 
-
-
-	/**
-	 * Hooks.
-	 */
 	useEffect(() => {
 
 		let isMounted = true;
 
-		/**
-		 * Get profile.
-		 */
-		const getProfile = async (uid: string) => {
+		const getProfile = async (uid: string): Promise<void> => {
 	
 			const userDocRef = doc(firestoreDatabase, 'users', uid);
 			const userDocSnap = await getDoc(userDocRef);
@@ -49,7 +36,7 @@ const Profile = (props: ProfileProps) => {
 					setIsLoading(false);
 				}
 			} else {
-				// Redirect the user.
+				setFailedLoading(true);
 			}
 	
 		}
@@ -63,11 +50,10 @@ const Profile = (props: ProfileProps) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	if (failedLoading) {
+		return <Redirect to="error/404" />;
+	}
 
-
-	/**
-	 * Main content.
-	 */
 	return(
 		<div className="profile">
 			<h1>{isLoading ? `Loading...` : userData && userData.username}</h1>

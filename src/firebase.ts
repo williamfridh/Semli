@@ -1,15 +1,7 @@
-/**
- * Import required files for seting up Firebase.
- */
 import {initializeApp} from 'firebase/app';
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore"
 
-
-
-/**
- * Initilize Firebase app.
- */
 const firebaseApp = initializeApp({
 	apiKey				: process.env.REACT_APP_FIREBASE_API_KEY,
 	authDomain			: process.env.REACT_APP_AUTH_DOMAIN,
@@ -19,12 +11,12 @@ const firebaseApp = initializeApp({
 	appId				: process.env.REACT_APP_FIREBASREACT_APP_APP_IDE_API_KEY,
 	measurementId		: process.env.REACT_APP_MEASUREMENT_ID
 });
+export default firebaseApp;
 
 
 
 /**
  * Prepare Firebase authentication and Firestore (database).
- * These alongside the
  * 
  * These values are passed to the Firebase Context
  * to become accecible all over the app. This can
@@ -33,11 +25,4 @@ const firebaseApp = initializeApp({
  */
 export const firestoreDatabase = getFirestore(firebaseApp);
 export const auth = getAuth(firebaseApp);
-
-
-
-/**
- * Export Firebase app.
- */
-export default firebaseApp;
 
