@@ -14,38 +14,45 @@ const SearchForm: FunctionComponent = () => {
 
 	const handleSearch: HandleSearchInterface = async e => {
 
-		const newTerm = e.target.value
-			.replaceAll('#', '')
-			.replaceAll('å', 'a')
-			.replaceAll('ä', 'a')
-			.replaceAll('ö', 'o')
-			.replaceAll(' ', '')
-			.toLowerCase();
+		try {
 
-		setTerm(newTerm);
-		setIsLoading(true);
-		if (!newTerm || newTerm.length <= 2) {
-			setIsLoading(false);
-			return;
-		}
+			const newTerm = e.target.value
+				.replaceAll('#', '')
+				.replaceAll('å', 'a')
+				.replaceAll('ä', 'a')
+				.replaceAll('ö', 'o')
+				.replaceAll(' ', '')
+				.toLowerCase();
 
-		const q = query(collection(firestoreDatabase, "hashtags"), where("name", ">=", newTerm), where("name", "<=", newTerm+ '\uf8ff'));
-		const qDocSnap = await getDocs(q);
-	
-		let hashtagArr: HashtagProps[] = [];
-	
-		qDocSnap.forEach((hashtagSnap: QueryDocumentSnapshot<DocumentData>) => {
-			const hashtagData = hashtagSnap.data();
-			const name = hashtagData.name;
-			const amount = hashtagData.amount;
-			hashtagArr.push({
-				name,
-				amount
+			setTerm(newTerm);
+			setIsLoading(true);
+			if (!newTerm || newTerm.length <= 2) {
+				setIsLoading(false);
+				return;
+			}
+
+			const q = query(collection(firestoreDatabase, "hashtags"), where("name", ">=", newTerm), where("name", "<=", newTerm+ '\uf8ff'));
+			const qDocSnap = await getDocs(q);
+		
+			let hashtagArr: HashtagProps[] = [];
+		
+			qDocSnap.forEach((hashtagSnap: QueryDocumentSnapshot<DocumentData>) => {
+				const hashtagData = hashtagSnap.data();
+				const name = hashtagData.name;
+				const amount = hashtagData.amount;
+				hashtagArr.push({
+					name,
+					amount
+				});
 			});
-		});
 
-		setResult(hashtagArr);
-		setIsLoading(false);
+			setResult(hashtagArr);
+			setIsLoading(false);
+
+		} catch (e) {
+			console.error(`SearchForm >> ${e}`);
+		}
+		
 	}
 
 	return (

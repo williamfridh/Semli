@@ -25,40 +25,46 @@ const Posts: FunctionComponent<PostsProps> = (props): JSX.Element=> {
 		let isMounted = true;
 
 		const getPosts = async (uid?: string): Promise<void> => {
-	
-			let q;
-			if (uid) {
-				const uRef = doc(firestoreDatabase, 'users', uid); // This is not a ref to the current user doc!
-				q = query(collection(firestoreDatabase, "posts"), where("user", "==", uRef));
-			} else if (hashtagName) {
-				q = query(collection(firestoreDatabase, "posts"), where("hashtags", "array-contains", hashtagName));
-			} else {
-				q = query(collection(firestoreDatabase, "posts"));
-			}
-	
-			const qSnap = await getDocs(q);
-	
-			if (qSnap) {
-	
-				let postsToAdd: PostProps[] = [];
-	
-				qSnap.forEach((post: QueryDocumentSnapshot<DocumentData>) => {
-					const { id, body, hashtags, likes } = post.data();
-					postsToAdd.push({
-						id,
-						body,
-						hashtags,
-						likes
-					});
-				});
-	
-				isMounted && setPosts(postsToAdd);
 
-			} else {
-				console.warn("Posts >> No posts found.");
+			try {
+		
+				let q;
+				if (uid) {
+					const uRef = doc(firestoreDatabase, 'users', uid); // This is not a ref to the current user doc!
+					q = query(collection(firestoreDatabase, "posts"), where("user", "==", uRef));
+				} else if (hashtagName) {
+					q = query(collection(firestoreDatabase, "posts"), where("hashtags", "array-contains", hashtagName));
+				} else {
+					q = query(collection(firestoreDatabase, "posts"));
+				}
+		
+				const qSnap = await getDocs(q);
+		
+				if (qSnap) {
+		
+					let postsToAdd: PostProps[] = [];
+		
+					qSnap.forEach((post: QueryDocumentSnapshot<DocumentData>) => {
+						const { body, hashtags, likes } = post.data();
+						postsToAdd.push({
+							id: post.id,
+							body,
+							hashtags,
+							likes
+						});
+					});
+		
+					isMounted && setPosts(postsToAdd);
+
+				} else {
+					console.warn("Posts >> No posts found.");
+				}
+		
+				isMounted && setIsLoading(false);
+
+			} catch (e) {
+				console.error(`Posts >> ${e}`);
 			}
-	
-			isMounted && setIsLoading(false);
 	
 		}
 			

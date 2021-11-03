@@ -118,22 +118,28 @@ const CreatePostForm: FunctionComponent = (): JSX.Element => {
 	 */
 	const saveHashtag: SaveHashtagInterface = async (hashtag, newPostDocRef) => {
 
-		const hashtahDocRef = doc(firestoreDatabase, `hashtags/${hashtag}`);
-		const hashtahDocSnap = await getDoc(hashtahDocRef);
+		try {
 
-		if (hashtahDocSnap.exists()) {
-			const { amount, posts } = hashtahDocSnap.data();
-			await setDoc(hashtahDocRef, {
-				name: hashtag,
-				amount: (amount+1),
-				posts: [...posts, newPostDocRef]
-			});
-		} else {
-			await setDoc(hashtahDocRef, {
-				name: hashtag,
-				amount: 1,
-				posts: [newPostDocRef]
-			});
+			const hashtahDocRef = doc(firestoreDatabase, `hashtags/${hashtag}`);
+			const hashtahDocSnap = await getDoc(hashtahDocRef);
+
+			if (hashtahDocSnap.exists()) {
+				const { amount, posts } = hashtahDocSnap.data();
+				await setDoc(hashtahDocRef, {
+					name: hashtag,
+					amount: (amount+1),
+					posts: [...posts, newPostDocRef]
+				});
+			} else {
+				await setDoc(hashtahDocRef, {
+					name: hashtag,
+					amount: 1,
+					posts: [newPostDocRef]
+				});
+			}
+
+		} catch (e) {
+			console.error("Error adding document: ", e);
 		}
 
 	}

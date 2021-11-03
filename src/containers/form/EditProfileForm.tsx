@@ -13,7 +13,14 @@ import { ResponseProps, UpdateUserDataProps } from "../../shared/types";
  */
 const EditProfileForm: FunctionComponent = (): JSX.Element => {
 
-	const { currentUser, firestoreDatabase, currentUserDocSnap, setCurrentUserDocSnap } = useFirebase();
+	const {
+		currentUser,
+		firestoreDatabase,
+		currentUserDocSnap,
+		setCurrentUserDocSnap,
+		firebaseIsloading,
+		setFirebaseIsloading
+	} = useFirebase();
 
 	const userDataArr = currentUserDocSnap?.data();
 
@@ -50,67 +57,77 @@ const EditProfileForm: FunctionComponent = (): JSX.Element => {
 			return;
 		}
 
-		let newResponse: ResponseProps[] = [];
+		setFirebaseIsloading && setFirebaseIsloading(true);
 
-		/**
-		 * Check input.
-		 */
-		if (username.length < 4) {
-			newResponse.push({body: 'Usernames must be minmum 4 characters long.', type: 'error'});
-			setResponse(newResponse);
-		}
-		if (bio.length < 10) {
-			newResponse.push({body: 'Bio must be minmum 10 characters long.', type: 'error'});
-			setResponse(newResponse);
-		}
-		if (newResponse.length) {
-			setResponse(newResponse);
-			return;
-		}
+		try {
 
-		const q = query(collection(firestoreDatabase, "users"), where("username", "==", username), where("id", "!=", currentUser.uid));
-		const qSnapshop = await getDocs(q);
+			let newResponse: ResponseProps[] = [];
 
-		qSnapshop.forEach((obj: QueryDocumentSnapshot<DocumentData>) => {
-			const foundUsername = obj.data()['username'];
-			if (foundUsername === username) {
-				setResponse([{body: 'Username already in use.', type: 'error'}]);
+			/**
+			 * Check input.
+			 */
+			if (username.length < 4) {
+				newResponse.push({body: 'Usernames must be minmum 4 characters long.', type: 'error'});
+				setResponse(newResponse);
+			}
+			if (bio.length < 10) {
+				newResponse.push({body: 'Bio must be minmum 10 characters long.', type: 'error'});
+				setResponse(newResponse);
+			}
+			if (newResponse.length) {
+				setResponse(newResponse);
 				return;
 			}
-		})
 
-		/**
-		 * Target, get and check if user doc exists.
-		 */
-		 const currentUserDocRef = doc(firestoreDatabase, 'users', currentUser.uid);
-		 const currentUserDocSnap = await getDoc(currentUserDocRef);
-		 const currentUserDocExists = currentUserDocSnap.exists();
- 
-		 if (currentUserDocExists) {
-			 
-			 /**
-			  * Update user doc.
-			  */
-			try {
-				
-				const updatedUserData: UpdateUserDataProps = {
-					username,
-					bio
-				};
+			const q = query(collection(firestoreDatabase, "users"), where("username", "==", username), where("id", "!=", currentUser.uid));
+			const qSnapshop = await getDocs(q);
+
+			qSnapshop.forEach((obj: QueryDocumentSnapshot<DocumentData>) => {
+				const foundUsername = obj.data()['username'];
+				if (foundUsername === username) {
+					setResponse([{body: 'Username already in use.', type: 'error'}]);
+					return;
+				}
+			})
+
+			/**
+			 * Target, get and check if user doc exists.
+			 */
+			const currentUserDocRef = doc(firestoreDatabase, 'users', currentUser.uid);
+			const currentUserDocSnap = await getDoc(currentUserDocRef);
+			const currentUserDocExists = currentUserDocSnap.exists();
 	
-				await updateDoc(currentUserDocRef, updatedUserData);
+			if (currentUserDocExists) {
+				
+				/**
+				 * Update user doc.
+				 */
+				try {
+					
+					const updatedUserData: UpdateUserDataProps = {
+						username,
+						bio
+					};
+		
+					await updateDoc(currentUserDocRef, updatedUserData);
 
-				setResponse([{body: 'Saved.', type: 'success'}]);
+					setResponse([{body: 'Saved.', type: 'success'}]);
 
-				// Update data.
-				const currentUserDocSnap = await getDoc(currentUserDocRef);
-				setCurrentUserDocSnap && setCurrentUserDocSnap(currentUserDocSnap);
+					// Update data.
+					const currentUserDocSnap = await getDoc(currentUserDocRef);
+					setCurrentUserDocSnap && setCurrentUserDocSnap(currentUserDocSnap);
 
-			} catch (e) {
-				console.error("Error adding document: ", e);
+				} catch (e) {
+					console.error("Error adding document: ", e);
+				}
+				
 			}
-			 
-		 }
+
+		} catch (e) {
+			console.error("Error adding document: ", e);
+		}
+
+		setFirebaseIsloading && setFirebaseIsloading(false);
 
 	}
 

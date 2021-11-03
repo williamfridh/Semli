@@ -13,7 +13,14 @@ import { NewUserDataProps, UpdateUserDataProps } from '../shared/types';
  */
 const LogInWithGoogleButton: FunctionComponent = (): JSX.Element => {
 	
-	const { auth, firestoreDatabase, setCurrentUserDocSnap, setCurrentUserDocRef } = useFirebase();
+	const {
+		auth,
+		firestoreDatabase,
+		setCurrentUserDocSnap,
+		setCurrentUserDocRef,
+		firebaseIsloading,
+		setFirebaseIsloading
+	} = useFirebase();
 
 	/**
 	 * Check user.
@@ -22,50 +29,60 @@ const LogInWithGoogleButton: FunctionComponent = (): JSX.Element => {
 	 */
 	const checkUser = async (currentUser: User): Promise<void> => {
 
-		const currentUserDocRef 	= doc(firestoreDatabase, 'users', currentUser.uid);
-		const currentUserDocSnap 	= await getDoc(currentUserDocRef);
-		const currentUserDocExists 	= currentUserDocSnap.exists();
+		setFirebaseIsloading && setFirebaseIsloading(true);
 
-		if (currentUserDocExists) {
-			
-			// Update user doc.
-			try {
-			
-				const updatedUserData: UpdateUserDataProps = {
-					lastActive: serverTimestamp()
-				};
+		try {
 
-				await updateDoc(currentUserDocRef, updatedUserData);
+			const currentUserDocRef 	= doc(firestoreDatabase, 'users', currentUser.uid);
+			const currentUserDocSnap 	= await getDoc(currentUserDocRef);
+			const currentUserDocExists 	= currentUserDocSnap.exists();
 
-			} catch (e) {
-				console.error("Error adding document: ", e);
+			if (currentUserDocExists) {
+				
+				// Update user doc.
+				try {
+				
+					const updatedUserData: UpdateUserDataProps = {
+						lastActive: serverTimestamp()
+					};
+
+					await updateDoc(currentUserDocRef, updatedUserData);
+
+				} catch (e) {
+					console.error("Error adding document: ", e);
+				}
+				
+			} else {
+
+				// Add new user doc.
+				try {
+				
+					const newUserData: NewUserDataProps = {
+						id			: currentUser.uid,
+						email		: currentUser.email,
+						created		: serverTimestamp(),
+						lastActive	: serverTimestamp()
+					};
+
+					await setDoc(doc(firestoreDatabase, `users`, currentUser.uid), newUserData);
+
+				} catch (e) {
+					console.error("Error adding document: ", e);
+				}
+
+				
+
 			}
-			
-		} else {
 
-			// Add new user doc.
-			try {
-			
-				const newUserData: NewUserDataProps = {
-					id			: currentUser.uid,
-					email		: currentUser.email,
-					created		: serverTimestamp(),
-					lastActive	: serverTimestamp()
-				};
+			// Update Firebase context.
+			setCurrentUserDocRef 	&& setCurrentUserDocRef(currentUserDocRef);
+			setCurrentUserDocSnap 	&& setCurrentUserDocSnap(currentUserDocSnap);
 
-				await setDoc(doc(firestoreDatabase, `users`, currentUser.uid), newUserData);
-
-			} catch (e) {
-				console.error("Error adding document: ", e);
-			}
-
-			
-
+		} catch (e) {
+			console.error(`LogInWithGoogleButton >> ${e}`);
 		}
 
-		// Update Firebase context.
-		setCurrentUserDocRef 	&& setCurrentUserDocRef(currentUserDocRef);
-		setCurrentUserDocSnap 	&& setCurrentUserDocSnap(currentUserDocSnap);
+		setFirebaseIsloading && setFirebaseIsloading(false);
 
 	}
 

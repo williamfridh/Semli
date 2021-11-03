@@ -23,36 +23,42 @@ const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 			return;
 		}
 
-		let action: 'add'|'remove';
-		
-		if (postLikes && postLikes.find((like: PostLikeProps) => like !== currentUserDocSnap)) {
-			action = 'remove';
-		} else {
-			action = 'add';
+		try {
+
+			let action: 'add'|'remove';
+			
+			if (postLikes && postLikes.find((like: PostLikeProps) => like !== currentUserDocSnap)) {
+				action = 'remove';
+			} else {
+				action = 'add';
+			}
+
+			let postNewLikes;
+
+			switch(action) {
+				case('add'):
+					if (postNewLikes) {
+						postNewLikes = [...postLikes, currentUserDocRef];
+					} else {
+						postNewLikes = [currentUserDocRef];
+					}
+					break;
+				case('remove'):
+					postNewLikes = postLikes.filter((like: PostLikeProps) => like === currentUserDocSnap);
+					break;
+			}
+
+			const userDataUpdate = {
+				likes: postNewLikes
+			};
+
+			await updateDoc(postDocRef, userDataUpdate);
+
+			setPostLikes(postNewLikes);
+
+		} catch (e) {
+			console.error(`Post >> ${e}`);
 		}
-
-		let postNewLikes;
-
-		switch(action) {
-			case('add'):
-				if (postNewLikes) {
-					postNewLikes = [...postLikes, currentUserDocRef];
-				} else {
-					postNewLikes = [currentUserDocRef];
-				}
-				break;
-			case('remove'):
-				postNewLikes = postLikes.filter((like: PostLikeProps) => like === currentUserDocSnap);
-				break;
-		}
-
-		const userDataUpdate = {
-			likes: postNewLikes
-		};
-
-		await updateDoc(postDocRef, userDataUpdate);
-
-		setPostLikes(postNewLikes);
 
 	}
 

@@ -15,21 +15,25 @@ const HashtagData: FunctionComponent<HashtagDataProps> = (props): JSX.Element =>
 		
 		let isMounted = true;
 		
-		const loadHashtag = async () => {
-			setIsLoading(true);
-			const hashtagDocRef = doc(firestoreDatabase, 'hashtags', (hashtagName as string));
-			const hashtagDocSnap = await getDoc(hashtagDocRef);
-			const data: DocumentData|null = hashtagDocSnap.data() as DocumentData|null;
-			if (!data) {
+		const loadHashtag = async (): Promise<void>=> {
+			try {
+				setIsLoading(true);
+				const hashtagDocRef = doc(firestoreDatabase, 'hashtags', (hashtagName as string));
+				const hashtagDocSnap = await getDoc(hashtagDocRef);
+				const data: DocumentData|null = hashtagDocSnap.data() as DocumentData|null;
+				if (!data) {
+					setIsLoading(false);
+					return;
+				}
+				const newData = {
+					name: String(data?.name),
+					amount: parseInt(data?.amount)
+				}
+				isMounted && setHashtag(newData);
 				setIsLoading(false);
-				return;
+			} catch (e) {
+				console.error(`HashtagData >> ${e}`);
 			}
-			const newData = {
-				name: String(data?.name),
-				amount: parseInt(data?.amount)
-			}
-			isMounted && setHashtag(newData);
-			setIsLoading(false);
 		}
 
 		loadHashtag();

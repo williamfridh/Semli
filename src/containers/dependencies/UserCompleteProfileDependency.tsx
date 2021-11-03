@@ -16,10 +16,17 @@ import { UserDependencyProps } from "../../shared/types";
 const UserCompleteProfileDependency: FunctionComponent<UserDependencyProps> = (props): JSX.Element => {
 
 	const { children } = props;
-	let { auth, currentUser, firestoreDatabase, setCurrentUserDocSnap, setCurrentUserDocRef } = useFirebase();
+	const {
+		auth,
+		currentUser,
+		firestoreDatabase,
+		setCurrentUserDocSnap,
+		setCurrentUserDocRef,
+		firebaseIsloading,
+		setFirebaseIsloading
+	} = useFirebase();
 	let { currentUserDocSnap } = useFirebase();
 	const [isLoading, setIsloading] = useState(false);
-	const currentUserDocSnapPreExists = currentUserDocSnap ? true : false;
 
 	/**
 	 * Check user.
@@ -28,25 +35,38 @@ const UserCompleteProfileDependency: FunctionComponent<UserDependencyProps> = (p
 	 */
 	const checkUser = async (currentUser: User): Promise<void>=> {
 
-		/**
-		 * Target, get and check if user doc exists.
-		 */
-		if ((!currentUserDocSnap || !currentUserDocSnap.exists())) {
+		if (currentUserDocSnap && currentUserDocSnap.exists()) {
+			return;
+		}
+
+		setFirebaseIsloading && setFirebaseIsloading(true);
+		
+		try {
+
+			/**
+			 * Target, get and check if user doc exists.
+			 */
 			setIsloading(true);
+
 			const currentUserDocRef = doc(firestoreDatabase, 'users', currentUser.uid);
 			currentUserDocSnap = await getDoc(currentUserDocRef);
+
 			setIsloading(false);
-			if (setCurrentUserDocSnap) {
-				setCurrentUserDocSnap(currentUserDocSnap);
+
+			setCurrentUserDocSnap && setCurrentUserDocSnap(currentUserDocSnap);
+			setCurrentUserDocRef && setCurrentUserDocRef(currentUserDocRef);
+
+			console.log("SET");
+
+			if (!currentUserDocSnap.exists()) {
+				logOut(auth, setCurrentUserDocRef, setCurrentUserDocSnap, firebaseIsloading, setFirebaseIsloading);
 			}
-			if (setCurrentUserDocRef) {
-				setCurrentUserDocRef(currentUserDocRef);
-			}
+
+		} catch (e) {
+			console.error(`UserCompleteProfileDependency >> checkUser >> ${e}`);
 		}
-	 
-		if (currentUserDocSnapPreExists && !currentUserDocSnap.exists()) {
-			logOut(auth, setCurrentUserDocRef, setCurrentUserDocSnap);
-		}
+
+		setFirebaseIsloading && setFirebaseIsloading(false);
 
 	}
 
@@ -58,7 +78,7 @@ const UserCompleteProfileDependency: FunctionComponent<UserDependencyProps> = (p
 			checkUser(currentUser);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentUser, currentUserDocSnap]);
+	}, [currentUserDocSnap]);
 
 	if (currentUser) {
 

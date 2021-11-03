@@ -16,7 +16,14 @@ import { ResponseProps, UpdateUserDataProps } from "../../shared/types";
  */
 const CompleteProfileForm: FunctionComponent = (): JSX.Element => {
 
-	const { currentUser, firestoreDatabase, setCurrentUserDocSnap, currentUserDocRef } = useFirebase();
+	const {
+		currentUser,
+		firestoreDatabase,
+		setCurrentUserDocSnap,
+		currentUserDocRef,
+		firebaseIsloading,
+		setFirebaseIsloading
+	} = useFirebase();
 
 	const [username, setUsername] 		= useState('');
 	const [bio, setBio] 				= useState('');
@@ -52,64 +59,74 @@ const CompleteProfileForm: FunctionComponent = (): JSX.Element => {
 			return;
 		}
 
-		let newResponse: ResponseProps[] = [];
+		setFirebaseIsloading && setFirebaseIsloading(true);
 
-		/**
-		 * Check input.
-		 */
-		if (username.length < 4) {
-			newResponse.push({body: 'Usernames must be minmum 4 characters long.', type: 'error'});
-		}
-		if (bio.length < 10) {
-			newResponse.push({body: 'Bio must be minmum 10 characters long.', type: 'error'});
-		}
-		if (newResponse.length) {
-			setResponse(newResponse);
-			return;
-		}
+		try {
 
-		const q = query(collection(firestoreDatabase, "users"), where("username", "==", username), where("id", "!=", currentUser.uid));
-		const qSnapshop = await getDocs(q);
+			let newResponse: ResponseProps[] = [];
 
-		qSnapshop.forEach((obj: QueryDocumentSnapshot<DocumentData>) => {
-			const foundUsername = obj.data()['username'];
-			if (foundUsername === username)  {
-				setResponse([{body: 'Username already in use.', type: 'error'}]);
+			/**
+			 * Check input.
+			 */
+			if (username.length < 4) {
+				newResponse.push({body: 'Usernames must be minmum 4 characters long.', type: 'error'});
+			}
+			if (bio.length < 10) {
+				newResponse.push({body: 'Bio must be minmum 10 characters long.', type: 'error'});
+			}
+			if (newResponse.length) {
+				setResponse(newResponse);
 				return;
 			}
-		});
 
-		/**
-		 * Target, get and check if user doc exists.
-		 */
-		 const currentUserDocSnap = currentUserDocRef && await getDoc(currentUserDocRef);
-		 const currentUserDocExists = currentUserDocSnap && currentUserDocSnap.exists();
- 
-		 if (currentUserDocExists) {
-			 
-			 /**
-			  * Update user doc.
-			  */
-			try {
-				
-				const updatedUserData: UpdateUserDataProps = {
-					username,
-					bio
-				};
+			const q = query(collection(firestoreDatabase, "users"), where("username", "==", username), where("id", "!=", currentUser.uid));
+			const qSnapshop = await getDocs(q);
+
+			qSnapshop.forEach((obj: QueryDocumentSnapshot<DocumentData>) => {
+				const foundUsername = obj.data()['username'];
+				if (foundUsername === username)  {
+					setResponse([{body: 'Username already in use.', type: 'error'}]);
+					return;
+				}
+			});
+
+			/**
+			 * Target, get and check if user doc exists.
+			 */
+			const currentUserDocSnap = currentUserDocRef && await getDoc(currentUserDocRef);
+			const currentUserDocExists = currentUserDocSnap && currentUserDocSnap.exists();
 	
-				await updateDoc(currentUserDocRef, updatedUserData);
+			if (currentUserDocExists) {
+				
+				/**
+				 * Update user doc.
+				 */
+				try {
+					
+					const updatedUserData: UpdateUserDataProps = {
+						username,
+						bio
+					};
+		
+					await updateDoc(currentUserDocRef, updatedUserData);
 
-				setIsComplete(true);
+					setIsComplete(true);
 
-				// Update data.
-				const currentUserDocSnap = await getDoc(currentUserDocRef);
-				setCurrentUserDocSnap && setCurrentUserDocSnap(currentUserDocSnap);
+					// Update data.
+					const currentUserDocSnap = await getDoc(currentUserDocRef);
+					setCurrentUserDocSnap && setCurrentUserDocSnap(currentUserDocSnap);
 
-			} catch (e) {
-				console.error("Error adding document: ", e);
+				} catch (e) {
+					console.error("Error adding document: ", e);
+				}
+				
 			}
-			 
-		 }
+
+		} catch (e) {
+			console.error(`CompleteProfileForm >> ${e}`);
+		}
+
+		setFirebaseIsloading && setFirebaseIsloading(false);
 
 	}
 

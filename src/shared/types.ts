@@ -23,7 +23,9 @@ import React, { SetStateAction } from 'react';
 	setCurrentUserDocRef	: React.Dispatch<React.SetStateAction<DocumentReference<DocumentData> | null>>|null,
 	currentUserDocSnap		: DocumentSnapshot<DocumentData>|null,
 	setCurrentUserDocSnap	: React.Dispatch<React.SetStateAction<DocumentSnapshot<DocumentData> | null>>|null,
-	firestoreDatabase		: Firestore
+	firestoreDatabase		: Firestore,
+	firebaseIsloading		: boolean|null,
+	setFirebaseIsloading	: React.Dispatch<React.SetStateAction<boolean>>|null
 }
 
 export type HashtagName = string|null;
@@ -116,7 +118,9 @@ export interface LogOutInterface {
 	(
 		auth: Auth,
 		setCurrentUserDocRef: React.Dispatch<React.SetStateAction<DocumentReference<DocumentData> | null>>|null,
-		setCurrentUserDocSnap: React.Dispatch<React.SetStateAction<DocumentSnapshot<DocumentData> | null>>|null
+		setCurrentUserDocSnap: React.Dispatch<React.SetStateAction<DocumentSnapshot<DocumentData> | null>>|null,
+		firebaseIsloading		: boolean|null,
+		setFirebaseIsloading	: React.Dispatch<React.SetStateAction<boolean>>|null
 	): Promise<void>
 }
 

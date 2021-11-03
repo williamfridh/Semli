@@ -26,17 +26,23 @@ const Profile: FunctionComponent<ProfileProps> = (props): JSX.Element=> {
 		let isMounted = true;
 
 		const getProfile = async (uid: string): Promise<void> => {
-	
-			const userDocRef = doc(firestoreDatabase, 'users', uid);
-			const userDocSnap = await getDoc(userDocRef);
-	
-			if (userDocSnap.exists()) {
-				if (isMounted) {
-					setUserData(userDocSnap.data());
-					setIsLoading(false);
+
+			try {
+		
+				const userDocRef = doc(firestoreDatabase, 'users', uid);
+				const userDocSnap = await getDoc(userDocRef);
+		
+				if (userDocSnap.exists()) {
+					if (isMounted) {
+						setUserData(userDocSnap.data());
+						setIsLoading(false);
+					}
+				} else {
+					setFailedLoading(true);
 				}
-			} else {
-				setFailedLoading(true);
+
+			} catch (e) {
+				console.error(`Profile >> ${e}`);
 			}
 	
 		}
