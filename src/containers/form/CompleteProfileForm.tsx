@@ -21,7 +21,6 @@ const CompleteProfileForm: FunctionComponent = (): JSX.Element => {
 		firestoreDatabase,
 		setCurrentUserDocSnap,
 		currentUserDocRef,
-		firebaseIsloading,
 		setFirebaseIsloading
 	} = useFirebase();
 

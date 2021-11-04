@@ -18,7 +18,6 @@ const EditProfileForm: FunctionComponent = (): JSX.Element => {
 		firestoreDatabase,
 		currentUserDocSnap,
 		setCurrentUserDocSnap,
-		firebaseIsloading,
 		setFirebaseIsloading
 	} = useFirebase();
 

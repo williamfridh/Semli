@@ -18,7 +18,6 @@ const LogInWithGoogleButton: FunctionComponent = (): JSX.Element => {
 		firestoreDatabase,
 		setCurrentUserDocSnap,
 		setCurrentUserDocRef,
-		firebaseIsloading,
 		setFirebaseIsloading
 	} = useFirebase();
 

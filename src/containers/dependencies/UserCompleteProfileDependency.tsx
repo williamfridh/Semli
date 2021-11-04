@@ -35,7 +35,7 @@ const UserCompleteProfileDependency: FunctionComponent<UserDependencyProps> = (p
 	 */
 	const checkUser = async (currentUser: User): Promise<void>=> {
 
-		if (currentUserDocSnap && currentUserDocSnap.exists()) {
+		if ((currentUserDocSnap && currentUserDocSnap.exists()) || firebaseIsloading) {
 			return;
 		}
 
@@ -55,8 +55,6 @@ const UserCompleteProfileDependency: FunctionComponent<UserDependencyProps> = (p
 
 			setCurrentUserDocSnap && setCurrentUserDocSnap(currentUserDocSnap);
 			setCurrentUserDocRef && setCurrentUserDocRef(currentUserDocRef);
-
-			console.log("SET");
 
 			if (!currentUserDocSnap.exists()) {
 				logOut(auth, setCurrentUserDocRef, setCurrentUserDocSnap, firebaseIsloading, setFirebaseIsloading);
@@ -78,7 +76,7 @@ const UserCompleteProfileDependency: FunctionComponent<UserDependencyProps> = (p
 			checkUser(currentUser);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentUserDocSnap]);
+	}, [currentUser, currentUserDocSnap]);
 
 	if (currentUser) {
 

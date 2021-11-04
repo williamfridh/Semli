@@ -80,6 +80,7 @@ export const FirebaseProvider: FunctionComponent = ({ children }) => {
  * @param setCurrentUserDocSnap - a setter for current user doc snap.
  */
 export const logOut: LogOutInterface = async ( auth, setCurrentUserDocRef, setCurrentUserDocSnap, firebaseIsloading, setFirebaseIsloading ) => {
+	setFirebaseIsloading && setFirebaseIsloading(true);
 	try {
 		// Do not change this order!
 		await signOut(auth);
@@ -88,5 +89,6 @@ export const logOut: LogOutInterface = async ( auth, setCurrentUserDocRef, setCu
 	} catch (err) {
 		console.log("Logout: failed");
 	}
+	setFirebaseIsloading && setFirebaseIsloading(false);
 }
 
