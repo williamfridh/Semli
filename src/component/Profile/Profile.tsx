@@ -1,8 +1,10 @@
 import { doc, DocumentData, getDoc } from "firebase/firestore";
 import { FunctionComponent, useEffect, useState } from "react";
 import { Redirect } from "react-router";
-import { useFirebase } from "../context/FirebaseContext";
-import { ProfileProps } from "../shared/types";
+import { useFirebase } from "../../context/FirebaseContext";
+import { ProfileProps } from "../../shared/types";
+import * as GS from '../../shared/globalStyles';
+import * as S from './Profile.styled';
 
 
 
@@ -62,8 +64,8 @@ const Profile: FunctionComponent<ProfileProps> = (props): JSX.Element=> {
 
 	return(
 		<div className="profile">
-			<h1>{isLoading ? `Loading...` : userData && userData.username}</h1>
-			<p>{isLoading ? `Loading...` : userData && userData.bio}</p>
+			<GS.Title>{isLoading ? `Loading...` : userData && userData.username}</GS.Title>
+			<S.ProfileBio>{isLoading ? `Loading...` : userData && userData.bio}</S.ProfileBio>
 		</div>
 	);
 

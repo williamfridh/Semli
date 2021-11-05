@@ -76,7 +76,8 @@ export type PostLikeProps = (QueryDocumentSnapshot<DocumentData>|DocumentReferen
 export type MenuObject = {
 	text			: string,
 	url				: string,
-	userStatus		: string
+	userStatus		: string,
+	icon			: string
 }
 
 
@@ -105,6 +106,22 @@ export type ErrorPageParams = {
 export type HashtagDataProps = {
 	hashtagName: HashtagName
 }
+
+
+
+export type ThemeContextProps = {
+	theme: {
+		color: {
+			background			: string|null,
+			boxBackground		: string|null,
+			inputBackground		: string|null,
+			callToAction		: string|null,
+			callToActionDark	: string|null,
+			textBrightHigh		: string|null,
+			textDarkHigh		: string|null
+		}
+	}
+};
 
 export interface SaveHashtagInterface {
 	(

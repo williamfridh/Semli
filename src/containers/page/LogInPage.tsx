@@ -1,12 +1,13 @@
 import LogInWithGoogleButton from "../../component/LogInWithGoogleButton";
+import * as S from '../../shared/globalStyles';
 
 const LogInPage = () => {
 
 	return(
-		<div className="page">
-			<h1>Log In</h1>
+		<S.Page>
+			<S.Title>Log In</S.Title>
 			<LogInWithGoogleButton />
-		</div>
+		</S.Page>
 	);
 }
 

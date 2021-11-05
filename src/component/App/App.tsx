@@ -15,90 +15,104 @@ import HashtagPage from '../../containers/page/HashtagPage';
 import SearchPage from '../../containers/page/SearchPage';
 import ErrorPage from '../../containers/page/ErrorPage';
 import { FunctionComponent } from 'react';
+import GlobalStyle from '../../shared/globalStyles';
+import { ThemeDataProvider, useTheme } from '../../context/ThemeContext';
+import { ThemeProvider } from 'styled-components';
 
 const App: FunctionComponent = (): JSX.Element => {
+
+	const { theme } = useTheme();
+
+	console.log(theme);
 	
 	return (
-		<div className="App">
-			<FirebaseProvider>
-				<BrowserRouter>
+		<div>
+			<GlobalStyle />
+			<ThemeDataProvider>
+				<ThemeProvider theme={theme}>
+					<FirebaseProvider>
+						<BrowserRouter>
 
-					<NavigationBar />		
+							<NavigationBar />
 
-						<Switch>
+								<Switch>
 
-							<Route exact path="/">
-								<UserCompleteProfileDependency>
-									<HomePage />
-								</UserCompleteProfileDependency>
-							</Route>
+									<Route exact path="/">
+										<UserOfflineDependency fallback="/feed">
+											<UserCompleteProfileDependency>
+												<HomePage />
+											</UserCompleteProfileDependency>
+										</UserOfflineDependency>
+									</Route>
 
-							<Route exact path="/feed">
-								<UserOnlineDependency fallback="/log_in">
-									<UserCompleteProfileDependency>
-										<FeedPage />
-									</UserCompleteProfileDependency>
-								</UserOnlineDependency>
-							</Route>
+									<Route exact path="/feed">
+										<UserOnlineDependency fallback="/log_in">
+											<UserCompleteProfileDependency>
+												<FeedPage />
+											</UserCompleteProfileDependency>
+										</UserOnlineDependency>
+									</Route>
 
-							<Route exact path="/search">
-								<UserOnlineDependency fallback="/log_in">
-									<UserCompleteProfileDependency>
-										<SearchPage />
-									</UserCompleteProfileDependency>
-								</UserOnlineDependency>
-							</Route>
+									<Route exact path="/search">
+										<UserOnlineDependency fallback="/log_in">
+											<UserCompleteProfileDependency>
+												<SearchPage />
+											</UserCompleteProfileDependency>
+										</UserOnlineDependency>
+									</Route>
 
-							<Route exact path="/hashtag/:hashtagName">
-								<UserOnlineDependency fallback="/log_in">
-									<UserCompleteProfileDependency>
-										<HashtagPage />
-									</UserCompleteProfileDependency>
-								</UserOnlineDependency>
-							</Route>
+									<Route exact path="/hashtag/:hashtagName">
+										<UserOnlineDependency fallback="/log_in">
+											<UserCompleteProfileDependency>
+												<HashtagPage />
+											</UserCompleteProfileDependency>
+										</UserOnlineDependency>
+									</Route>
 
-							<Route exact path="/post/create">
-								<UserOnlineDependency fallback="/log_in">
-									<UserCompleteProfileDependency>
-										<CreatePostPage />
-									</UserCompleteProfileDependency>
-								</UserOnlineDependency>
-							</Route>
+									<Route exact path="/post/create">
+										<UserOnlineDependency fallback="/log_in">
+											<UserCompleteProfileDependency>
+												<CreatePostPage />
+											</UserCompleteProfileDependency>
+										</UserOnlineDependency>
+									</Route>
 
-							<Route exact path="/profile/complete">
-								<UserOnlineDependency fallback="/log_in">
-									<CompleteAccountPage />
-								</UserOnlineDependency>
-							</Route>
+									<Route exact path="/profile/complete">
+										<UserOnlineDependency fallback="/log_in">
+											<CompleteAccountPage />
+										</UserOnlineDependency>
+									</Route>
 
-							<Route exact path="/profile/:uid">
-								<UserCompleteProfileDependency>
-									<ProfilePage />
-								</UserCompleteProfileDependency>
-							</Route>
+									<Route exact path="/profile/:uid">
+										<UserCompleteProfileDependency>
+											<ProfilePage />
+										</UserCompleteProfileDependency>
+									</Route>
 
-							<Route exact path="/log_in">
-								<UserOfflineDependency fallback="/feed">
-									<LogInPage />
-								</UserOfflineDependency>
-							</Route>
+									<Route exact path="/log_in">
+										<UserOfflineDependency fallback="/feed">
+											<LogInPage />
+										</UserOfflineDependency>
+									</Route>
 
-							<Route exact path="/settings">
-								<UserOnlineDependency fallback="/log_in">
-									<UserCompleteProfileDependency>
-										<SettingsPage />
-									</UserCompleteProfileDependency>
-								</UserOnlineDependency>
-							</Route>
+									<Route exact path="/settings">
+										<UserOnlineDependency fallback="/log_in">
+											<UserCompleteProfileDependency>
+												<SettingsPage />
+											</UserCompleteProfileDependency>
+										</UserOnlineDependency>
+									</Route>
 
-							<Route exact path="/error/:code">
-								<ErrorPage />
-							</Route>
+									<Route exact path="/error/:code">
+										<ErrorPage />
+									</Route>
 
-						</Switch>
+								</Switch>
 
-				</BrowserRouter>
-			</FirebaseProvider>
+						</BrowserRouter>
+					</FirebaseProvider>
+				</ThemeProvider>
+			</ThemeDataProvider>
 		</div>
 	);
 }

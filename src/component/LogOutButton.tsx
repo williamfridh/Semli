@@ -1,5 +1,6 @@
 import { FunctionComponent } from "react";
 import { logOut, useFirebase } from "../context/FirebaseContext";
+import * as S from '../shared/globalStyles';
 
 
 
@@ -27,7 +28,7 @@ const LogOutButton: FunctionComponent = (): JSX.Element => {
 		logOut(auth, setCurrentUserDocRef, setCurrentUserDocSnap, firebaseIsloading, setFirebaseIsloading);
 	}
 
-	return <div><button onClick={handleLogoutClick}>Logout</button></div>;
+	return <S.Button onClick={handleLogoutClick}>Logout</S.Button>;
 }
 
 export default LogOutButton;

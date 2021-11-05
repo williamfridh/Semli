@@ -1,9 +1,11 @@
+import * as S from '../../shared/globalStyles';
+
 const HomePage = () => {
 	
 	return(
-		<div className="page">
-			<h1>Home</h1>
-		</div>
+		<S.Page>
+			<S.Title>Home</S.Title>
+		</S.Page>
 	);
 
 }

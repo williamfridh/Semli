@@ -1,8 +1,9 @@
 import { doc, DocumentData, QueryDocumentSnapshot, updateDoc } from "firebase/firestore";
 import { FunctionComponent, useState } from "react";
-import { NavLink } from "react-router-dom";
-import { useFirebase } from "../context/FirebaseContext";
-import { PostLikeProps, PostProps } from "../shared/types";
+import { useFirebase } from "../../context/FirebaseContext";
+import { PostLikeProps, PostProps } from "../../shared/types";
+import * as S from "./Post.styled";
+import { MdFavoriteBorder, MdFavorite } from 'react-icons/md';
 
 const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 
@@ -17,7 +18,7 @@ const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 	 * @param e - event of the click.
 	 * @returns nothing.
 	 */
-	const handleLikeClick = async (e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
+	const handleLikeClick = async (): Promise<void> => {
 
 		if (!currentUser || !currentUserDocRef) {
 			return;
@@ -65,21 +66,23 @@ const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 	let likeOrDislikeButton: React.ReactNode =
 		postLikes &&
 		postLikes.find((like: PostLikeProps) => like !== currentUserDocSnap) ?
-		<button onClick={handleLikeClick}>Dislike</button> :
-		<button onClick={handleLikeClick}>Like</button>;
+		<MdFavoriteBorder onClick={handleLikeClick} /> :
+		<MdFavorite onClick={handleLikeClick} />;
 
 	const hashtagsCollection: React.ReactNode = hashtags.map((hashtag: QueryDocumentSnapshot<DocumentData>, key: number) => {
-		return <NavLink to={`/hashtag/${hashtag}`} key={key}><span>#{hashtag}</span></NavLink>;
+		return <S.PostHashtag to={`/hashtag/${hashtag}`} key={key}><span>#{hashtag}</span></S.PostHashtag>;
 	});
 
 
 	return(
-		<div className="post">
-			<p>{body}</p>
-			{hashtagsCollection}
-			<span>Likes: {postLikes ? postLikes?.length : 0}</span>
-			{likeOrDislikeButton}
-		</div>
+		<S.Post>
+			<S.PostBody>{body}</S.PostBody>
+			<S.PostHashtagHolder>{hashtagsCollection}</S.PostHashtagHolder>
+			<S.LikeArea>
+				<S.PostLikes>Liked by <b>{postLikes ? postLikes?.length : 0}</b> people</S.PostLikes>
+				<S.PostLikeDislikeButton>{likeOrDislikeButton}</S.PostLikeDislikeButton>
+			</S.LikeArea>
+		</S.Post>
 	);
 
 }

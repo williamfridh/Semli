@@ -2,7 +2,7 @@ import { collection, doc, DocumentData, getDocs, query, QueryDocumentSnapshot, w
 import { FunctionComponent, useEffect, useState } from "react";
 import { useFirebase } from "../context/FirebaseContext";
 import { PostProps, PostsProps } from "../shared/types";
-import Post from "./Post";
+import Post from "./Post/";
 
 
 

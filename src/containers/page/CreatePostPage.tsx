@@ -1,12 +1,13 @@
 import CreatePostForm from "../form/CreatePostForm";
+import * as S from '../../shared/globalStyles';
 
 const CreatePostPage = () => {
 
 	return(
-		<div className="page">
-			<h1>Create Post</h1>
+		<S.Page>
+			<S.Title>Create Post</S.Title>
 			<CreatePostForm />
-		</div>
+		</S.Page>
 	);
 	
 }

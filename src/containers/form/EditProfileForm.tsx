@@ -3,6 +3,7 @@ import { FunctionComponent, useState } from "react";
 import ResponseList from "../../component/ResponseList";
 import { useFirebase } from "../../context/FirebaseContext";
 import { ResponseProps, UpdateUserDataProps } from "../../shared/types";
+import * as S from '../../shared/globalStyles';
 
 /**
  * Form to complete account.
@@ -134,7 +135,7 @@ const EditProfileForm: FunctionComponent = (): JSX.Element => {
 		<div className="form">
 			<input type="text" onChange={handleUsernameChange} value={username} />
 			<textarea onChange={handleBioChange} value={bio} />
-			<button onClick={handlePostClick}>Continue</button>
+			<S.Button onClick={handlePostClick}>Save</S.Button>
 			{response && <ResponseList list={response} />}
 		</div>
 	);

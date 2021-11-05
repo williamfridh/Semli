@@ -1,13 +1,14 @@
 import LogOutButton from "../../component/LogOutButton";
 import EditProfileForm from "../form/EditProfileForm";
+import * as S from '../../shared/globalStyles';
 
 const SettingsPage = () => {
 	return(
-		<div className="page">
-			<h1>Settings</h1>
+		<S.Page>
+			<S.Title>Settings</S.Title>
 			<LogOutButton />
 			<EditProfileForm />
-		</div>
+		</S.Page>
 	);
 }
 

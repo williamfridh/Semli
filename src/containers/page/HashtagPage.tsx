@@ -3,6 +3,7 @@ import Posts from "../../component/Posts";
 import { Redirect, useParams } from "react-router";
 import { HashtagName } from "../../shared/types";
 import HashtagData from "../../component/HashtagData";
+import * as S from '../../shared/globalStyles';
 
 const HashtagPage: FunctionComponent = (): JSX.Element => {
 
@@ -13,11 +14,11 @@ const HashtagPage: FunctionComponent = (): JSX.Element => {
 	}
 
 	return(
-		<div className="page">
-			<h1>#{hashtagName}</h1>
+		<S.Page>
+			<S.Title>#{hashtagName}</S.Title>
 			<HashtagData hashtagName={hashtagName} />
 			<Posts hashtagName={hashtagName} />
-		</div>
+		</S.Page>
 	);
 
 }

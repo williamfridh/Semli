@@ -11,14 +11,14 @@ import { LogOutInterface, useFirebaseProps } from '../shared/types';
  */
 const FirebaseContext = React.createContext<useFirebaseProps>({
 	auth,
-	currentUser: null,
-	currentUserDocRef: null,
-	setCurrentUserDocRef: null,
-	currentUserDocSnap: null,
-	setCurrentUserDocSnap: null,
+	currentUser				: null,
+	currentUserDocRef		: null,
+	setCurrentUserDocRef	: null,
+	currentUserDocSnap		: null,
+	setCurrentUserDocSnap	: null,
 	firestoreDatabase,
-	firebaseIsloading: null,
-	setFirebaseIsloading: null
+	firebaseIsloading		: null,
+	setFirebaseIsloading	: null
 });
 
 
@@ -42,10 +42,10 @@ export const useFirebase = (): useFirebaseProps => {
  */
 export const FirebaseProvider: FunctionComponent = ({ children }) => {
 
-	const [firebaseIsloading, setFirebaseIsloading] = useState(false);
-	const [currentUser, setCurrentUser] = useState<User|null>(null);
-	const [currentUserDocSnap, setCurrentUserDocSnap] = useState<DocumentSnapshot<DocumentData>|null>(null);
-	const [currentUserDocRef, setCurrentUserDocRef] = useState<DocumentReference<DocumentData>|null>(null);
+	const [firebaseIsloading, setFirebaseIsloading] 	= useState(false);
+	const [currentUser, setCurrentUser] 				= useState<User|null>(null);
+	const [currentUserDocSnap, setCurrentUserDocSnap] 	= useState<DocumentSnapshot<DocumentData>|null>(null);
+	const [currentUserDocRef, setCurrentUserDocRef] 	= useState<DocumentReference<DocumentData>|null>(null);
 
 	useEffect(() => {
 		const unsubscribe = auth.onAuthStateChanged(user => {

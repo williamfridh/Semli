@@ -3,6 +3,7 @@ import React, { FunctionComponent, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useFirebase } from "../../context/FirebaseContext";
 import { HandleSearchInterface, HashtagProps } from "../../shared/types";
+import * as S from '../../shared/globalStyles';
 
 const SearchForm: FunctionComponent = () => {
 
@@ -57,7 +58,7 @@ const SearchForm: FunctionComponent = () => {
 
 	return (
 		<div className="search">
-			<input type="text" onChange={handleSearch} value={term} />
+			<S.Input type="text" onChange={handleSearch} value={term} placeholder="Search for hashtags" />
 			<div className="search-results">
 				{isLoading && <div>Searching...</div>}
 				{result && result.map((obj: HashtagProps, key: number) => {

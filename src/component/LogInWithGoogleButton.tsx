@@ -3,6 +3,8 @@ import { doc, getDoc, serverTimestamp, setDoc, updateDoc } from 'firebase/firest
 import { FunctionComponent } from 'react';
 import { useFirebase } from '../context/FirebaseContext';
 import { NewUserDataProps, UpdateUserDataProps } from '../shared/types';
+import * as S from '../shared/globalStyles';
+import { AiOutlineGoogle } from 'react-icons/ai';
 
 
 
@@ -104,7 +106,7 @@ const LogInWithGoogleButton: FunctionComponent = (): JSX.Element => {
 			
 	}
 	
-	return <div><button onClick={loginWithGoogleClick}>Log In With Google</button></div>;
+	return <S.Button primary onClick={loginWithGoogleClick}><S.ButtonIcon><AiOutlineGoogle /></S.ButtonIcon><S.ButtonText>Log In With Google</S.ButtonText></S.Button>;
 
 }
 
