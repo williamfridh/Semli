@@ -1,5 +1,5 @@
-import * as S from '../NavigationBar.styled';
-import { useFirebase } from '../../../context/FirebaseContext';
+import * as StyledNavigationBar from 'component/NavigationBar/NavigationBar.styled';
+import { useFirebase } from 'context/FirebaseContext';
 import { MdHome, MdSettings, MdAccountCircle, MdOutlineSearch } from 'react-icons/md';
 
 const OnlineOptions = () => {
@@ -7,12 +7,12 @@ const OnlineOptions = () => {
 	const { currentUser } = useFirebase();
 
 	return (
-		<S.NavigationBarContainer>
-			<S.NavigationBarButton to={`/feed`}><MdHome /><S.NavigationBarButtonText>Feed</S.NavigationBarButtonText></S.NavigationBarButton>
-			<S.NavigationBarButton to={`/search`}><MdOutlineSearch /><S.NavigationBarButtonText>Search</S.NavigationBarButtonText></S.NavigationBarButton>
-			<S.NavigationBarButton to={`/settings`}><MdSettings /><S.NavigationBarButtonText>Settings</S.NavigationBarButtonText></S.NavigationBarButton>
-			<S.NavigationBarButton to={`/profile/${currentUser?.uid}`}><MdAccountCircle /><S.NavigationBarButtonText>My Profile</S.NavigationBarButtonText></S.NavigationBarButton>
-		</S.NavigationBarContainer>
+		<StyledNavigationBar.Container>
+			<StyledNavigationBar.Button to={`/feed`}><MdHome /><StyledNavigationBar.ButtonText>Feed</StyledNavigationBar.ButtonText></StyledNavigationBar.Button>
+			<StyledNavigationBar.Button to={`/search`}><MdOutlineSearch /><StyledNavigationBar.ButtonText>Search</StyledNavigationBar.ButtonText></StyledNavigationBar.Button>
+			<StyledNavigationBar.Button to={`/settings`}><MdSettings /><StyledNavigationBar.ButtonText>Settings</StyledNavigationBar.ButtonText></StyledNavigationBar.Button>
+			<StyledNavigationBar.Button to={`/profile/${currentUser?.uid}`}><MdAccountCircle /><StyledNavigationBar.ButtonText>My Profile</StyledNavigationBar.ButtonText></StyledNavigationBar.Button>
+		</StyledNavigationBar.Container>
 	);
 
 }

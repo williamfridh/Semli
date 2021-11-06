@@ -1,9 +1,9 @@
 import { getDoc, updateDoc, query, where, collection, getDocs, QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
 import { FunctionComponent, useState } from "react";
 import { Redirect } from "react-router";
-import ResponseList from "../../component/ResponseList";
-import { useFirebase } from "../../context/FirebaseContext";
-import { ResponseProps, UpdateUserDataProps } from "../../shared/types";
+import ResponseList from "component/ResponseList";
+import { useFirebase } from "context/FirebaseContext";
+import { ResponseProps, UpdateUserDataProps } from "shared/types";
 
 
 

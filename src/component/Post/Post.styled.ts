@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
-export const Post = styled.div`
+export const Container = styled.div`
 	background		: #1a1b2d;
 	padding			: 16px;
 	border-radius	: 8px;
@@ -10,16 +10,16 @@ export const Post = styled.div`
 	}
 `
 
-export const PostBody = styled.div`
+export const Body = styled.div`
 	color			: #fff;
 	line-height		: 150%;
 `;
 
-export const PostHashtagHolder = styled.div`
+export const HashtagHolder = styled.div`
 	margin			: 16px 0;
 `;
 
-export const PostHashtag = styled(NavLink)`
+export const Hashtag = styled(NavLink)`
 	color			: #E84545;
 	font-size		: 14px;
 	text-decoration	: none;
@@ -30,17 +30,16 @@ export const PostHashtag = styled(NavLink)`
 	}
 `;
 
-export const PostLikes = styled.div`
+export const Likes = styled.div`
 	color			: #fff;
 `;
 
-export const PostLikeDislikeButton = styled.div`
+export const LikeDislikeButton = styled.div`
 	color			: #fff;
 	font-size		: 24px;
 	display			: flex;
 	justify-content	: flex-end;
 `;
-
 
 export const LikeArea = styled.div`
 	display					: grid;

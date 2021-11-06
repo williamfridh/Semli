@@ -2,8 +2,8 @@ import { User } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { FunctionComponent, useEffect, useState } from "react";
 import { Redirect } from "react-router";
-import { logOut, useFirebase } from '../../context/FirebaseContext';
-import { UserDependencyProps } from "../../shared/types";
+import { logOut, useFirebase } from 'context/FirebaseContext';
+import { UserDependencyProps } from "shared/types";
 
 
 

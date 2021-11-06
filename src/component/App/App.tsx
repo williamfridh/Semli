@@ -1,118 +1,126 @@
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import HomePage from '../../containers/page/HomePage';
-import FeedPage from '../../containers/page/FeedPage';
-import LogInPage from '../../containers/page/LogInPage';
-import SettingsPage from '../../containers/page/SettingsPage';
-import CreatePostPage from '../../containers/page/CreatePostPage';
-import ProfilePage from '../../containers/page/ProfilePage';
-import UserOnlineDependency from '../../containers/dependencies/UserOnlineDependency';
-import UserOfflineDependency from '../../containers/dependencies/UserOfflineDependency';
-import { FirebaseProvider } from '../../context/FirebaseContext';
-import NavigationBar from '../NavigationBar';
-import CompleteAccountPage from '../../containers/page/CompleteAccountPage';
-import UserCompleteProfileDependency from '../../containers/dependencies/UserCompleteProfileDependency';
-import HashtagPage from '../../containers/page/HashtagPage';
-import SearchPage from '../../containers/page/SearchPage';
-import ErrorPage from '../../containers/page/ErrorPage';
+import HomePage from 'container/page/HomePage';
+import FeedPage from 'container/page/FeedPage';
+import LogInPage from 'container/page/LogInPage';
+import SettingsPage from 'container/page/SettingsPage';
+import CreatePostPage from 'container/page/CreatePostPage';
+import ProfilePage from 'container/page/ProfilePage';
+import UserOnlineDependency from 'container/dependency/UserOnlineDependency';
+import UserOfflineDependency from 'container/dependency/UserOfflineDependency';
+import { FirebaseProvider } from 'context/FirebaseContext';
+import NavigationBar from 'component/NavigationBar';
+import CompleteAccountPage from 'container/page/CompleteAccountPage';
+import UserCompleteProfileDependency from 'container/dependency/UserCompleteProfileDependency';
+import HashtagPage from 'container/page/HashtagPage';
+import SearchPage from 'container/page/SearchPage';
+import ErrorPage from 'container/page/ErrorPage';
 import { FunctionComponent } from 'react';
-import GlobalStyle from '../../shared/globalStyles';
-import { ThemeDataProvider, useTheme } from '../../context/ThemeContext';
+import GlobalStyles from 'shared/GlobalStyles';
 import { ThemeProvider } from 'styled-components';
+import { ThemeContextProps } from 'shared/types';
 
 const App: FunctionComponent = (): JSX.Element => {
 
-	const { theme } = useTheme();
+	let theme: ThemeContextProps;
 
-	console.log(theme);
+	theme = {
+		color: {
+			background			: '#2B2E4A',
+			boxBackground		: '#1a1b2d',
+			inputBackground		: '#fff',
+			callToAction		: '#E84545',
+			callToActionDark	: '#903749',
+			textBrightHigh		: '#fff',
+			textDarkHigh		: '#000'
+		}
+	};
 	
 	return (
 		<div>
-			<GlobalStyle />
-			<ThemeDataProvider>
-				<ThemeProvider theme={theme}>
-					<FirebaseProvider>
-						<BrowserRouter>
+			<GlobalStyles />
+			<ThemeProvider theme={theme}>
+				<FirebaseProvider>
+					<BrowserRouter>
 
-							<NavigationBar />
+						<NavigationBar />
 
-								<Switch>
+						<Switch>
 
-									<Route exact path="/">
-										<UserOfflineDependency fallback="/feed">
-											<UserCompleteProfileDependency>
-												<HomePage />
-											</UserCompleteProfileDependency>
-										</UserOfflineDependency>
-									</Route>
+							<Route exact path="/">
+								<UserOfflineDependency fallback="/feed">
+									<UserCompleteProfileDependency>
+										<HomePage />
+									</UserCompleteProfileDependency>
+								</UserOfflineDependency>
+							</Route>
 
-									<Route exact path="/feed">
-										<UserOnlineDependency fallback="/log_in">
-											<UserCompleteProfileDependency>
-												<FeedPage />
-											</UserCompleteProfileDependency>
-										</UserOnlineDependency>
-									</Route>
+							<Route exact path="/feed">
+								<UserOnlineDependency fallback="/log_in">
+									<UserCompleteProfileDependency>
+										<FeedPage />
+									</UserCompleteProfileDependency>
+								</UserOnlineDependency>
+							</Route>
 
-									<Route exact path="/search">
-										<UserOnlineDependency fallback="/log_in">
-											<UserCompleteProfileDependency>
-												<SearchPage />
-											</UserCompleteProfileDependency>
-										</UserOnlineDependency>
-									</Route>
+							<Route exact path="/search">
+								<UserOnlineDependency fallback="/log_in">
+									<UserCompleteProfileDependency>
+										<SearchPage />
+									</UserCompleteProfileDependency>
+								</UserOnlineDependency>
+							</Route>
 
-									<Route exact path="/hashtag/:hashtagName">
-										<UserOnlineDependency fallback="/log_in">
-											<UserCompleteProfileDependency>
-												<HashtagPage />
-											</UserCompleteProfileDependency>
-										</UserOnlineDependency>
-									</Route>
+							<Route exact path="/hashtag/:hashtagName">
+								<UserOnlineDependency fallback="/log_in">
+									<UserCompleteProfileDependency>
+										<HashtagPage />
+									</UserCompleteProfileDependency>
+								</UserOnlineDependency>
+							</Route>
 
-									<Route exact path="/post/create">
-										<UserOnlineDependency fallback="/log_in">
-											<UserCompleteProfileDependency>
-												<CreatePostPage />
-											</UserCompleteProfileDependency>
-										</UserOnlineDependency>
-									</Route>
+							<Route exact path="/post/create">
+								<UserOnlineDependency fallback="/log_in">
+									<UserCompleteProfileDependency>
+										<CreatePostPage />
+									</UserCompleteProfileDependency>
+								</UserOnlineDependency>
+							</Route>
 
-									<Route exact path="/profile/complete">
-										<UserOnlineDependency fallback="/log_in">
-											<CompleteAccountPage />
-										</UserOnlineDependency>
-									</Route>
+							<Route exact path="/profile/complete">
+								<UserOnlineDependency fallback="/log_in">
+									<CompleteAccountPage />
+								</UserOnlineDependency>
+							</Route>
 
-									<Route exact path="/profile/:uid">
-										<UserCompleteProfileDependency>
-											<ProfilePage />
-										</UserCompleteProfileDependency>
-									</Route>
+							<Route exact path="/profile/:uid">
+								<UserCompleteProfileDependency>
+									<ProfilePage />
+								</UserCompleteProfileDependency>
+							</Route>
 
-									<Route exact path="/log_in">
-										<UserOfflineDependency fallback="/feed">
-											<LogInPage />
-										</UserOfflineDependency>
-									</Route>
+							<Route exact path="/log_in">
+								<UserOfflineDependency fallback="/feed">
+									<LogInPage />
+								</UserOfflineDependency>
+							</Route>
 
-									<Route exact path="/settings">
-										<UserOnlineDependency fallback="/log_in">
-											<UserCompleteProfileDependency>
-												<SettingsPage />
-											</UserCompleteProfileDependency>
-										</UserOnlineDependency>
-									</Route>
+							<Route exact path="/settings">
+								<UserOnlineDependency fallback="/log_in">
+									<UserCompleteProfileDependency>
+										<SettingsPage />
+									</UserCompleteProfileDependency>
+								</UserOnlineDependency>
+							</Route>
 
-									<Route exact path="/error/:code">
-										<ErrorPage />
-									</Route>
+							<Route exact path="/error/:code">
+								<ErrorPage />
+							</Route>
 
-								</Switch>
+						</Switch>
 
-						</BrowserRouter>
-					</FirebaseProvider>
-				</ThemeProvider>
-			</ThemeDataProvider>
+					</BrowserRouter>
+				</FirebaseProvider>
+			</ThemeProvider>
 		</div>
 	);
 }

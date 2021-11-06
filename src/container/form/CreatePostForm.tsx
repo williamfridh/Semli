@@ -1,9 +1,9 @@
 import { collection, addDoc, doc, serverTimestamp, getDoc, setDoc } from "firebase/firestore";
 import { FunctionComponent, useState } from "react";
 import { Redirect } from "react-router";
-import ResponseList from "../../component/ResponseList";
-import { useFirebase } from "../../context/FirebaseContext";
-import { HashtagName, NewPostDataProps, ResponseProps, SaveHashtagInterface } from "../../shared/types";
+import ResponseList from "component/ResponseList";
+import { useFirebase } from "context/FirebaseContext";
+import { HashtagName, NewPostDataProps, ResponseProps, SaveHashtagInterface } from "shared/types";
 
 
 

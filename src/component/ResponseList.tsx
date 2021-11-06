@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import { ResponseListProps, ResponseProps } from "../shared/types";
+import { ResponseListProps, ResponseProps } from "shared/types";
 
 
 

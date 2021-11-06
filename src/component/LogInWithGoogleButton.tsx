@@ -1,9 +1,9 @@
 import { GoogleAuthProvider, signInWithPopup, User } from 'firebase/auth';
 import { doc, getDoc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
 import { FunctionComponent } from 'react';
-import { useFirebase } from '../context/FirebaseContext';
-import { NewUserDataProps, UpdateUserDataProps } from '../shared/types';
-import * as S from '../shared/globalStyles';
+import { useFirebase } from 'context/FirebaseContext';
+import { NewUserDataProps, UpdateUserDataProps } from 'shared/types';
+import * as SC from './StyledComponents';
 import { AiOutlineGoogle } from 'react-icons/ai';
 
 
@@ -106,7 +106,7 @@ const LogInWithGoogleButton: FunctionComponent = (): JSX.Element => {
 			
 	}
 	
-	return <S.Button primary onClick={loginWithGoogleClick}><S.ButtonIcon><AiOutlineGoogle /></S.ButtonIcon><S.ButtonText>Log In With Google</S.ButtonText></S.Button>;
+	return <SC.Button primary onClick={loginWithGoogleClick}><SC.ButtonIcon><AiOutlineGoogle /></SC.ButtonIcon><SC.ButtonText>Log In With Google</SC.ButtonText></SC.Button>;
 
 }
 

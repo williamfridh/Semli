@@ -1,9 +1,9 @@
 import { collection, doc, DocumentData, getDoc, getDocs, query, QueryDocumentSnapshot, updateDoc, where } from "firebase/firestore";
 import { FunctionComponent, useState } from "react";
-import ResponseList from "../../component/ResponseList";
-import { useFirebase } from "../../context/FirebaseContext";
-import { ResponseProps, UpdateUserDataProps } from "../../shared/types";
-import * as S from '../../shared/globalStyles';
+import ResponseList from "component/ResponseList";
+import { useFirebase } from "context/FirebaseContext";
+import { ResponseProps, UpdateUserDataProps } from "shared/types";
+import * as SC from 'component/StyledComponents';
 
 /**
  * Form to complete account.
@@ -135,7 +135,7 @@ const EditProfileForm: FunctionComponent = (): JSX.Element => {
 		<div className="form">
 			<input type="text" onChange={handleUsernameChange} value={username} />
 			<textarea onChange={handleBioChange} value={bio} />
-			<S.Button onClick={handlePostClick}>Save</S.Button>
+			<SC.Button onClick={handlePostClick}>Save</SC.Button>
 			{response && <ResponseList list={response} />}
 		</div>
 	);

@@ -1,6 +1,6 @@
 import { FunctionComponent, useEffect, useState } from "react";
-import { HashtagDataProps, HashtagProps, } from "../shared/types";
-import { useFirebase } from "../context/FirebaseContext";
+import { HashtagDataProps, HashtagProps, } from "shared/types";
+import { useFirebase } from "context/FirebaseContext";
 import { doc, DocumentData, getDoc } from "firebase/firestore";
 
 const HashtagData: FunctionComponent<HashtagDataProps> = (props): JSX.Element => {

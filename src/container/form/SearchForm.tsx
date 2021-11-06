@@ -1,9 +1,9 @@
 import { collection, DocumentData, getDocs, query, QueryDocumentSnapshot, where } from "firebase/firestore";
 import React, { FunctionComponent, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { useFirebase } from "../../context/FirebaseContext";
-import { HandleSearchInterface, HashtagProps } from "../../shared/types";
-import * as S from '../../shared/globalStyles';
+import { useFirebase } from "context/FirebaseContext";
+import { HandleSearchInterface, HashtagProps } from "shared/types";
+import * as SC from 'component/StyledComponents';
 
 const SearchForm: FunctionComponent = () => {
 
@@ -58,7 +58,7 @@ const SearchForm: FunctionComponent = () => {
 
 	return (
 		<div className="search">
-			<S.Input type="text" onChange={handleSearch} value={term} placeholder="Search for hashtags" />
+			<SC.Input type="text" onChange={handleSearch} value={term} placeholder="Search for hashtags" />
 			<div className="search-results">
 				{isLoading && <div>Searching...</div>}
 				{result && result.map((obj: HashtagProps, key: number) => {

@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react';
-import { useFirebase } from '../../context/FirebaseContext';
-import * as S from './NavigationBar.styled';
+import { useFirebase } from 'context/FirebaseContext';
+import * as StyledNavigationBar from './NavigationBar.styled';
 import OnlineOptions from './Collections/OnlineOptions';
 import OfflineOptions from './Collections/OfflineOptions';
 
@@ -15,7 +15,7 @@ const NavigationBar: FunctionComponent = (): JSX.Element => {
 
 	const { currentUserDocSnap } = useFirebase();
 
-	return <S.NavigationBar>{currentUserDocSnap ? <OnlineOptions /> : <OfflineOptions />}</S.NavigationBar>;
+	return <StyledNavigationBar.Bar>{currentUserDocSnap ? <OnlineOptions /> : <OfflineOptions />}</StyledNavigationBar.Bar>;
 }
 
 export default NavigationBar;

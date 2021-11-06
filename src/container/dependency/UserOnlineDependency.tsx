@@ -1,21 +1,21 @@
 import { FunctionComponent } from "react";
 import { Redirect } from "react-router";
-import { useFirebase } from '../../context/FirebaseContext';
-import { UserDependencyProps } from "../../shared/types";
+import { useFirebase } from 'context/FirebaseContext';
+import { UserDependencyProps } from "shared/types";
 
 
 
 /**
- * Check if the user is offline.
+ * Check if user is online.
  * 
  * @param fallback - Url to fallback to if criteria aren't met. 
  * @param children - Automatixaly provided by React. Children of the element to be returned on a successful check.
  * @returns the children.
  */
-const UserOfflineDependency: FunctionComponent<UserDependencyProps> = (props): JSX.Element => {
+const UserOnlineDependency: FunctionComponent<UserDependencyProps> = (props): JSX.Element => {
 
 	const { fallback, children } = props;
-	const { currentUser, currentUserDocSnap } = useFirebase();
+	const { currentUser } = useFirebase();
 
 	/**
 	 * Use predecided fallback.
@@ -30,9 +30,9 @@ const UserOfflineDependency: FunctionComponent<UserDependencyProps> = (props): J
 		}
 	}
 
-	return currentUser && currentUserDocSnap ? triggerFallback() : <div>{children}</div>;
+	return currentUser ? <div>{children}</div> : triggerFallback();
 
 }
 
-export default UserOfflineDependency;
+export default UserOnlineDependency;
 

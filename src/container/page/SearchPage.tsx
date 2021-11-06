@@ -1,14 +1,14 @@
 import { FunctionComponent } from "react";
-import SearchForm from "../form/SearchForm";
-import * as S from '../../shared/globalStyles';
+import SearchForm from "container/form/SearchForm";
+import * as SC from 'component/StyledComponents';
 
 const SearchPage: FunctionComponent = (): JSX.Element => {
 
 	return(
-		<S.Page>
-			<S.Title>Search</S.Title>
+		<SC.Page>
+			<SC.Title>Search</SC.Title>
 			<SearchForm />
-		</S.Page>
+		</SC.Page>
 	);
 
 }

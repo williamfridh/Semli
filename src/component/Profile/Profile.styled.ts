@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const ProfileBio = styled.div`
+export const Bio = styled.div`
 	line-height		: 150%;
 	color			: #fff;
 	font-size		: 16px;

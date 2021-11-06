@@ -1,7 +1,7 @@
 import { collection, doc, DocumentData, getDocs, query, QueryDocumentSnapshot, where } from "firebase/firestore";
 import { FunctionComponent, useEffect, useState } from "react";
-import { useFirebase } from "../context/FirebaseContext";
-import { PostProps, PostsProps } from "../shared/types";
+import { useFirebase } from "context/FirebaseContext";
+import { PostProps, PostsProps } from "shared/types";
 import Post from "./Post/";
 
 

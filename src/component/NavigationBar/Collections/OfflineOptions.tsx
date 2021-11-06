@@ -1,13 +1,13 @@
-import * as S from '../NavigationBar.styled';
+import * as StyledNavigationBar from 'component/NavigationBar/NavigationBar.styled';
 import { MdHome, MdAccountCircle } from 'react-icons/md';
 
 const OnlineOptions = () => {
 
 	return (
-		<S.NavigationBarContainer>
-			<S.NavigationBarButton to={`/`}><MdHome /><S.NavigationBarButtonText>Home</S.NavigationBarButtonText></S.NavigationBarButton>
-			<S.NavigationBarButton to={`/log_in`}><MdAccountCircle /><S.NavigationBarButtonText>Log In</S.NavigationBarButtonText></S.NavigationBarButton>
-		</S.NavigationBarContainer>
+		<StyledNavigationBar.Container>
+			<StyledNavigationBar.Button to={`/`}><MdHome /><StyledNavigationBar.ButtonText>Home</StyledNavigationBar.ButtonText></StyledNavigationBar.Button>
+			<StyledNavigationBar.Button to={`/log_in`}><MdAccountCircle /><StyledNavigationBar.ButtonText>Log In</StyledNavigationBar.ButtonText></StyledNavigationBar.Button>
+		</StyledNavigationBar.Container>
 	);
 
 }

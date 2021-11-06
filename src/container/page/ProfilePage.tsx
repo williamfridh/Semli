@@ -1,8 +1,8 @@
 import { useParams } from "react-router";
-import Posts from "../../component/Posts";
-import Profile from "../../component/Profile";
-import { ProfilePageParamsProps } from "../../shared/types";
-import * as S from '../../shared/globalStyles';
+import Posts from "component/Posts";
+import Profile from "component/Profile";
+import { ProfilePageParamsProps } from "shared/types";
+import * as SC from 'component/StyledComponents';
 
 /**
  * User profile page element.
@@ -15,10 +15,10 @@ const ProfilePage = () => {
   	const { uid }: ProfilePageParamsProps = useParams();
 
 	return(
-		<S.Page>
+		<SC.Page>
 			<Profile uid={uid} />
 			<Posts uid={uid} />
-		</S.Page>
+		</SC.Page>
 	);
 	
 }
