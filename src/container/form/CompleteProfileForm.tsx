@@ -4,8 +4,7 @@ import { Redirect } from "react-router";
 import ResponseList from "component/ResponseList";
 import { useFirebase } from "context/FirebaseContext";
 import { ResponseProps, UpdateUserDataProps } from "shared/types";
-
-
+import * as SC from 'component/StyledComponents';
 
 /**
  * Form to complete account.
@@ -135,9 +134,9 @@ const CompleteProfileForm: FunctionComponent = (): JSX.Element => {
 
 	return(
 		<div className="form">
-			<input type="text" onChange={handleUsernameChange} value={username} />
-			<textarea onChange={handleBioChange} value={bio} />
-			<button onClick={handlePostClick}>Continue</button>
+			<SC.Input type="text" onChange={handleUsernameChange} value={username} />
+			<SC.Textarea onChange={handleBioChange} value={bio} />
+			<SC.Button primary onClick={handlePostClick}>Save</SC.Button>
 			{response && <ResponseList list={response} />}
 		</div>
 	);

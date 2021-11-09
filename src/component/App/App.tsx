@@ -8,7 +8,7 @@ import ProfilePage from 'container/page/ProfilePage';
 import UserOnlineDependency from 'container/dependency/UserOnlineDependency';
 import UserOfflineDependency from 'container/dependency/UserOfflineDependency';
 import { FirebaseProvider } from 'context/FirebaseContext';
-import NavigationBar from 'component/NavigationBar';
+import BottomNavigationBar from 'component/navigation/BottomNavigationBar';
 import CompleteAccountPage from 'container/page/CompleteAccountPage';
 import UserCompleteProfileDependency from 'container/dependency/UserCompleteProfileDependency';
 import HashtagPage from 'container/page/HashtagPage';
@@ -18,20 +18,32 @@ import { FunctionComponent } from 'react';
 import GlobalStyles from 'shared/GlobalStyles';
 import { ThemeProvider } from 'styled-components';
 import { ThemeContextProps } from 'shared/types';
+import TopNavigationBar from 'component/navigation/TopNavigationBar';
 
 const App: FunctionComponent = (): JSX.Element => {
 
-	let theme: ThemeContextProps;
-
-	theme = {
+	let theme: ThemeContextProps = {
 		color: {
-			background			: '#2B2E4A',
-			boxBackground		: '#1a1b2d',
-			inputBackground		: '#fff',
-			callToAction		: '#E84545',
-			callToActionDark	: '#903749',
-			textBrightHigh		: '#fff',
-			textDarkHigh		: '#000'
+			background					: '#2B2E4A',
+			boxBackground				: '#1a1b2d',
+			inputBackground				: '#fff',
+			callToAction				: '#E84545',
+			callToActionDark			: '#903749',
+			textBrightHigh				: '#fff',
+			textDarkHigh				: '#000'
+		},
+		size: {
+			container					: 800,
+			distanceHuge				: 32,
+			distanceBig					: 16,
+			distanceMedium				: 16,
+			distanceSmall				: 16,
+			topNavigationBarMobile		: 56,
+			bottomNavigationBarMobile	: 56
+		},
+		border: {
+			radius						: 8,
+			width						: 2
 		}
 	};
 	
@@ -42,7 +54,8 @@ const App: FunctionComponent = (): JSX.Element => {
 				<FirebaseProvider>
 					<BrowserRouter>
 
-						<NavigationBar />
+						<TopNavigationBar />
+						<BottomNavigationBar />
 
 						<Switch>
 

@@ -5,6 +5,6 @@ export const Bio = styled.div`
 	color			: #fff;
 	font-size		: 16px;
 	text-align		: center;
-	padding			: 16px 0;
+	padding			: ${props => props.theme.size.distanceBig}px 0;
 `;
 

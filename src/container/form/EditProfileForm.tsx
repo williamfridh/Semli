@@ -133,9 +133,9 @@ const EditProfileForm: FunctionComponent = (): JSX.Element => {
 
 	return(
 		<div className="form">
-			<input type="text" onChange={handleUsernameChange} value={username} />
-			<textarea onChange={handleBioChange} value={bio} />
-			<SC.Button onClick={handlePostClick}>Save</SC.Button>
+			<SC.Input type="text" onChange={handleUsernameChange} value={username} />
+			<SC.Textarea onChange={handleBioChange} value={bio} />
+			<SC.Button primary onClick={handlePostClick}>Save</SC.Button>
 			{response && <ResponseList list={response} />}
 		</div>
 	);

@@ -4,8 +4,7 @@ import { Redirect } from "react-router";
 import ResponseList from "component/ResponseList";
 import { useFirebase } from "context/FirebaseContext";
 import { HashtagName, NewPostDataProps, ResponseProps, SaveHashtagInterface } from "shared/types";
-
-
+import * as SC from 'component/StyledComponents';
 
 const CreatePostForm: FunctionComponent = (): JSX.Element => {
 
@@ -146,9 +145,9 @@ const CreatePostForm: FunctionComponent = (): JSX.Element => {
 
 	return(
 		<div className="form">
-			<textarea onChange={handleBodyChange} value={body} />
-			<textarea onChange={handleHashtagChange} value={hashtags} />
-			<button onClick={handlePostClick}>Test</button>
+			<SC.Textarea onChange={handleBodyChange} value={body} />
+			<SC.Textarea onChange={handleHashtagChange} value={hashtags} />
+			<SC.Button primary onClick={handlePostClick}>Post</SC.Button>
 			{isLoading && <div>Loading...</div>}
 			{isComplete && <Redirect to={`/feed`} />}
 			{response && <ResponseList list={response} />}

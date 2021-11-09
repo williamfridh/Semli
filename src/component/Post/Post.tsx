@@ -8,7 +8,7 @@ import { MdFavoriteBorder, MdFavorite } from 'react-icons/md';
 const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 
 	const { id, body, hashtags, likes } = props;
-	const { currentUser, firestoreDatabase, currentUserDocRef, currentUserDocSnap } = useFirebase();
+	const { currentUser, firestoreDatabase, currentUserDocRef } = useFirebase();
 	const [postLikes, setPostLikes] = useState(likes ? likes : [] as PostLikeProps[]);
 	const postDocRef = doc(firestoreDatabase, `posts/${id}`);
 
@@ -28,7 +28,7 @@ const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 
 			let action: 'add'|'remove';
 			
-			if (postLikes && postLikes.find((like: PostLikeProps) => like === currentUserDocRef)) {
+			if (postLikes && postLikes.find((like: PostLikeProps) => like.id === currentUserDocRef.id)) {
 				action = 'remove';
 			} else {
 				action = 'add';
@@ -36,18 +36,14 @@ const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 
 			let postNewLikes;
 
-			console.log(action);
-
 			switch(action) {
 				case('add'):
 					postNewLikes = [...postLikes, currentUserDocRef];
 					break;
 				case('remove'):
-					postNewLikes = postLikes.filter((like: PostLikeProps) => like !== currentUserDocRef);
+					postNewLikes = postLikes.filter((like: PostLikeProps) => like.id !== currentUserDocRef.id);
 					break;
 			}
-
-			console.log(postNewLikes);
 
 			const userDataUpdate = {
 				likes: postNewLikes
@@ -63,18 +59,16 @@ const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 
 	}
 
-	let likeOrDislikeButton: React.ReactNode =
+	const likeOrDislikeButton: React.ReactNode =
 		postLikes &&
-		postLikes.find((like: PostLikeProps) => like === currentUserDocRef) ?
+		currentUserDocRef && 
+		postLikes.find((like: PostLikeProps) => like.id === currentUserDocRef.id) ?
 		<MdFavorite onClick={handleLikeClick} /> :
 		<MdFavoriteBorder onClick={handleLikeClick} />;
-
-		console.log(postLikes.find((like: PostLikeProps) => like === currentUserDocRef));
 
 	const hashtagsCollection: React.ReactNode = hashtags.map((hashtag: QueryDocumentSnapshot<DocumentData>, key: number) => {
 		return <StyledPost.Hashtag to={`/hashtag/${hashtag}`} key={key}><span>#{hashtag}</span></StyledPost.Hashtag>;
 	});
-
 
 	return(
 		<StyledPost.Container>

@@ -3,10 +3,10 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
 	background		: #1a1b2d;
-	padding			: 16px;
-	border-radius	: 8px;
+	padding			: ${props => props.theme.size.distanceBig}px;
+	border-radius	: ${props => props.theme.border.radius}px;
 	&:not(:first-child) {
-		margin		: 16px 0 0 0;
+		margin		: ${props => props.theme.size.distanceBig}px 0 0 0;
 	}
 `
 
@@ -16,7 +16,7 @@ export const Body = styled.div`
 `;
 
 export const HashtagHolder = styled.div`
-	margin			: 16px 0;
+	margin			: ${props => props.theme.size.distanceBig}px 0;
 `;
 
 export const Hashtag = styled(NavLink)`
@@ -24,9 +24,9 @@ export const Hashtag = styled(NavLink)`
 	font-size		: 14px;
 	text-decoration	: none;
 	border			: solid 1px #E84545;
-	padding			: 4px 8px;
+	padding			: ${props => props.theme.size.distanceSmall}px ${props => props.theme.size.distanceMedium}px;
 	&:not(:first-child) {
-		margin		: 0 0 0 8px;
+		margin		: 0 0 0 ${props => props.theme.size.distanceMedium}px;
 	}
 `;
 
