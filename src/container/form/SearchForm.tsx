@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom";
 import { useFirebase } from "context/FirebaseContext";
 import { HandleSearchInterface, HashtagProps } from "shared/types";
 import * as SC from 'component/StyledComponents';
+import SvgLoadingDark from "component/icon/LoadingDark";
 
 const SearchForm: FunctionComponent = () => {
 
@@ -29,6 +30,7 @@ const SearchForm: FunctionComponent = () => {
 			setIsLoading(true);
 			if (!newTerm || newTerm.length <= 2) {
 				setIsLoading(false);
+				setResult(null);
 				return;
 			}
 
@@ -57,13 +59,15 @@ const SearchForm: FunctionComponent = () => {
 	}
 
 	return (
-		<div className="search">
-			<SC.Input type="text" onChange={handleSearch} value={term} placeholder="Search for hashtags" />
+		<div>
+			<SC.InputHolder>
+				<SC.Input type="text" onChange={handleSearch} value={term} placeholder="Search for hashtags" />
+				{isLoading && <SC.InputLoading><SvgLoadingDark /></SC.InputLoading>}
+			</SC.InputHolder>
 			<div className="search-results">
-				{isLoading && <div>Searching...</div>}
 				{result && result.map((obj: HashtagProps, key: number) => {
 					const {name, amount} = obj;
-					return <NavLink to={`/hashtag/${name}`} key={key}><div>{name}({amount})</div></NavLink>;
+					return <NavLink to={`/hashtag/${name}`} key={key}><SC.SeachFormResult>#{name} ({amount})</SC.SeachFormResult></NavLink>;
 				})}
 			</div>
 		</div>

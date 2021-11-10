@@ -3,6 +3,7 @@ import { FunctionComponent, useEffect, useState } from "react";
 import { useFirebase } from "context/FirebaseContext";
 import { PostProps, PostsProps } from "shared/types";
 import Post from "./Post/";
+import Loading from "./Loading";
 
 
 
@@ -83,7 +84,7 @@ const Posts: FunctionComponent<PostsProps> = (props): JSX.Element=> {
 
 	return(
 		<div className="posts">
-			{isLoading ? <div>Loading...</div> : postsCollection}
+			{isLoading ? <Loading/> : postsCollection}
 		</div>
 	);
 

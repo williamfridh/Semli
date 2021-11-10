@@ -14,7 +14,7 @@ export const Bar = styled.nav`
 
 export const Container = styled.div`
 	height			: 100%;
-	background		: #000;
+	background		: ${props => props.theme.color.bar};
 	display			: flex;
     justify-content	: space-evenly;
 `;
@@ -22,7 +22,7 @@ export const Container = styled.div`
 export const Button = styled(NavLink)`
 	text-decoration	: 'none';
 	display			: inline-block;
-	color			: #fff;
+	color			: ${props => props.theme.color.textBrightHigh};
 	font-size		: 25px;
 	display			: flex;
     align-items		: center;

@@ -111,13 +111,17 @@ export type HashtagDataProps = {
 
 export type ThemeContextProps = {
 	color: {
-		background					: string|null,
-		boxBackground				: string|null,
-		inputBackground				: string|null,
-		callToAction				: string|null,
-		callToActionDark			: string|null,
-		textBrightHigh				: string|null,
-		textDarkHigh				: string|null
+		background					: string,
+		boxBackground				: string,
+		inputBackground				: string,
+		callToAction				: string,
+		callToActionDark			: string,
+		textBrightHigh				: string,
+		textDarkHigh				: string
+		darkCover					: string,
+		bar							: string,
+		success						: string,
+		error						: string
 	},
 	size: {
 		container					: number,
@@ -126,7 +130,8 @@ export type ThemeContextProps = {
 		distanceMedium				: number,
 		distanceSmall				: number,
 		topNavigationBarMobile		: number,
-		bottomNavigationBarMobile	: number
+		bottomNavigationBarMobile	: number,
+		desktopNavigationBar		: number
 	},
 	border: {
 		radius						: number,

@@ -5,6 +5,7 @@ import { useFirebase } from "context/FirebaseContext";
 import { ProfileProps } from "shared/types";
 import * as SC from 'component/StyledComponents';
 import * as StyledProfile from './Profile.styled';
+import Loading from "component/Loading";
 
 
 
@@ -64,8 +65,8 @@ const Profile: FunctionComponent<ProfileProps> = (props): JSX.Element=> {
 
 	return(
 		<div className="profile">
-			<SC.Title>{isLoading ? `Loading...` : userData && userData.username}</SC.Title>
-			<StyledProfile.Bio>{isLoading ? `Loading...` : userData && userData.bio}</StyledProfile.Bio>
+			<SC.Title>{isLoading ? <Loading/> : userData && userData.username}</SC.Title>
+			<StyledProfile.Bio>{userData && userData.bio}</StyledProfile.Bio>
 		</div>
 	);
 

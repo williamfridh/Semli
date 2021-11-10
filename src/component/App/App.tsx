@@ -19,6 +19,7 @@ import GlobalStyles from 'shared/GlobalStyles';
 import { ThemeProvider } from 'styled-components';
 import { ThemeContextProps } from 'shared/types';
 import TopNavigationBar from 'component/navigation/TopNavigationBar';
+import DesktopNavigationBar from 'component/navigation/DesktopNavigationBar';
 
 const App: FunctionComponent = (): JSX.Element => {
 
@@ -30,16 +31,21 @@ const App: FunctionComponent = (): JSX.Element => {
 			callToAction				: '#E84545',
 			callToActionDark			: '#903749',
 			textBrightHigh				: '#fff',
-			textDarkHigh				: '#000'
+			textDarkHigh				: '#000',
+			darkCover					: '#0000008e',
+			bar							: '#000',
+			success						: '#277529',
+			error						: '#9d1818'
 		},
 		size: {
 			container					: 800,
 			distanceHuge				: 32,
 			distanceBig					: 16,
-			distanceMedium				: 16,
-			distanceSmall				: 16,
+			distanceMedium				: 8,
+			distanceSmall				: 4,
 			topNavigationBarMobile		: 56,
-			bottomNavigationBarMobile	: 56
+			bottomNavigationBarMobile	: 56,
+			desktopNavigationBar		: 80,
 		},
 		border: {
 			radius						: 8,
@@ -54,6 +60,7 @@ const App: FunctionComponent = (): JSX.Element => {
 				<FirebaseProvider>
 					<BrowserRouter>
 
+						<DesktopNavigationBar />
 						<TopNavigationBar />
 						<BottomNavigationBar />
 

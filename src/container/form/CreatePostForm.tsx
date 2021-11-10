@@ -5,6 +5,7 @@ import ResponseList from "component/ResponseList";
 import { useFirebase } from "context/FirebaseContext";
 import { HashtagName, NewPostDataProps, ResponseProps, SaveHashtagInterface } from "shared/types";
 import * as SC from 'component/StyledComponents';
+import Loading from "component/Loading";
 
 const CreatePostForm: FunctionComponent = (): JSX.Element => {
 
@@ -145,12 +146,12 @@ const CreatePostForm: FunctionComponent = (): JSX.Element => {
 
 	return(
 		<div className="form">
-			<SC.Textarea onChange={handleBodyChange} value={body} />
-			<SC.Textarea onChange={handleHashtagChange} value={hashtags} />
-			<SC.Button primary onClick={handlePostClick}>Post</SC.Button>
-			{isLoading && <div>Loading...</div>}
+			<SC.Row><SC.Textarea onChange={handleBodyChange} value={body} placeholder={`Type text here...`} /></SC.Row>
+			<SC.Row><SC.Textarea onChange={handleHashtagChange} value={hashtags} placeholder={`#example1 #example2 #example3`} /></SC.Row>
+			<SC.Row><SC.Button primary onClick={handlePostClick}>Post</SC.Button></SC.Row>
+			{isLoading && <Loading/>}
 			{isComplete && <Redirect to={`/feed`} />}
-			{response && <ResponseList list={response} />}
+			{response && <SC.Row><ResponseList list={response} /></SC.Row>}
 		</div>
 	);
 	

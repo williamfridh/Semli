@@ -6,7 +6,7 @@ const SettingsPage = () => {
 	return(
 		<SC.Page>
 			<SC.Title>Settings</SC.Title>
-			<LogOutButton />
+			<SC.Row><LogOutButton /></SC.Row>
 			<EditProfileForm />
 		</SC.Page>
 	);

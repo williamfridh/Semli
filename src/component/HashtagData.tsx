@@ -2,6 +2,8 @@ import { FunctionComponent, useEffect, useState } from "react";
 import { HashtagDataProps, HashtagProps, } from "shared/types";
 import { useFirebase } from "context/FirebaseContext";
 import { doc, DocumentData, getDoc } from "firebase/firestore";
+import Loading from "./Loading";
+import * as SC from 'component/StyledComponents';
 
 const HashtagData: FunctionComponent<HashtagDataProps> = (props): JSX.Element => {
 
@@ -48,8 +50,8 @@ const HashtagData: FunctionComponent<HashtagDataProps> = (props): JSX.Element =>
 	return(
 		<div className="HashtagData">
 			<h3>
-				{isLoading && `Loading...`}
-				{hashtag && `${hashtag['amount']} post${hashtag['amount'] !== 1 ? `s` : ``}`}
+				{isLoading && <Loading/>}
+				{hashtag && <SC.SubTitle>{hashtag['amount']} post{hashtag['amount'] !== 1 ? `s` : ``}</SC.SubTitle>}
 			</h3>
 		</div>
 	);

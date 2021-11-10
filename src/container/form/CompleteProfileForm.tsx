@@ -5,6 +5,7 @@ import ResponseList from "component/ResponseList";
 import { useFirebase } from "context/FirebaseContext";
 import { ResponseProps, UpdateUserDataProps } from "shared/types";
 import * as SC from 'component/StyledComponents';
+import Loading from "component/Loading";
 
 /**
  * Form to complete account.
@@ -26,6 +27,7 @@ const CompleteProfileForm: FunctionComponent = (): JSX.Element => {
 	const [username, setUsername] 		= useState('');
 	const [bio, setBio] 				= useState('');
 	const [isComplete, setIsComplete] 	= useState(false);
+	const [isLoading, setIsLoading] 	= useState(false);
 	const [response, setResponse] 		= useState([] as ResponseProps[]);
 
 	/**
@@ -58,6 +60,7 @@ const CompleteProfileForm: FunctionComponent = (): JSX.Element => {
 		}
 
 		setFirebaseIsloading && setFirebaseIsloading(true);
+		setIsLoading(true);
 
 		try {
 
@@ -125,6 +128,7 @@ const CompleteProfileForm: FunctionComponent = (): JSX.Element => {
 		}
 
 		setFirebaseIsloading && setFirebaseIsloading(false);
+		setIsLoading(false);
 
 	}
 
@@ -134,10 +138,11 @@ const CompleteProfileForm: FunctionComponent = (): JSX.Element => {
 
 	return(
 		<div className="form">
-			<SC.Input type="text" onChange={handleUsernameChange} value={username} />
-			<SC.Textarea onChange={handleBioChange} value={bio} />
-			<SC.Button primary onClick={handlePostClick}>Save</SC.Button>
-			{response && <ResponseList list={response} />}
+			<SC.Row><SC.Input type="text" onChange={handleUsernameChange} value={username} /></SC.Row>
+			<SC.Row><SC.Textarea onChange={handleBioChange} value={bio} /></SC.Row>
+			<SC.Row><SC.Button primary onClick={handlePostClick}>Save</SC.Button></SC.Row>
+			{response && <SC.Row><ResponseList list={response} /></SC.Row>}
+			{isLoading && <Loading/>}
 		</div>
 	);
 	

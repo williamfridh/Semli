@@ -14,7 +14,7 @@ export const Bar = styled.nav`
 
 export const Container = styled.div`
 	height					: 100%;
-	background				: #000;
+	background				: ${props => props.theme.color.bar};
 	display					: flex;
     justify-content			: space-between;
 	padding					: 0 ${props => props.theme.size.distanceBig}px;
@@ -23,7 +23,7 @@ export const Container = styled.div`
 export const Button = styled(NavLink)`
 	text-decoration			: 'none';
 	display					: inline-block;
-	color					: #fff;
+	color					: ${props => props.theme.color.textBrightHigh};
 	font-size				: 25px;
 	display					: flex;
     align-items				: center;
@@ -33,21 +33,3 @@ export const ButtonText = styled.span`
 	display					: none;
 `;
 
-export const Logo = styled.div`
-	display					: flex;
-	align-items				: center;
-	margin					: auto;
-`;
-
-export const LogoLetter = styled.span`
-	color					: #000;
-	font-size				: 26px;
-	font-weight				: 700;
-	background-color		: #fff;
-	width					: 30px;
-	line-height				: 30px;
-	text-align				: center;
-	&:not(:first-child) {
-		margin: 0 0 0 6px;
-	}
-`;
