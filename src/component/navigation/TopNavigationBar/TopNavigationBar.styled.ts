@@ -25,7 +25,7 @@ export const Button = styled(NavLink)`
 	text-decoration			: 'none';
 	display					: inline-block;
 	color					: ${props => props.theme.color.textBrightHigh};
-	font-size				: 25px;
+	font-size				: 140%;
 	display					: flex;
     align-items				: center;
 `;
