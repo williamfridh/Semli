@@ -1,14 +1,26 @@
+import { FunctionComponent } from 'react';
+import { LogoProps } from 'shared/types';
 import * as StyledLogo from './Logo.styled';
 
-const Logo = () => {
+/**
+ * Logo element.
+ * 
+ * @param props contains a size value (0-1).
+ * @returns a JSX element that represents the logo.
+ */
+const Logo: FunctionComponent<LogoProps> = (props): JSX.Element => {
+
+	let { size, margin } = props;
+
+	size = size || 1;
 
 	return(
-		<StyledLogo.Holder>
-			<StyledLogo.Letter>S</StyledLogo.Letter>
-			<StyledLogo.Letter>E</StyledLogo.Letter>
-			<StyledLogo.Letter>M</StyledLogo.Letter>
-			<StyledLogo.Letter>L</StyledLogo.Letter>
-			<StyledLogo.Letter>I</StyledLogo.Letter>
+		<StyledLogo.Holder margin={margin}>
+			<StyledLogo.Letter size={size}>S</StyledLogo.Letter>
+			<StyledLogo.Letter size={size}>E</StyledLogo.Letter>
+			<StyledLogo.Letter size={size}>M</StyledLogo.Letter>
+			<StyledLogo.Letter size={size}>L</StyledLogo.Letter>
+			<StyledLogo.Letter size={size}>I</StyledLogo.Letter>
 		</StyledLogo.Holder>
 	);
 

@@ -140,7 +140,7 @@ const CompleteProfileForm: FunctionComponent = (): JSX.Element => {
 		<div className="form">
 			<SC.Row><SC.Input type="text" onChange={handleUsernameChange} value={username} /></SC.Row>
 			<SC.Row><SC.Textarea onChange={handleBioChange} value={bio} /></SC.Row>
-			<SC.Row><SC.Button primary onClick={handlePostClick}>Save</SC.Button></SC.Row>
+			<SC.Row><SC.Button primary onClick={handlePostClick}><SC.ButtonText>Save</SC.ButtonText></SC.Button></SC.Row>
 			{response && <SC.Row><ResponseList list={response} /></SC.Row>}
 			{isLoading && <Loading/>}
 		</div>

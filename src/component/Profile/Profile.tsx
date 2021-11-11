@@ -30,6 +30,8 @@ const Profile: FunctionComponent<ProfileProps> = (props): JSX.Element=> {
 
 		const getProfile = async (uid: string): Promise<void> => {
 
+			console.log(`Profile >> useEffect >> getProfile >> Running`);
+
 			try {
 		
 				const userDocRef = doc(firestoreDatabase, 'users', uid);
@@ -45,7 +47,7 @@ const Profile: FunctionComponent<ProfileProps> = (props): JSX.Element=> {
 				}
 
 			} catch (e) {
-				console.error(`Profile >> ${e}`);
+				console.error(`Profile >> useEffect >> Dismounted >> ${e}`);
 			}
 	
 		}
@@ -53,6 +55,7 @@ const Profile: FunctionComponent<ProfileProps> = (props): JSX.Element=> {
 		getProfile(uid);
 
 		return () => {
+			console.log(`Profile >> useEffect >> Dismounted`);
 			isMounted = false;
 		}
 

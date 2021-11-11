@@ -2,6 +2,7 @@ import { FunctionComponent } from "react";
 import { Redirect } from "react-router";
 import { useFirebase } from 'context/FirebaseContext';
 import { UserDependencyProps } from "shared/types";
+import Loading from "component/Loading";
 
 
 
@@ -15,7 +16,7 @@ import { UserDependencyProps } from "shared/types";
 const UserOnlineDependency: FunctionComponent<UserDependencyProps> = (props): JSX.Element => {
 
 	const { fallback, children } = props;
-	const { currentUser } = useFirebase();
+	const { auth, currentUser } = useFirebase();
 
 	/**
 	 * Use predecided fallback.
@@ -30,7 +31,15 @@ const UserOnlineDependency: FunctionComponent<UserDependencyProps> = (props): JS
 		}
 	}
 
-	return currentUser ? <div>{children}</div> : triggerFallback();
+	if (auth) {
+		if (!currentUser) {
+			return <Loading />;
+		} else {
+			return <div>{children}</div>;
+		}
+	} else {
+		return triggerFallback();
+	}
 
 }
 

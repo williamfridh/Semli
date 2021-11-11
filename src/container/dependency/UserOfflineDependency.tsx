@@ -30,7 +30,11 @@ const UserOfflineDependency: FunctionComponent<UserDependencyProps> = (props): J
 		}
 	}
 
-	return currentUser && currentUserDocSnap ? triggerFallback() : <div>{children}</div>;
+	if (currentUser || currentUserDocSnap) {
+		return triggerFallback();
+	} else {
+		return <div>{children}</div>;
+	}
 
 }
 

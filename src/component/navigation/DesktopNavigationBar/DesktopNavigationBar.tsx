@@ -1,15 +1,20 @@
 import Logo from 'component/Logo';
 import * as StyledDesktopNavigationBar from './DesktopNavigationBar.styled';
-import * as SC from 'component/StyledComponents';
+import OnlineOptions from 'component/navigation/DesktopNavigationBar/collections/OnlineOptions';
+import OfflineOptions from 'component/navigation/DesktopNavigationBar/collections/OfflineOptions';
+import { useFirebase } from 'context/FirebaseContext';
 
 const DesktopNavigationBar = () => {
+
+	const { currentUserDocSnap } = useFirebase();
 	
 	return(
-		<StyledDesktopNavigationBar.Holder>
-			<SC.Container>
+		<StyledDesktopNavigationBar.Bar>
+			<StyledDesktopNavigationBar.FlexContainer>
 				<Logo />
-			</SC.Container>
-		</StyledDesktopNavigationBar.Holder>
+				{currentUserDocSnap ? <OnlineOptions /> : <OfflineOptions />}
+			</StyledDesktopNavigationBar.FlexContainer>
+		</StyledDesktopNavigationBar.Bar>
 	);
 }
 

@@ -4,6 +4,7 @@ import { FunctionComponent, useEffect, useState } from "react";
 import { Redirect } from "react-router";
 import { logOut, useFirebase } from 'context/FirebaseContext';
 import { UserDependencyProps } from "shared/types";
+import Loading from "component/Loading";
 
 
 
@@ -29,59 +30,70 @@ const UserCompleteProfileDependency: FunctionComponent<UserDependencyProps> = (p
 	const [isLoading, setIsloading] = useState(false);
 
 	/**
-	 * Check user.
-	 * 
-	 * @param currentUser - the currentUser object from the Firebase context.
-	 */
-	const checkUser = async (currentUser: User): Promise<void>=> {
-
-		if ((currentUserDocSnap && currentUserDocSnap.exists()) || firebaseIsloading) {
-			return;
-		}
-
-		setFirebaseIsloading && setFirebaseIsloading(true);
-		
-		try {
-
-			/**
-			 * Target, get and check if user doc exists.
-			 */
-			setIsloading(true);
-
-			const currentUserDocRef = doc(firestoreDatabase, 'users', currentUser.uid);
-			currentUserDocSnap = await getDoc(currentUserDocRef);
-
-			setIsloading(false);
-
-			setCurrentUserDocSnap && setCurrentUserDocSnap(currentUserDocSnap);
-			setCurrentUserDocRef && setCurrentUserDocRef(currentUserDocRef);
-
-			if (!currentUserDocSnap.exists()) {
-				logOut(auth, setCurrentUserDocRef, setCurrentUserDocSnap, firebaseIsloading, setFirebaseIsloading);
-			}
-
-		} catch (e) {
-			console.error(`UserCompleteProfileDependency >> checkUser >> ${e}`);
-		}
-
-		setFirebaseIsloading && setFirebaseIsloading(false);
-
-	}
-
-	/**
 	 * Trigger use effect on different changes.
 	 */
 	useEffect(() => {
-		if (currentUser) {
+
+		let isMounted = true;
+
+		/**
+		 * Check user.
+		 * 
+		 * @param currentUser - the currentUser object from the Firebase context.
+		 */
+		const checkUser = async (currentUser: User): Promise<void>=> {
+
+			if ((currentUserDocSnap && currentUserDocSnap.exists()) || firebaseIsloading) {
+				return;
+			}
+
+			console.log(`UserCompleteProfileDependency >> useEffect >> checkUser >> Running`);
+
+			setFirebaseIsloading && setFirebaseIsloading(true);
+			
+			try {
+
+				/**
+				 * Target, get and check if user doc exists.
+				 */
+				setIsloading(true);
+
+				const currentUserDocRef = doc(firestoreDatabase, 'users', currentUser.uid);
+				const currentUserDocSnapTemp = await getDoc(currentUserDocRef);
+
+				setIsloading(false);
+
+				setCurrentUserDocSnap && setCurrentUserDocSnap(currentUserDocSnapTemp);
+				setCurrentUserDocRef && setCurrentUserDocRef(currentUserDocRef);
+
+				if (!currentUserDocSnapTemp.exists()) {
+					logOut(auth, setCurrentUserDocRef, setCurrentUserDocSnap, firebaseIsloading, setFirebaseIsloading);
+				}
+
+			} catch (e) {
+				console.error(`UserCompleteProfileDependency >> useEffect >> checkUser >> ${e}`);
+			}
+
+			setFirebaseIsloading && setFirebaseIsloading(false);
+
+		}
+
+		if (currentUser && !currentUserDocSnap && isMounted) {
 			checkUser(currentUser);
 		}
+
+		return() => {
+			console.log(`UserCompleteProfileDependency >> useEffect >> Dismounted`);
+			isMounted = false;
+		}
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentUser, currentUserDocSnap]);
 
 	if (currentUser) {
 
 		if (isLoading || !currentUserDocSnap) {
-			return <div style={{height: '100px', width: '100px', backgroundColor: 'green'}}>Is loading...</div>;
+			return <Loading />;
 		}
 		
 		const userDataArr = currentUserDocSnap.data();

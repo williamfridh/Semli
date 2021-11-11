@@ -28,7 +28,7 @@ const LogOutButton: FunctionComponent = (): JSX.Element => {
 		logOut(auth, setCurrentUserDocRef, setCurrentUserDocSnap, firebaseIsloading, setFirebaseIsloading);
 	}
 
-	return <SC.Button onClick={handleLogoutClick}>Logout</SC.Button>;
+	return <SC.Button onClick={handleLogoutClick}><SC.ButtonText>Logout</SC.ButtonText></SC.Button>;
 }
 
 export default LogOutButton;

@@ -1,6 +1,5 @@
 import { collection, DocumentData, getDocs, query, QueryDocumentSnapshot, where } from "firebase/firestore";
 import React, { FunctionComponent, useState } from "react";
-import { NavLink } from "react-router-dom";
 import { useFirebase } from "context/FirebaseContext";
 import { HandleSearchInterface, HashtagProps } from "shared/types";
 import * as SC from 'component/StyledComponents';
@@ -67,7 +66,7 @@ const SearchForm: FunctionComponent = () => {
 			<div className="search-results">
 				{result && result.map((obj: HashtagProps, key: number) => {
 					const {name, amount} = obj;
-					return <NavLink to={`/hashtag/${name}`} key={key}><SC.SeachFormResult>#{name} ({amount})</SC.SeachFormResult></NavLink>;
+					return <SC.SeachFormResult to={`/hashtag/${name}`} key={key}>#{name} ({amount})</SC.SeachFormResult>;
 				})}
 			</div>
 		</div>

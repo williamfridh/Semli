@@ -1,5 +1,4 @@
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import HomePage from 'container/page/HomePage';
 import FeedPage from 'container/page/FeedPage';
 import LogInPage from 'container/page/LogInPage';
 import SettingsPage from 'container/page/SettingsPage';
@@ -31,6 +30,7 @@ const App: FunctionComponent = (): JSX.Element => {
 			callToAction				: '#E84545',
 			callToActionDark			: '#903749',
 			textBrightHigh				: '#fff',
+			textBrightMedium			: '#ffffffb8',
 			textDarkHigh				: '#000',
 			darkCover					: '#0000008e',
 			bar							: '#000',
@@ -66,38 +66,28 @@ const App: FunctionComponent = (): JSX.Element => {
 
 						<Switch>
 
+							{/* ======== FEED ======== */}
 							<Route exact path="/">
-								<UserOfflineDependency fallback="/feed">
-									<UserCompleteProfileDependency>
-										<HomePage />
-									</UserCompleteProfileDependency>
-								</UserOfflineDependency>
+								<UserCompleteProfileDependency>
+									<FeedPage />
+								</UserCompleteProfileDependency>
 							</Route>
 
-							<Route exact path="/feed">
-								<UserOnlineDependency fallback="/log_in">
-									<UserCompleteProfileDependency>
-										<FeedPage />
-									</UserCompleteProfileDependency>
-								</UserOnlineDependency>
-							</Route>
-
+							{/* ======== SEARCH ======== */}
 							<Route exact path="/search">
-								<UserOnlineDependency fallback="/log_in">
-									<UserCompleteProfileDependency>
-										<SearchPage />
-									</UserCompleteProfileDependency>
-								</UserOnlineDependency>
+								<UserCompleteProfileDependency>
+									<SearchPage />
+								</UserCompleteProfileDependency>
 							</Route>
 
+							{/* ======== HASHTAG ======== */}
 							<Route exact path="/hashtag/:hashtagName">
-								<UserOnlineDependency fallback="/log_in">
-									<UserCompleteProfileDependency>
-										<HashtagPage />
-									</UserCompleteProfileDependency>
-								</UserOnlineDependency>
+								<UserCompleteProfileDependency>
+									<HashtagPage />
+								</UserCompleteProfileDependency>
 							</Route>
 
+							{/* ======== CREATE POST ======== */}
 							<Route exact path="/post/create">
 								<UserOnlineDependency fallback="/log_in">
 									<UserCompleteProfileDependency>
@@ -106,24 +96,28 @@ const App: FunctionComponent = (): JSX.Element => {
 								</UserOnlineDependency>
 							</Route>
 
+							{/* ======== COMPLETE ACCOUNT ======== */}
 							<Route exact path="/profile/complete">
 								<UserOnlineDependency fallback="/log_in">
 									<CompleteAccountPage />
 								</UserOnlineDependency>
 							</Route>
 
+							{/* ======== PROFILE ======== */}
 							<Route exact path="/profile/:uid">
 								<UserCompleteProfileDependency>
 									<ProfilePage />
 								</UserCompleteProfileDependency>
 							</Route>
 
+							{/* ======== LOG IN ======== */}
 							<Route exact path="/log_in">
-								<UserOfflineDependency fallback="/feed">
+								<UserOfflineDependency fallback="/">
 									<LogInPage />
 								</UserOfflineDependency>
 							</Route>
 
+							{/* ======== SETTINGS ======== */}
 							<Route exact path="/settings">
 								<UserOnlineDependency fallback="/log_in">
 									<UserCompleteProfileDependency>
@@ -132,6 +126,7 @@ const App: FunctionComponent = (): JSX.Element => {
 								</UserOnlineDependency>
 							</Route>
 
+							{/* ======== ERROR ======== */}
 							<Route exact path="/error/:code">
 								<ErrorPage />
 							</Route>

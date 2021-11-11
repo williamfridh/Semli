@@ -7,6 +7,7 @@ export const Bar = styled.nav`
 	left					: 0;
 	right					: 0;
 	height					: ${props => props.theme.size.bottomNavigationBarMobile}px;
+
 	@media (min-width: ${props => props.theme.size.container + (props.theme.size.distanceHuge)}px) {
 		display				: none;
 	}

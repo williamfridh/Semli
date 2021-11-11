@@ -14,7 +14,7 @@ import { createGlobalStyle } from 'styled-components';
 	}
 	body {
 		background	: #2B2E4A;
-		font-size	: 16px;
+		font-size	: 14px;
 	}
 	html, body, #root {
 		height: 100%;

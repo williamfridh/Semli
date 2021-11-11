@@ -16,27 +16,29 @@ export const Body = styled.div`
 `;
 
 export const HashtagHolder = styled.div`
-	margin			: ${props => props.theme.size.distanceBig}px 0;
+	margin			: ${props => props.theme.size.distanceBig}px 0 0 0;
 `;
 
 export const Hashtag = styled(NavLink)`
 	color			: #E84545;
-	font-size		: 14px;
+	font-size		: 80%;
 	text-decoration	: none;
 	border			: solid 1px #E84545;
+	border-radius	: ${props => props.theme.border.radius}px;
 	padding			: ${props => props.theme.size.distanceSmall}px ${props => props.theme.size.distanceMedium}px;
-	&:not(:first-child) {
-		margin		: 0 0 0 ${props => props.theme.size.distanceMedium}px;
-	}
+	display			: inline-block;
+	margin			: 0 ${props => props.theme.size.distanceMedium}px ${props => props.theme.size.distanceMedium}px 0;
 `;
 
 export const Likes = styled.div`
-	color			: #fff;
+	color			: ${props => props.theme.color.textBrightMedium};
+	display			: flex;
+	align-items		: flex-end;
 `;
 
 export const LikeDislikeButton = styled.div`
 	color			: #fff;
-	font-size		: 24px;
+	font-size		: 200%;
 	display			: flex;
 	justify-content	: flex-end;
 `;
@@ -44,5 +46,19 @@ export const LikeDislikeButton = styled.div`
 export const LikeArea = styled.div`
 	display					: grid;
 	grid-template-columns	: auto auto;
+	font-size				: 80%;
+`;
+
+interface UsernameProps {
+	to						: string;
+}
+export const Username = styled(NavLink)<UsernameProps>`
+	text-decoration	: none;
+	color			: ${props => props.theme.color.textBrightHigh};
+	font-weight		: 700;
+	font-size		: 100%;
+`;
+export const By = styled.div`
+	margin			: 0 0 ${props => props.theme.size.distanceMedium}px 0;
 `;
 

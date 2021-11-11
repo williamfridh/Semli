@@ -8,9 +8,9 @@ const OnlineOptions = () => {
 
 	return (
 		<StyledBottomNavigationBar.Container>
-			<StyledBottomNavigationBar.Button to={`/feed`}><MdHome /><StyledBottomNavigationBar.ButtonText>Feed</StyledBottomNavigationBar.ButtonText></StyledBottomNavigationBar.Button>
-			<StyledBottomNavigationBar.Button to={`/post/create`}><MdAddCircleOutline /><StyledBottomNavigationBar.ButtonText>Feed</StyledBottomNavigationBar.ButtonText></StyledBottomNavigationBar.Button>
-			<StyledBottomNavigationBar.Button to={`/profile/${currentUser?.uid}`}><MdAccountCircle /><StyledBottomNavigationBar.ButtonText>My Profile</StyledBottomNavigationBar.ButtonText></StyledBottomNavigationBar.Button>
+			<StyledBottomNavigationBar.Button to={`/`}><MdHome /></StyledBottomNavigationBar.Button>
+			<StyledBottomNavigationBar.Button to={`/post/create`}><MdAddCircleOutline /></StyledBottomNavigationBar.Button>
+			<StyledBottomNavigationBar.Button to={`/profile/${currentUser?.uid}`}><MdAccountCircle /></StyledBottomNavigationBar.Button>
 		</StyledBottomNavigationBar.Container>
 	);
 

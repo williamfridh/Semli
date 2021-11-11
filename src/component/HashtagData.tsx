@@ -18,11 +18,18 @@ const HashtagData: FunctionComponent<HashtagDataProps> = (props): JSX.Element =>
 		let isMounted = true;
 		
 		const loadHashtag = async (): Promise<void>=> {
+
+			console.log(`HashtagData >> useEffect >> loadHashtag >> Running`);
+
 			try {
-				setIsLoading(true);
+
+				isMounted && setIsLoading(true);
 				const hashtagDocRef = doc(firestoreDatabase, 'hashtags', (hashtagName as string));
 				const hashtagDocSnap = await getDoc(hashtagDocRef);
 				const data: DocumentData|null = hashtagDocSnap.data() as DocumentData|null;
+				if (!isMounted) {
+					return;
+				}
 				if (!data) {
 					setIsLoading(false);
 					return;
@@ -31,28 +38,29 @@ const HashtagData: FunctionComponent<HashtagDataProps> = (props): JSX.Element =>
 					name: String(data?.name),
 					amount: parseInt(data?.amount)
 				}
-				isMounted && setHashtag(newData);
+				setHashtag(newData);
 				setIsLoading(false);
+
 			} catch (e) {
-				console.error(`HashtagData >> ${e}`);
+				console.error(`HashtagData >> useEffect >> loadHashtag >> ${e}`);
 			}
+
 		}
 
 		loadHashtag();
 
 		return () => {
 			isMounted = false;
+			console.log(`HashtagData >> useEffect >> Dismounted`);
 		}
 
 		// eslint-disable-next-line
 	}, []);
 
 	return(
-		<div className="HashtagData">
-			<h3>
-				{isLoading && <Loading/>}
-				{hashtag && <SC.SubTitle>{hashtag['amount']} post{hashtag['amount'] !== 1 ? `s` : ``}</SC.SubTitle>}
-			</h3>
+		<div>
+			{isLoading && <Loading/>}
+			{hashtag && <SC.SubTitle>{hashtag['amount']} post{hashtag['amount'] !== 1 ? `s` : ``}</SC.SubTitle>}
 		</div>
 	);
 

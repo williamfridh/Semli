@@ -13,5 +13,8 @@ export const Response = styled.div<ResponseProps>`
 	padding			: ${props => props.theme.size.distanceBig}px;
 	border-radius	: ${props => props.theme.border.radius}px;
 	color			: ${props => props.theme.color.textBrightHigh};
+	&:not(:first-child) {
+		margin: ${props => props.theme.size.distanceBig}px 0 0;
+	}
 `;
 

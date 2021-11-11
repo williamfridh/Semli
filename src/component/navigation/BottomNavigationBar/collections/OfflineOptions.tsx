@@ -5,8 +5,8 @@ const OnlineOptions = () => {
 
 	return (
 		<StyledBottomNavigationBar.Container>
-			<StyledBottomNavigationBar.Button to={`/`}><MdHome /><StyledBottomNavigationBar.ButtonText>Home</StyledBottomNavigationBar.ButtonText></StyledBottomNavigationBar.Button>
-			<StyledBottomNavigationBar.Button to={`/log_in`}><MdAccountCircle /><StyledBottomNavigationBar.ButtonText>Log In</StyledBottomNavigationBar.ButtonText></StyledBottomNavigationBar.Button>
+			<StyledBottomNavigationBar.Button to={`/`}><MdHome /></StyledBottomNavigationBar.Button>
+			<StyledBottomNavigationBar.Button to={`/log_in`}><MdAccountCircle /></StyledBottomNavigationBar.Button>
 		</StyledBottomNavigationBar.Container>
 	);
 

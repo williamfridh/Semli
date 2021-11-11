@@ -68,7 +68,8 @@ export type PostProps = {
 	id?				: string,
 	body			: QueryDocumentSnapshot<DocumentData>,
 	hashtags		: QueryDocumentSnapshot<DocumentData>[],
-	likes?			: PostLikeProps[]
+	likes?			: PostLikeProps[],
+	user			: DocumentReference<DocumentData>
 }
 export type PostLikeProps = (QueryDocumentSnapshot<DocumentData>|DocumentReference<DocumentData>)
 
@@ -117,6 +118,7 @@ export type ThemeContextProps = {
 		callToAction				: string,
 		callToActionDark			: string,
 		textBrightHigh				: string,
+		textBrightMedium			: string,
 		textDarkHigh				: string
 		darkCover					: string,
 		bar							: string,
@@ -163,4 +165,11 @@ export interface HandleSearchInterface {
 	(
 		e: React.ChangeEvent<HTMLInputElement>
 	): Promise<void>
+}
+
+
+
+export type LogoProps = {
+	size?		: number,
+	margin?		: string
 }

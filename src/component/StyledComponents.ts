@@ -17,7 +17,7 @@ export const Container = styled.div`
 export const Page = styled(Container)`
 	padding: ${props => props.theme.size.topNavigationBarMobile + props.theme.size.distanceBig}px ${props => props.theme.size.distanceBig}px ${props => props.theme.size.bottomNavigationBarMobile + props.theme.size.distanceBig}px;
 	@media (min-width: ${props => props.theme.size.container + (props.theme.size.distanceHuge)}px) {
-		padding: ${props => props.theme.size.desktopNavigationBar}px ${props => props.theme.size.distanceBig}px ${props => props.theme.size.desktopNavigationBar}px;
+		padding: ${props => props.theme.size.desktopNavigationBar + props.theme.size.distanceBig}px ${props => props.theme.size.distanceBig}px ${props => props.theme.size.distanceBig}px;
 	}
 `;
 
@@ -76,15 +76,14 @@ export const Button = styled.button<ButtonProps>`
 `;
 
 export const ButtonIcon = styled.span`
-	font-size			: 30px;
+	font-size			: 180%;
 	display				: flex;
     align-items			: center;
 	margin				: 0 ${props => props.theme.size.distanceMedium}px 0 0;
 `;
 
 export const ButtonText = styled.span`
-	font-size	: 18px;
-	font-weight	: 700;
+	font-size			: 100%;
 `;
 
 
@@ -97,10 +96,10 @@ text-align	: center;
 color		: #ffffff;
 padding		: ${props => props.theme.size.distanceBig}px ${props => props.theme.size.distanceHuge}px;
 `;
-export const SubTitle = styled.h2`
+export const SubTitle = styled.h4`
 	text-align	: center;
 	color		: #ffffff;
-	padding		: ${props => props.theme.size.distanceBig}px ${props => props.theme.size.distanceHuge}px;
+	padding		: 0 ${props => props.theme.size.distanceHuge}px ${props => props.theme.size.distanceBig}px;
 `;
 
 
@@ -112,7 +111,7 @@ export const Input = styled.input`
 	width			: 100%;
 	border-radius	: ${props => props.theme.border.radius}px;
 	line-height		: 48px;
-	font-size		: 16px;
+	font-size		: 100%;
 	color			: #000;
 	background		: #fff;
 	border			: none;
@@ -123,12 +122,13 @@ export const Textarea = styled.textarea`
 	width			: 100%;
 	border-radius	: ${props => props.theme.border.radius}px;
 	line-height		: 48px;
-	font-size		: 16px;
+	font-size		: 100%;
 	color			: #000;
 	background		: #fff;
 	border			: none;
-	padding			: 0 ${props => props.theme.size.distanceBig}px;
+	padding			: ${props => props.theme.size.distanceBig}px;
 	outline			: none;
+	line-height: 160%;
 `;
 export const InputHolder = styled.div`
 	position		: relative;
@@ -138,7 +138,7 @@ export const InputLoading = styled.div`
 	top				: 50%;
 	right			: ${props => props.theme.size.distanceMedium}px;
 	transform		: translate(0, -50%);
-	font-size		: 30px;
+	font-size		: 180%;
 `;
 
 
@@ -146,12 +146,17 @@ export const InputLoading = styled.div`
 /**
  * Search form.
  */
-export const SeachFormResult = styled.div`
+interface SeachFormResultInterface {
+	to				: string;
+}
+export const SeachFormResult = styled(NavLink)<SeachFormResultInterface>`
 	color			: ${props => props.theme.color.textBrightHigh};
-	font-size		: 16px;
+	font-size		: 100%;
 	background		: ${props => props.theme.color.boxBackground};
 	padding			: ${props => props.theme.size.distanceBig}px;
 	margin			: ${props => props.theme.size.distanceMedium}px 0 0;
 	border-radius	: ${props => props.theme.border.radius}px;
+	text-decoration	: none;
+	display			: block;
 `;
 

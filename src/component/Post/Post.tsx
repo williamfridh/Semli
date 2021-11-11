@@ -1,5 +1,5 @@
-import { doc, DocumentData, QueryDocumentSnapshot, updateDoc } from "firebase/firestore";
-import { FunctionComponent, useState } from "react";
+import { doc, DocumentData, QueryDocumentSnapshot, updateDoc, getDoc, DocumentSnapshot, DocumentReference } from "firebase/firestore";
+import { FunctionComponent, useEffect, useState } from "react";
 import { useFirebase } from "context/FirebaseContext";
 import { PostLikeProps, PostProps } from "shared/types";
 import * as StyledPost from "./Post.styled";
@@ -7,9 +7,10 @@ import { MdFavoriteBorder, MdFavorite } from 'react-icons/md';
 
 const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 
-	const { id, body, hashtags, likes } = props;
+	const { id, body, hashtags, likes, user } = props;
 	const { currentUser, firestoreDatabase, currentUserDocRef } = useFirebase();
 	const [postLikes, setPostLikes] = useState(likes ? likes : [] as PostLikeProps[]);
+	const [userData, setUserData] = useState({} as DocumentData); // Unknown is OK here.
 	const postDocRef = doc(firestoreDatabase, `posts/${id}`);
 
 	/**
@@ -59,6 +60,38 @@ const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 
 	}
 
+	useEffect(() => {
+
+		let isMounted = true;
+
+		const loadUser = async (userRef: DocumentReference): Promise<void> => {
+
+			console.log(`Post >> useEffect >> loadUser >> Running`);
+
+			if (!isMounted) {
+				return;
+			}
+
+			const userSnap = await getDoc(userRef);
+
+			if (userSnap.exists()) {
+				isMounted && setUserData(userSnap.data() as DocumentSnapshot<DocumentData>);
+			} else {
+				console.error(`Post >> useEffect >> loadUser >> User not found`);
+			}
+
+		}
+
+		loadUser(user);
+
+		return() => {
+			console.log(`Post >> useEffect >> Dismounted`);
+			isMounted = false;
+		}
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
 	const likeOrDislikeButton: React.ReactNode =
 		postLikes &&
 		currentUserDocRef && 
@@ -72,12 +105,19 @@ const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 
 	return(
 		<StyledPost.Container>
+
+			<StyledPost.By>
+				<StyledPost.Username to={userData ? `/profile/${userData.id}` : '/error/404'}>{userData ? userData.username : 'Loading...'}</StyledPost.Username>
+			</StyledPost.By>
+			
 			<StyledPost.Body>{body}</StyledPost.Body>
 			<StyledPost.HashtagHolder>{hashtagsCollection}</StyledPost.HashtagHolder>
+			
 			<StyledPost.LikeArea>
-				<StyledPost.Likes>Liked by <b>{postLikes.length}</b> {postLikes.length === 1 ? `person` : `people`}</StyledPost.Likes>
+				<StyledPost.Likes><span>Liked by <b>{postLikes.length}</b> {postLikes.length === 1 ? `person` : `people`}</span></StyledPost.Likes>
 				<StyledPost.LikeDislikeButton>{likeOrDislikeButton}</StyledPost.LikeDislikeButton>
 			</StyledPost.LikeArea>
+
 		</StyledPost.Container>
 	);
 

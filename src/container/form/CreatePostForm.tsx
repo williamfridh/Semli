@@ -11,11 +11,12 @@ const CreatePostForm: FunctionComponent = (): JSX.Element => {
 
 	const { currentUser, firestoreDatabase } = useFirebase();
 
-	const [body, setBody] 				= useState('');
-	const [hashtags, setHashtag] 		= useState('');
-	const [isLoading, setIsLoading] 	= useState(false);
-	const [isComplete, setIsComplete] 	= useState(false);
-	const [response, setResponse] 		= useState([] as ResponseProps[]);
+	const [body, setBody] 					= useState('');
+	const [hashtags, setHashtag] 			= useState('');
+	const [hashtagArr, setHashtagArr] 		= useState([] as string[]);
+	const [isLoading, setIsLoading] 		= useState(false);
+	const [isComplete, setIsComplete] 		= useState(false);
+	const [response, setResponse] 			= useState([] as ResponseProps[]);
 
 	/**
 	 * Handle body content change.
@@ -23,7 +24,14 @@ const CreatePostForm: FunctionComponent = (): JSX.Element => {
 	 * @param e - event to track.
 	 */
 	const handleBodyChange = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
-		setBody(e.target.value);
+		
+		let val = e.target.value;
+
+		if (val.length > 200) {
+			return;
+		}
+
+		setBody(val);
 	}
 
 	/**
@@ -32,7 +40,15 @@ const CreatePostForm: FunctionComponent = (): JSX.Element => {
 	 * @param e - event to track.
 	 */
 	const handleHashtagChange = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
-		setHashtag(e.target.value);
+		
+		let val = e.target.value;
+
+		if (val.length > 150) {
+			return;
+		}
+
+		setHashtag(val);
+		setHashtagArr(hashtagStringToArray(val));
 	}
 
 	/**
@@ -40,20 +56,25 @@ const CreatePostForm: FunctionComponent = (): JSX.Element => {
 	 * 
 	 * @returns the hashtags split into a array.
 	 */
-	const splitHashtag = () => {
+	const hashtagStringToArray = (string: string): string[] => {
 
-		if (!hashtags) {
+		if (!string) {
 			return [];
 		}
 
-		let hashtagsArr: string[] = hashtags.toLocaleLowerCase().replaceAll(" ", "").replaceAll("å", "a").replaceAll("ä", "a").replaceAll("ö", "o").split('#');
-		hashtagsArr = hashtagsArr.filter((hashtag: HashtagName) => hashtag !== "");
+		let newHashtagsArr: string[] = string.toLocaleLowerCase().replaceAll(" ", "").replaceAll("å", "a").replaceAll("ä", "a").replaceAll("ö", "o").split('#');
+		newHashtagsArr = newHashtagsArr.filter((hashtag: HashtagName) => hashtag !== "");
 
-		if (typeof hashtagsArr !== 'object') {
+		if (typeof newHashtagsArr !== 'object') {
 			return [];
 		}
+
+		// Remove duplicates.
+		newHashtagsArr = newHashtagsArr.filter((value: string, index: number, self: string[]): any => {
+			return self.indexOf(value) === index;
+		});
 		
-		return hashtagsArr;
+		return newHashtagsArr;
 	}
 
 	/**
@@ -75,10 +96,11 @@ const CreatePostForm: FunctionComponent = (): JSX.Element => {
 			 * Check input.
 			 */
 			if (body.length < 6) {
-				newResponse.push({body: 'Body must be minmum 6 characters long.', type: 'error'});
+				newResponse.push({body: 'Body must be between 6-200 characters long.', type: 'error'});
 				setResponse(newResponse);
 			}
-			if (newResponse.length > 0) {
+			if (!hashtagArr.length || hashtagArr.length > 15) {
+				newResponse.push({body: 'You add between 1-15 hashtags.', type: 'error'});
 				setResponse(newResponse);
 			}
 			if (newResponse.length) {
@@ -91,7 +113,7 @@ const CreatePostForm: FunctionComponent = (): JSX.Element => {
 			// Add post doc.
 			const newPostData: NewPostDataProps = {
 				body,
-				hashtags: splitHashtag(),
+				hashtags: hashtagArr,
 				created: serverTimestamp(),
 				user: doc(firestoreDatabase, 'users', currentUser.uid)
 			}
@@ -99,7 +121,7 @@ const CreatePostForm: FunctionComponent = (): JSX.Element => {
 			const newPostDocRef = await addDoc(collection(firestoreDatabase, `posts`), newPostData);
 
 			// Save hashtag(s).
-			splitHashtag().forEach((hashtag: HashtagName) => saveHashtag(hashtag, newPostDocRef));
+			hashtagArr.forEach((hashtag: HashtagName) => saveHashtag(hashtag, newPostDocRef));
 
 			setIsLoading(false);
 			setIsComplete(true);
@@ -148,9 +170,9 @@ const CreatePostForm: FunctionComponent = (): JSX.Element => {
 		<div className="form">
 			<SC.Row><SC.Textarea onChange={handleBodyChange} value={body} placeholder={`Type text here...`} /></SC.Row>
 			<SC.Row><SC.Textarea onChange={handleHashtagChange} value={hashtags} placeholder={`#example1 #example2 #example3`} /></SC.Row>
-			<SC.Row><SC.Button primary onClick={handlePostClick}>Post</SC.Button></SC.Row>
+			<SC.Row><SC.Button primary onClick={handlePostClick}><SC.ButtonText>Post</SC.ButtonText></SC.Button></SC.Row>
 			{isLoading && <Loading/>}
-			{isComplete && <Redirect to={`/feed`} />}
+			{isComplete && <Redirect to={`/`} />}
 			{response && <SC.Row><ResponseList list={response} /></SC.Row>}
 		</div>
 	);
