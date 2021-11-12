@@ -4,6 +4,7 @@ import { PostProps, PostsProps } from "shared/types";
 import Post from "./Post/";
 import Loading from "./Loading";
 import usePosts from "hook/usePosts";
+import { Redirect } from "react-router";
 
 
 
@@ -18,9 +19,13 @@ const Posts: FunctionComponent<PostsProps> = (props): JSX.Element=> {
 	const { uid, hashtagName } 	= props;
 	const { firestoreDatabase } = useFirebase();
 
-	const { posts, isLoading, failed } = usePosts(firestoreDatabase, uid, hashtagName);
+	const { postsData, isLoading, errorCode } = usePosts(firestoreDatabase, uid, hashtagName);
 
-	let postsCollection: React.ReactNode = posts && posts.map((postProps: PostProps, key:number) => {
+	if (errorCode) {
+		return <Redirect to={`/error/${errorCode}`} />
+	}
+
+	const postsCollection: React.ReactNode = postsData && postsData.map((postProps: PostProps, key:number) => {
 		return <Post {...postProps} key={key} />;
 	 });
 

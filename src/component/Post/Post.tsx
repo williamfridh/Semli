@@ -1,64 +1,19 @@
-import { doc, DocumentData, QueryDocumentSnapshot, updateDoc, getDoc, DocumentSnapshot, DocumentReference } from "firebase/firestore";
+import { doc, DocumentData, QueryDocumentSnapshot, getDoc, DocumentSnapshot, DocumentReference } from "firebase/firestore";
 import { FunctionComponent, useEffect, useState } from "react";
 import { useFirebase } from "context/FirebaseContext";
 import { PostLikeProps, PostProps } from "shared/types";
 import * as StyledPost from "./Post.styled";
 import { MdFavoriteBorder, MdFavorite } from 'react-icons/md';
+import useLike from "hook/useLike";
 
 const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 
-	const { id, body, hashtags, likes, user } = props;
-	const { currentUser, firestoreDatabase, currentUserDocRef } = useFirebase();
-	const [postLikes, setPostLikes] = useState(likes ? likes : [] as PostLikeProps[]);
-	const [userData, setUserData] = useState({} as DocumentData); // Unknown is OK here.
+	const { id, body, hashtags, user } = props;
+	const { firestoreDatabase, currentUserDocRef } = useFirebase();
+	const [userData, setUserData] = useState({} as DocumentData);
 	const postDocRef = doc(firestoreDatabase, `posts/${id}`);
 
-	/**
-	 * Handle like click.
-	 * 
-	 * @param e - event of the click.
-	 * @returns nothing.
-	 */
-	const handleLikeClick = async (): Promise<void> => {
-
-		if (!currentUser || !currentUserDocRef) {
-			return;
-		}
-
-		try {
-
-			let action: 'add'|'remove';
-			
-			if (postLikes && postLikes.find((like: PostLikeProps) => like.id === currentUserDocRef.id)) {
-				action = 'remove';
-			} else {
-				action = 'add';
-			}
-
-			let postNewLikes;
-
-			switch(action) {
-				case('add'):
-					postNewLikes = [...postLikes, currentUserDocRef];
-					break;
-				case('remove'):
-					postNewLikes = postLikes.filter((like: PostLikeProps) => like.id !== currentUserDocRef.id);
-					break;
-			}
-
-			const userDataUpdate = {
-				likes: postNewLikes
-			};
-
-			await updateDoc(postDocRef, userDataUpdate);
-
-			setPostLikes(postNewLikes);
-
-		} catch (e) {
-			console.error(`Post >> handleLikeClick >> ${e}`);
-		}
-
-	}
+	const {likes, handleClick, isLoading, failedToLoad} = useLike(postDocRef, currentUserDocRef, props.likes as PostLikeProps[]);
 
 	useEffect(() => {
 
@@ -93,11 +48,11 @@ const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 	}, []);
 
 	const likeOrDislikeButton: React.ReactNode =
-		postLikes &&
+		likes &&
 		currentUserDocRef && 
-		postLikes.find((like: PostLikeProps) => like.id === currentUserDocRef.id) ?
-		<MdFavorite onClick={handleLikeClick} /> :
-		<MdFavoriteBorder onClick={handleLikeClick} />;
+		likes.find((like: PostLikeProps) => like.id === currentUserDocRef.id) ?
+		<MdFavorite onClick={handleClick} /> :
+		<MdFavoriteBorder onClick={handleClick} />;
 
 	const hashtagsCollection: React.ReactNode = hashtags.map((hashtag: QueryDocumentSnapshot<DocumentData>, key: number) => {
 		return <StyledPost.Hashtag to={`/hashtag/${hashtag}`} key={key}><span>#{hashtag}</span></StyledPost.Hashtag>;
@@ -114,7 +69,7 @@ const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 			<StyledPost.HashtagHolder>{hashtagsCollection}</StyledPost.HashtagHolder>
 			
 			<StyledPost.LikeArea>
-				<StyledPost.Likes><span>Liked by <b>{postLikes.length}</b> {postLikes.length === 1 ? `person` : `people`}</span></StyledPost.Likes>
+				<StyledPost.Likes><span>Liked by <b>{likes.length}</b> {likes.length === 1 ? `person` : `people`}</span></StyledPost.Likes>
 				<StyledPost.LikeDislikeButton>{likeOrDislikeButton}</StyledPost.LikeDislikeButton>
 			</StyledPost.LikeArea>
 

@@ -1,4 +1,4 @@
-import { doc, getDoc } from "@firebase/firestore";
+import { doc, DocumentData, getDoc } from "@firebase/firestore";
 import { Firestore } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
@@ -10,51 +10,47 @@ interface useProfileInterface {
 }
 
 type useProfileProps = {
-	res			: string,
-	isLoading	: boolean,
-	failed		: boolean
+	profileData			: DocumentData,
+	isLoading			: boolean,
+	errorCode			: number|null
 }
 
 const useProfile: useProfileInterface = (firestoreDatabase, uid) => {
 	
-	const [res, setRes] 				= useState({} as DocumentData);
-	const [isLoading, setIsLoading] 	= useState(false);
-	const [failed, setFailed] 			= useState(false);
+	const [profileData, setProfileData] 		= useState({} as DocumentData);
+	const [isLoading, setIsLoading] 			= useState(false);
+	const [errorCode, setErrorCode] 			= useState<number|null>(null);
 
 	useEffect(() => {
 
 		let isMounted = true;
-
-		const getProfile = async (uid: string): Promise<void> => {
-
-			try {
 				
-				console.log(`Profile >> useEffect >> getProfile >> Running`);
-				setIsLoading(true);
-				setFailed(false);
+		console.log(`Profile >> useEffect >> getProfile >> Running`);
+		setIsLoading(true);
+		setErrorCode(null);
 		
-				const userDocRef = doc(firestoreDatabase, 'users', uid);
-				const userDocSnap = await getDoc(userDocRef);
-		
-				if (userDocSnap.exists()) {
-					if (isMounted) {
-						setRes(userDocSnap.data());
-						setIsLoading(false);
-					}
-				} else {
-					console.error(`useProfile >> useEffect >> getProfile >> No result.`);
-					setFailed(true);
-				}
+		const userDocRef = doc(firestoreDatabase, 'users', uid);
 
-			} catch (e) {
-				console.error(`useProfile >> useEffect >> Dismounted >> ${e}`);
-				setFailed(true);
-				setIsLoading(false);
+		getDoc(userDocRef).then(userDocSnap => {
+
+			if (!isMounted) {
+				return;
 			}
-	
-		}
+			
+			if (userDocSnap.exists()) {
+				setProfileData(userDocSnap.data());
+				setIsLoading(false);
+				console.log(`useProfile >> useEffect >> getProfile >> Success.`);
+			} else {
+				console.error(`useProfile >> useEffect >> getProfile >> No result.`);
+				setErrorCode(404);
+			}
 
-		getProfile(uid);
+		}).catch(e => {
+			console.error(`useProfile >> useEffect >> Dismounted >> ${e}`);
+			setErrorCode(400);
+			setIsLoading(false);
+		});
 
 		return () => {
 			console.log(`Profile >> useEffect >> Dismounted`);
@@ -62,9 +58,9 @@ const useProfile: useProfileInterface = (firestoreDatabase, uid) => {
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [uid]);
 
-	return {res, isLoading, failed};
+	return {profileData, isLoading, errorCode};
 
 }
 

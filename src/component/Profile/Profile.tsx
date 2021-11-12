@@ -1,11 +1,11 @@
-import { doc, DocumentData, getDoc } from "firebase/firestore";
-import { FunctionComponent, useEffect, useState } from "react";
+import { FunctionComponent } from "react";
 import { Redirect } from "react-router";
 import { useFirebase } from "context/FirebaseContext";
 import { ProfileProps } from "shared/types";
 import * as SC from 'component/StyledComponents';
 import * as StyledProfile from './Profile.styled';
 import Loading from "component/Loading";
+import useProfile from "hook/useProfile";
 
 
 
@@ -19,57 +19,17 @@ const Profile: FunctionComponent<ProfileProps> = (props): JSX.Element=> {
 
 	const { uid } = props;
 	const { firestoreDatabase } = useFirebase();
-	
-	const [userData, setUserData] 			= useState({} as DocumentData);
-	const [isLoading, setIsLoading] 		= useState(true);
-	const [failedLoading, setFailedLoading] = useState(false);
 
-	useEffect(() => {
+	const {profileData, isLoading, errorCode} = useProfile(firestoreDatabase, uid);
 
-		let isMounted = true;
-
-		const getProfile = async (uid: string): Promise<void> => {
-
-			console.log(`Profile >> useEffect >> getProfile >> Running`);
-
-			try {
-		
-				const userDocRef = doc(firestoreDatabase, 'users', uid);
-				const userDocSnap = await getDoc(userDocRef);
-		
-				if (userDocSnap.exists()) {
-					if (isMounted) {
-						setUserData(userDocSnap.data());
-						setIsLoading(false);
-					}
-				} else {
-					setFailedLoading(true);
-				}
-
-			} catch (e) {
-				console.error(`Profile >> useEffect >> Dismounted >> ${e}`);
-			}
-	
-		}
-
-		getProfile(uid);
-
-		return () => {
-			console.log(`Profile >> useEffect >> Dismounted`);
-			isMounted = false;
-		}
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	if (failedLoading) {
-		return <Redirect to="error/404" />;
+	if (errorCode) {
+		return <Redirect to={`/error/${errorCode}`} />;
 	}
 
 	return(
 		<div className="profile">
-			<SC.Title>{isLoading ? <Loading/> : userData && userData.username}</SC.Title>
-			<StyledProfile.Bio>{userData && userData.bio}</StyledProfile.Bio>
+			<SC.Title>{isLoading ? <Loading/> : profileData && profileData.username}</SC.Title>
+			<StyledProfile.Bio>{profileData && profileData.bio}</StyledProfile.Bio>
 		</div>
 	);
 

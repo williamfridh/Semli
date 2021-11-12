@@ -13,11 +13,11 @@ import Logo from 'component/Logo';
  */
 const TopNavigationBar: FunctionComponent = (): JSX.Element => {
 
-	const { currentUserDocSnap } = useFirebase();
+	const { auth } = useFirebase();
 
 	return <StyledTopNavigationBar.Bar>
 		<StyledTopNavigationBar.Container>
-			{currentUserDocSnap && <StyledTopNavigationBar.Button to={`/settings`}><MdSettings /></StyledTopNavigationBar.Button>}
+			{auth && <StyledTopNavigationBar.Button to={`/settings`}><MdSettings /></StyledTopNavigationBar.Button>}
 			<Logo margin="auto" />
 			<StyledTopNavigationBar.Button to={`/search`}><MdSearch /></StyledTopNavigationBar.Button>
 		</StyledTopNavigationBar.Container>

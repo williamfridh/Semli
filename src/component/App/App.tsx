@@ -66,13 +66,6 @@ const App: FunctionComponent = (): JSX.Element => {
 
 						<Switch>
 
-							{/* ======== FEED ======== */}
-							<Route exact path="/">
-								<UserCompleteProfileDependency>
-									<FeedPage />
-								</UserCompleteProfileDependency>
-							</Route>
-
 							{/* ======== SEARCH ======== */}
 							<Route exact path="/search">
 								<UserCompleteProfileDependency>
@@ -129,6 +122,13 @@ const App: FunctionComponent = (): JSX.Element => {
 							{/* ======== ERROR ======== */}
 							<Route exact path="/error/:code">
 								<ErrorPage />
+							</Route>
+
+							{/* ======== FEED ======== */}
+							<Route path="/">
+								<UserCompleteProfileDependency>
+									<FeedPage />
+								</UserCompleteProfileDependency>
 							</Route>
 
 						</Switch>

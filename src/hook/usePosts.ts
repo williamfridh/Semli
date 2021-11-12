@@ -11,16 +11,16 @@ interface usePostsInterface {
 }
 
 type usePostsReturn = {
-	posts		: PostProps[],
-    isLoading	: boolean,
-    failed		: boolean
+	postsData		: PostProps[],
+    isLoading		: boolean,
+    errorCode			: number|null
 }
 
 const usePosts: usePostsInterface = (firestoreDatabase, uid, hashtagName) => {
 	
-	const [posts, setPosts] 			= useState([] as PostProps[]);
+	const [postsData, setPostsData] 	= useState([] as PostProps[]);
 	const [isLoading, setIsLoading] 	= useState(false);
-	const [failed, setFailed] 			= useState(false);
+	const [errorCode, setErrorCode] 	= useState<number|null>(null);
 
 	useEffect(() => {
 
@@ -28,7 +28,7 @@ const usePosts: usePostsInterface = (firestoreDatabase, uid, hashtagName) => {
 
 		console.log(`usePosts >> useEffect >> getPosts >> Running`);
 		setIsLoading(true);
-		setFailed(false);
+		setErrorCode(null);
 		
 		let postQuery;
 		if (uid) {
@@ -61,13 +61,14 @@ const usePosts: usePostsInterface = (firestoreDatabase, uid, hashtagName) => {
 					});
 				});
 			
-				isMounted && setPosts(postsToAdd);
+				setPostsData(postsToAdd);
 
 			} else {
 				console.warn("Posts >> useEffect >> getPosts >> No posts found.");
+				setErrorCode(404);
 			}
 			
-			isMounted && setIsLoading(false);
+			setIsLoading(false);
 
 			console.log(`usePosts >> useEffect >> getPosts >> Success`);
 			setIsLoading(false);
@@ -75,20 +76,18 @@ const usePosts: usePostsInterface = (firestoreDatabase, uid, hashtagName) => {
 		}).catch(e => {
 			console.error(`usePosts >> useEffect >> getPosts >> ${e}`);
 			setIsLoading(false);
-			setFailed(true);
+			setErrorCode(400);
 		});
-
-		console.log(uid);
-		console.log(hashtagName);
 
 		return() => {
 			console.log(`usePosts >> useEffect >> Dismounted`);
 			isMounted = false;
 		}
 
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [uid, hashtagName]);
 
-	return {posts, isLoading, failed};
+	return {postsData, isLoading, errorCode};
 
 }
 
