@@ -2,34 +2,34 @@ import { DocumentData, DocumentReference, updateDoc } from "@firebase/firestore"
 import { useState } from "react";
 import { PostLikeProps } from "shared/types";
 
-interface useLikeInterface {
+interface useLikeUnlikeInterface {
 	(
 		postDocRef			: DocumentReference<DocumentData>,
 		currentUserDocRef	: DocumentReference<DocumentData>|null,
 		initialValue		: PostLikeProps[]
-	): useLikereturn
+	): useLikeUnlikereturn
 }
 
-type useLikereturn = {
+type useLikeUnlikereturn = {
 	likes			: PostLikeProps[],
 	handleClick		: any,
 	isLoading		: boolean,
-	failedToLoad	: number|null
+	errorCode		: number|null
 }
 
-const useLike: useLikeInterface = (postDocRef, currentUserDocRef, initialValue) => {
+const useLikeUnlike: useLikeUnlikeInterface = (postDocRef, currentUserDocRef, initialValue) => {
 
-	const [likes, setLikes]					= useState(initialValue);
-	const [isLoading, setIsLoading] 		= useState(false);
-	const [failedToLoad, setFailedToLoad] 	= useState<number|null>(null);
+	const [likes, setLikes]				= useState(initialValue ? initialValue : [] as PostLikeProps[]);
+	const [isLoading, setIsLoading] 	= useState(false);
+	const [errorCode, setErrorCode] 	= useState<number|null>(null);
 
 	const handleClick = async () => {
-
+		
 		if (!currentUserDocRef) {
 			return;
 		}
 
-		console.log(`useLike >> handleClick >> Running...`);
+		console.log(`useLikeUnlike >> handleClick >> Running...`);
 
 		let newLikes;
 
@@ -44,16 +44,16 @@ const useLike: useLikeInterface = (postDocRef, currentUserDocRef, initialValue) 
 		};
 
 		try {
-			setFailedToLoad(null);
+			setErrorCode(null);
 			setIsLoading(true);
 			await updateDoc(postDocRef, postDataUpdate);
 			setIsLoading(false);
 			setLikes(newLikes as PostLikeProps[]);
-			console.log(`useLike >> handleClick >> Success`);
+			console.log(`useLikeUnlike >> handleClick >> Success`);
 		} catch (e) {
-			setFailedToLoad(400);
+			setErrorCode(400);
 			setIsLoading(false);
-			console.error(`useLike >> handleClick >> ${e}`);
+			console.error(`useLikeUnlike >> handleClick >> ${e}`);
 		}
 
 	}
@@ -72,9 +72,9 @@ const useLike: useLikeInterface = (postDocRef, currentUserDocRef, initialValue) 
 		return likes.filter((like: PostLikeProps) => like.id !== currentUserDocRef.id);
 	}
 
-	return {likes, handleClick, isLoading, failedToLoad};
+	return {likes, handleClick, isLoading, errorCode};
 
 }
 
-export default useLike;
+export default useLikeUnlike;
 

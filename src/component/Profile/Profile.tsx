@@ -5,7 +5,8 @@ import { ProfileProps } from "shared/types";
 import * as SC from 'component/StyledComponents';
 import * as StyledProfile from './Profile.styled';
 import Loading from "component/Loading";
-import useProfile from "hook/useProfile";
+import useUsers from "hook/useUsers";
+import { doc } from "@firebase/firestore";
 
 
 
@@ -19,8 +20,9 @@ const Profile: FunctionComponent<ProfileProps> = (props): JSX.Element=> {
 
 	const { uid } = props;
 	const { firestoreDatabase } = useFirebase();
+	const userDocRef = doc(firestoreDatabase, 'users', uid);
 
-	const {profileData, isLoading, errorCode} = useProfile(firestoreDatabase, uid);
+	const {profileData, isLoading, errorCode} = useUsers(userDocRef);
 
 	if (errorCode) {
 		return <Redirect to={`/error/${errorCode}`} />;

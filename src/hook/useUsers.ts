@@ -1,21 +1,19 @@
-import { doc, DocumentData, getDoc } from "@firebase/firestore";
-import { Firestore } from "firebase/firestore";
+import { DocumentData, DocumentReference, getDoc } from "@firebase/firestore";
 import { useEffect, useState } from "react";
 
-interface useProfileInterface {
+interface useUsersInterface {
 	(
-		firestoreDatabase	: Firestore,
-		uid					: string
-	): useProfileProps
+		userDocRef				: DocumentReference<DocumentData>
+	): useUsersProps
 }
 
-type useProfileProps = {
+type useUsersProps = {
 	profileData			: DocumentData,
 	isLoading			: boolean,
 	errorCode			: number|null
 }
 
-const useProfile: useProfileInterface = (firestoreDatabase, uid) => {
+const useUsers: useUsersInterface = (userDocRef) => {
 	
 	const [profileData, setProfileData] 		= useState({} as DocumentData);
 	const [isLoading, setIsLoading] 			= useState(false);
@@ -28,8 +26,6 @@ const useProfile: useProfileInterface = (firestoreDatabase, uid) => {
 		console.log(`Profile >> useEffect >> getProfile >> Running`);
 		setIsLoading(true);
 		setErrorCode(null);
-		
-		const userDocRef = doc(firestoreDatabase, 'users', uid);
 
 		getDoc(userDocRef).then(userDocSnap => {
 
@@ -40,16 +36,16 @@ const useProfile: useProfileInterface = (firestoreDatabase, uid) => {
 			if (userDocSnap.exists()) {
 				setProfileData(userDocSnap.data());
 				setIsLoading(false);
-				console.log(`useProfile >> useEffect >> getProfile >> Success.`);
+				console.log(`useUsers >> useEffect >> getProfile >> Success.`);
 			} else {
-				console.error(`useProfile >> useEffect >> getProfile >> No result.`);
 				setErrorCode(404);
+				console.error(`useUsers >> useEffect >> getProfile >> No result.`);
 			}
 
 		}).catch(e => {
-			console.error(`useProfile >> useEffect >> Dismounted >> ${e}`);
 			setErrorCode(400);
 			setIsLoading(false);
+			console.error(`useUsers >> useEffect >> ${e}`);
 		});
 
 		return () => {
@@ -58,10 +54,10 @@ const useProfile: useProfileInterface = (firestoreDatabase, uid) => {
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [uid]);
+	}, []);
 
 	return {profileData, isLoading, errorCode};
 
 }
 
-export default useProfile;
+export default useUsers;

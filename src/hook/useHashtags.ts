@@ -1,21 +1,21 @@
-import { doc, Firestore, getDoc } from "@firebase/firestore";
+import { getDoc } from "@firebase/firestore";
+import { DocumentData, DocumentReference } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { HashtagName, HashtagProps } from "shared/types";
+import { HashtagProps } from "shared/types";
 
-interface useHashtagInterface {
+interface useHashtagsInterface {
 	(
-		firestoreDatabase	: Firestore,
-		hashtagName			: HashtagName
-	): useHashtagReturn
+		hashtagDocRef	: DocumentReference<DocumentData>
+	): useHashtagsReturn
 }
 
-type useHashtagReturn = {
+type useHashtagsReturn = {
 	hashtagData		: HashtagProps,
 	isLoading		: boolean,
 	errorCode		: null|number
 }
 
-const useHashtag: useHashtagInterface = (firestoreDatabase, hashtagName) => {
+const useHashtags: useHashtagsInterface = (hashtagDocRef) => {
 
 	const [hashtagData, setHashtagData] 	= useState({} as HashtagProps);
 	const [isLoading, setIsLoading] 		= useState(false);
@@ -25,9 +25,7 @@ const useHashtag: useHashtagInterface = (firestoreDatabase, hashtagName) => {
 
 		let isMounted = true;
 
-		console.log(`useHashtag >> useEffect >> Running...`);
-
-		const hashtagDocRef = doc(firestoreDatabase, 'hashtags', hashtagName as string);
+		console.log(`useHashtags >> useEffect >> Running...`);
 
 		setIsLoading(true);
 		setErrorCode(null);
@@ -50,11 +48,11 @@ const useHashtag: useHashtagInterface = (firestoreDatabase, hashtagName) => {
 				setHashtagData(newData);
 
 				
-				console.log(`useHashtag >> useEffect >> Success.`);
+				console.log(`useHashtags >> useEffect >> Success.`);
 
 			} else {
 				setErrorCode(404);
-				console.error(`useHashtag >> useEffect >> Not found.`);
+				console.error(`useHashtags >> useEffect >> Not found.`);
 			}
 
 			
@@ -63,19 +61,19 @@ const useHashtag: useHashtagInterface = (firestoreDatabase, hashtagName) => {
 		}).catch(e => {
 			setErrorCode(400);
 			setIsLoading(false);
-			console.error(`useHashtag >> useEffect >> ${e}`);
+			console.error(`useHashtags >> useEffect >> ${e}`);
 		});
 
 		return() => {
 			isMounted = false;
 		}
 
-		// eslint-disable-next-line
-	}, [hashtagName]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return {hashtagData, isLoading, errorCode};
 
 }
 
-export default useHashtag;
+export default useHashtags;
 

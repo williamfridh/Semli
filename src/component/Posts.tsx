@@ -5,6 +5,7 @@ import Post from "./Post/";
 import Loading from "./Loading";
 import usePosts from "hook/usePosts";
 import { Redirect } from "react-router";
+import { doc } from "@firebase/firestore";
 
 
 
@@ -18,8 +19,10 @@ const Posts: FunctionComponent<PostsProps> = (props): JSX.Element=> {
 
 	const { uid, hashtagName } 	= props;
 	const { firestoreDatabase } = useFirebase();
+	const userDocRef = uid ? doc(firestoreDatabase, `users/${uid}`) : undefined;
+	const hashtagDocRef = hashtagName ? doc(firestoreDatabase, `hashtags/${hashtagName}`) : undefined;
 
-	const { postsData, isLoading, errorCode } = usePosts(firestoreDatabase, uid, hashtagName);
+	const { postsData, isLoading, errorCode } = usePosts(firestoreDatabase, userDocRef, hashtagDocRef);
 
 	if (errorCode) {
 		return <Redirect to={`/error/${errorCode}`} />

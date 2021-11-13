@@ -161,10 +161,10 @@ export interface LogOutInterface {
 
 
 
-export interface HandleSearchInterface {
+export interface HandleSearchTermInterface {
 	(
 		e: React.ChangeEvent<HTMLInputElement>
-	): Promise<void>
+	): void
 }
 
 
