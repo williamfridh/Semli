@@ -2,6 +2,7 @@ import { FunctionComponent } from "react";
 import { Redirect } from "react-router";
 import {  ifProfileComplete, useFirebase } from 'context/FirebaseContext';
 import { UserDependencyProps } from "shared/types";
+import Loading from "component/Loading";
 
 
 

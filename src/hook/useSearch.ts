@@ -1,4 +1,4 @@
-import { collection, DocumentData, Firestore, getDocs, query, QueryDocumentSnapshot, where } from "@firebase/firestore";
+import { collection, DocumentData, Firestore, getDocs, orderBy, query, QueryDocumentSnapshot, where } from "@firebase/firestore";
 import { useEffect, useState } from "react";
 import { HashtagProps } from "shared/types";
 
@@ -34,7 +34,7 @@ const useSearch: useSearchInterFace = (firestoreDatabase, term) => {
 		setErrorCode(null);
 		console.log(`useSearch >> useEffect >> Running...`);
 
-		const q = query(collection(firestoreDatabase, "hashtags"), where("name", ">=", term), where("name", "<=", term + '\uf8ff'));
+		const q = query(collection(firestoreDatabase, "hashtags"), where("name", ">=", term), where("name", "<=", term + '\uf8ff'), orderBy("name", "asc"));
 		getDocs(q).then(qDocSnap => {
 
 			if (!isMounted) {
