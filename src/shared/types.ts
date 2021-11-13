@@ -18,6 +18,7 @@ import React, { SetStateAction } from 'react';
  */
  export type useFirebaseProps = {
 	auth					: Auth,
+	authInitilized			: boolean,
 	currentUser				: User|null,
 	currentUserDocRef		: DocumentReference<DocumentData>|null,
 	setCurrentUserDocRef	: React.Dispatch<React.SetStateAction<DocumentReference<DocumentData> | null>>|null,

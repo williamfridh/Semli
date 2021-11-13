@@ -16,7 +16,7 @@ import Loading from "component/Loading";
 const UserOnlineDependency: FunctionComponent<UserDependencyProps> = (props): JSX.Element => {
 
 	const { fallback, children } = props;
-	const { auth, currentUser } = useFirebase();
+	const { currentUser, authInitilized } = useFirebase();
 
 	/**
 	 * Use predecided fallback.
@@ -31,12 +31,10 @@ const UserOnlineDependency: FunctionComponent<UserDependencyProps> = (props): JS
 		}
 	}
 
-	if (auth) {
-		if (!currentUser) {
-			return <Loading />;
-		} else {
-			return <div>{children}</div>;
-		}
+	if (currentUser) {
+		return <div>{children}</div>;
+	} else if (!authInitilized) {
+		return <Loading />;
 	} else {
 		return triggerFallback();
 	}

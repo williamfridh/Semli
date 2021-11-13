@@ -11,6 +11,7 @@ import { LogOutInterface, useFirebaseProps } from 'shared/types';
  */
 const FirebaseContext = React.createContext<useFirebaseProps>({
 	auth,
+	authInitilized			: false,
 	currentUser				: null,
 	currentUserDocRef		: null,
 	setCurrentUserDocRef	: null,
@@ -43,6 +44,7 @@ export const useFirebase = (): useFirebaseProps => {
 export const FirebaseProvider: FunctionComponent = ({ children }) => {
 
 	const [firebaseIsloading, setFirebaseIsloading] 	= useState(false);
+	const [authInitilized, setAuthInitilized] 			= useState(false);
 	const [currentUser, setCurrentUser] 				= useState<User|null>(null);
 	const [currentUserDocSnap, setCurrentUserDocSnap] 	= useState<DocumentSnapshot<DocumentData>|null>(null);
 	const [currentUserDocRef, setCurrentUserDocRef] 	= useState<DocumentReference<DocumentData>|null>(null);
@@ -50,6 +52,7 @@ export const FirebaseProvider: FunctionComponent = ({ children }) => {
 	useEffect(() => {
 		const unsubscribe = auth.onAuthStateChanged(user => {
 			setCurrentUser(user);
+			setAuthInitilized(true);
 		});
 
 		return unsubscribe;
@@ -57,6 +60,7 @@ export const FirebaseProvider: FunctionComponent = ({ children }) => {
 
 	const newValue: useFirebaseProps = {
 		auth,
+		authInitilized,
 		currentUser,
 		currentUserDocRef,
 		setCurrentUserDocRef,

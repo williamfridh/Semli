@@ -1,6 +1,6 @@
 import { User } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { FunctionComponent, useEffect, useState } from "react";
+import { FunctionComponent, useEffect } from "react";
 import { Redirect } from "react-router";
 import { logOut, useFirebase } from 'context/FirebaseContext';
 import { UserDependencyProps } from "shared/types";
@@ -27,14 +27,11 @@ const UserCompleteProfileDependency: FunctionComponent<UserDependencyProps> = (p
 		setFirebaseIsloading
 	} = useFirebase();
 	let { currentUserDocSnap } = useFirebase();
-	const [isLoading, setIsloading] = useState(false);
 
 	/**
 	 * Trigger use effect on different changes.
 	 */
 	useEffect(() => {
-
-		let isMounted = true;
 
 		/**
 		 * Check user.
@@ -56,12 +53,9 @@ const UserCompleteProfileDependency: FunctionComponent<UserDependencyProps> = (p
 				/**
 				 * Target, get and check if user doc exists.
 				 */
-				setIsloading(true);
 
 				const currentUserDocRef = doc(firestoreDatabase, 'users', currentUser.uid);
 				const currentUserDocSnapTemp = await getDoc(currentUserDocRef);
-
-				setIsloading(false);
 
 				setCurrentUserDocSnap && setCurrentUserDocSnap(currentUserDocSnapTemp);
 				setCurrentUserDocRef && setCurrentUserDocRef(currentUserDocRef);
@@ -78,13 +72,12 @@ const UserCompleteProfileDependency: FunctionComponent<UserDependencyProps> = (p
 
 		}
 
-		if (currentUser && !currentUserDocSnap && isMounted) {
+		if (currentUser && !currentUserDocSnap) {
 			checkUser(currentUser);
 		}
 
 		return() => {
 			console.log(`UserCompleteProfileDependency >> useEffect >> Dismounted`);
-			isMounted = false;
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -92,11 +85,11 @@ const UserCompleteProfileDependency: FunctionComponent<UserDependencyProps> = (p
 
 	if (currentUser) {
 
-		if (isLoading || !currentUserDocSnap) {
+		if (firebaseIsloading) {
 			return <Loading />;
 		}
 		
-		const userDataArr = currentUserDocSnap.data();
+		const userDataArr = currentUserDocSnap?.data();
 
 		if (userDataArr) {
 			if (
