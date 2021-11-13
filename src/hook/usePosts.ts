@@ -37,15 +37,15 @@ const usePosts: usePostsInterface = (firestoreDatabase, userDocRef, hashtagDocRe
 				
 				let postQuery;
 				if (userDocRef) {
-					postQuery = query(firestoreCollection, where("user", "==", userDocRef), orderBy("created", "desc"), limit(3));
+					postQuery = query(firestoreCollection, where("user", "==", userDocRef), orderBy("created", "desc"), limit(10));
 				} else if (hashtagDocRef) {
 					const hashtagDocSnap = await getDoc(hashtagDocRef);
 					if (!isMounted) {
 						return;
 					}
-					postQuery = query(firestoreCollection, where("hashtags", "array-contains", hashtagDocSnap.id), orderBy("created", "desc"), limit(3));
+					postQuery = query(firestoreCollection, where("hashtags", "array-contains", hashtagDocSnap.id), orderBy("created", "desc"), limit(10));
 				} else {
-					postQuery = query(firestoreCollection, orderBy("created", "desc"), limit(3));
+					postQuery = query(firestoreCollection, orderBy("created", "desc"), limit(10));
 				}
 				
 				const querySnap = await getDocs(postQuery);

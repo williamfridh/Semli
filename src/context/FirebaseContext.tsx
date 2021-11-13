@@ -1,5 +1,5 @@
 import { signOut, User } from 'firebase/auth';
-import { DocumentData, DocumentReference, DocumentSnapshot } from 'firebase/firestore';
+import { DocumentData, DocumentReference, DocumentSnapshot, doc } from '@firebase/firestore';
 import React, { FunctionComponent, useContext, useEffect, useState } from 'react';
 import { auth, firestoreDatabase } from 'firebase';
 import { LogOutInterface, useFirebaseProps } from 'shared/types';
@@ -14,12 +14,9 @@ const FirebaseContext = React.createContext<useFirebaseProps>({
 	authInitilized			: false,
 	currentUser				: null,
 	currentUserDocRef		: null,
-	setCurrentUserDocRef	: null,
 	currentUserDocSnap		: null,
 	setCurrentUserDocSnap	: null,
-	firestoreDatabase,
-	firebaseIsloading		: null,
-	setFirebaseIsloading	: null
+	firestoreDatabase
 });
 
 
@@ -43,7 +40,6 @@ export const useFirebase = (): useFirebaseProps => {
  */
 export const FirebaseProvider: FunctionComponent = ({ children }) => {
 
-	const [firebaseIsloading, setFirebaseIsloading] 	= useState(false);
 	const [authInitilized, setAuthInitilized] 			= useState(false);
 	const [currentUser, setCurrentUser] 				= useState<User|null>(null);
 	const [currentUserDocSnap, setCurrentUserDocSnap] 	= useState<DocumentSnapshot<DocumentData>|null>(null);
@@ -53,6 +49,9 @@ export const FirebaseProvider: FunctionComponent = ({ children }) => {
 		const unsubscribe = auth.onAuthStateChanged(user => {
 			setCurrentUser(user);
 			setAuthInitilized(true);
+			if (user) {
+				setCurrentUserDocRef(doc(firestoreDatabase, 'users', user.uid));
+			}
 		});
 
 		return unsubscribe;
@@ -63,12 +62,9 @@ export const FirebaseProvider: FunctionComponent = ({ children }) => {
 		authInitilized,
 		currentUser,
 		currentUserDocRef,
-		setCurrentUserDocRef,
 		currentUserDocSnap,
 		setCurrentUserDocSnap,
-		firestoreDatabase,
-		firebaseIsloading,
-		setFirebaseIsloading
+		firestoreDatabase
 	};
 
 	return <FirebaseContext.Provider value={newValue}>{children}</FirebaseContext.Provider>;
@@ -83,16 +79,28 @@ export const FirebaseProvider: FunctionComponent = ({ children }) => {
  * @param auth - the current auth object used by Firebase for authentication.
  * @param setCurrentUserDocSnap - a setter for current user doc snap.
  */
-export const logOut: LogOutInterface = async ( auth, setCurrentUserDocRef, setCurrentUserDocSnap, firebaseIsloading, setFirebaseIsloading ) => {
-	setFirebaseIsloading && setFirebaseIsloading(true);
+export const logOut: LogOutInterface = async ( auth ) => {
 	try {
 		// Do not change this order!
 		await signOut(auth);
-		setCurrentUserDocSnap && setCurrentUserDocSnap(null);
-		setCurrentUserDocRef && setCurrentUserDocRef(null);
 	} catch (err) {
 		console.log("Logout: failed");
 	}
-	setFirebaseIsloading && setFirebaseIsloading(false);
+}
+
+
+export const ifProfileComplete = (currentUserDocSnap: any)  => {
+	if (currentUserDocSnap) {
+		const currentUserSnapData = currentUserDocSnap.data();
+		if (
+			!currentUserSnapData ||
+			'username' in currentUserSnapData === false ||
+			'bio' in currentUserSnapData === false
+		) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 }
 

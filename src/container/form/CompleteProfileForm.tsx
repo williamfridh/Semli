@@ -1,8 +1,8 @@
 import { getDoc, updateDoc, query, where, collection, getDocs, QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import { Redirect } from "react-router";
 import ResponseList from "component/ResponseList";
-import { useFirebase } from "context/FirebaseContext";
+import { ifProfileComplete, useFirebase } from "context/FirebaseContext";
 import { ResponseProps, UpdateUserDataProps } from "shared/types";
 import * as SC from 'component/StyledComponents';
 import Loading from "component/Loading";
@@ -19,9 +19,9 @@ const CompleteProfileForm: FunctionComponent = (): JSX.Element => {
 	const {
 		currentUser,
 		firestoreDatabase,
+		currentUserDocSnap,
 		setCurrentUserDocSnap,
-		currentUserDocRef,
-		setFirebaseIsloading
+		currentUserDocRef
 	} = useFirebase();
 
 	const [username, setUsername] 		= useState('');
@@ -59,7 +59,6 @@ const CompleteProfileForm: FunctionComponent = (): JSX.Element => {
 			return;
 		}
 
-		setFirebaseIsloading && setFirebaseIsloading(true);
 		setIsLoading(true);
 
 		try {
@@ -111,8 +110,6 @@ const CompleteProfileForm: FunctionComponent = (): JSX.Element => {
 		
 					await updateDoc(currentUserDocRef, updatedUserData);
 
-					setIsComplete(true);
-
 					// Update data.
 					const currentUserDocSnap = await getDoc(currentUserDocRef);
 					setCurrentUserDocSnap && setCurrentUserDocSnap(currentUserDocSnap);
@@ -127,19 +124,25 @@ const CompleteProfileForm: FunctionComponent = (): JSX.Element => {
 			console.error(`CompleteProfileForm >> ${e}`);
 		}
 
-		setFirebaseIsloading && setFirebaseIsloading(false);
 		setIsLoading(false);
 
 	}
 
-	if (isComplete && currentUser) {
-		return <Redirect to={`/profile/${currentUser.uid}`} />;
+	useEffect(() => {
+		if (ifProfileComplete(currentUserDocSnap)) {
+			setIsComplete(true);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentUserDocSnap]);
+
+	if (isComplete) {
+		return <Redirect to={`/profile/${currentUser?.uid}`} />;
 	}
 
 	return(
 		<div className="form">
-			<SC.Row><SC.Input type="text" onChange={handleUsernameChange} value={username} /></SC.Row>
-			<SC.Row><SC.Textarea onChange={handleBioChange} value={bio} /></SC.Row>
+			<SC.Row><SC.Input type="text" onChange={handleUsernameChange} value={username} placeholder="Username*" /></SC.Row>
+			<SC.Row><SC.Textarea onChange={handleBioChange} value={bio} placeholder="I love cats, code, and...*" /></SC.Row>
 			<SC.Row><SC.Button primary onClick={handlePostClick}><SC.ButtonText>Save</SC.ButtonText></SC.Button></SC.Row>
 			{response && <SC.Row><ResponseList list={response} /></SC.Row>}
 			{isLoading && <Loading/>}

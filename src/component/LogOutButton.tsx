@@ -12,11 +12,7 @@ import * as SC from './StyledComponents';
 const LogOutButton: FunctionComponent = (): JSX.Element => {
 
 	const {
-		auth,
-		setCurrentUserDocSnap,
-		setCurrentUserDocRef,
-		firebaseIsloading,
-		setFirebaseIsloading
+		auth
 	} = useFirebase();
 
 	/**
@@ -25,7 +21,7 @@ const LogOutButton: FunctionComponent = (): JSX.Element => {
 	 * @returns nothing. 
 	 */
 	const handleLogoutClick = (): void => {
-		logOut(auth, setCurrentUserDocRef, setCurrentUserDocSnap, firebaseIsloading, setFirebaseIsloading);
+		logOut(auth);
 	}
 
 	return <SC.Button onClick={handleLogoutClick}><SC.ButtonText>Logout</SC.ButtonText></SC.Button>;

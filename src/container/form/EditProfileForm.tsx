@@ -19,8 +19,7 @@ const EditProfileForm: FunctionComponent = (): JSX.Element => {
 		currentUser,
 		firestoreDatabase,
 		currentUserDocSnap,
-		setCurrentUserDocSnap,
-		setFirebaseIsloading
+		setCurrentUserDocSnap
 	} = useFirebase();
 
 	const userDataArr = currentUserDocSnap?.data();
@@ -59,7 +58,6 @@ const EditProfileForm: FunctionComponent = (): JSX.Element => {
 			return;
 		}
 
-		setFirebaseIsloading && setFirebaseIsloading(true);
 		setIsLoading(true);
 
 		try {
@@ -130,15 +128,14 @@ const EditProfileForm: FunctionComponent = (): JSX.Element => {
 			console.error(`EditProfileForm >> handlePostClick >> ${e}`);
 		}
 
-		setFirebaseIsloading && setFirebaseIsloading(false);
 		setIsLoading(false);
 
 	}
 
 	return(
 		<div className="form">
-			<SC.Row><SC.Input type="text" onChange={handleUsernameChange} value={username} /></SC.Row>
-			<SC.Row><SC.Textarea onChange={handleBioChange} value={bio} /></SC.Row>
+			<SC.Row><SC.Input type="text" onChange={handleUsernameChange} value={username} placeholder="Username*" /></SC.Row>
+			<SC.Row><SC.Textarea onChange={handleBioChange} value={bio} placeholder="I love cats, code, and...*" /></SC.Row>
 			<SC.Row><SC.Button primary onClick={handlePostClick}><SC.ButtonText>Save</SC.ButtonText></SC.Button></SC.Row>
 			{response && <SC.Row><ResponseList list={response} /></SC.Row>}
 			{isLoading && <Loading/>}

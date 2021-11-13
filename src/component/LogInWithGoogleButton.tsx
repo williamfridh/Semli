@@ -18,9 +18,7 @@ const LogInWithGoogleButton: FunctionComponent = (): JSX.Element => {
 	const {
 		auth,
 		firestoreDatabase,
-		setCurrentUserDocSnap,
-		setCurrentUserDocRef,
-		setFirebaseIsloading
+		setCurrentUserDocSnap
 	} = useFirebase();
 
 	/**
@@ -30,15 +28,12 @@ const LogInWithGoogleButton: FunctionComponent = (): JSX.Element => {
 	 */
 	const checkUser = async (currentUser: User): Promise<void> => {
 
-		setFirebaseIsloading && setFirebaseIsloading(true);
-
 		try {
 
 			const currentUserDocRef 	= doc(firestoreDatabase, 'users', currentUser.uid);
 			const currentUserDocSnap 	= await getDoc(currentUserDocRef);
-			const currentUserDocExists 	= currentUserDocSnap.exists();
 
-			if (currentUserDocExists) {
+			if (currentUserDocSnap.exists()) {
 				
 				// Update user doc.
 				try {
@@ -50,7 +45,7 @@ const LogInWithGoogleButton: FunctionComponent = (): JSX.Element => {
 					await updateDoc(currentUserDocRef, updatedUserData);
 
 				} catch (e) {
-					console.error("Error adding document: ", e);
+					console.error(`LogInWithGoogleButton >> checkUser >> ${e}`);
 				}
 				
 			} else {
@@ -68,41 +63,36 @@ const LogInWithGoogleButton: FunctionComponent = (): JSX.Element => {
 					await setDoc(doc(firestoreDatabase, `users`, currentUser.uid), newUserData);
 
 				} catch (e) {
-					console.error("Error adding document: ", e);
+					console.error(`LogInWithGoogleButton >> checkUser >> ${e}`);
 				}
-
-				
 
 			}
 
 			// Update Firebase context.
-			setCurrentUserDocRef 	&& setCurrentUserDocRef(currentUserDocRef);
-			setCurrentUserDocSnap 	&& setCurrentUserDocSnap(currentUserDocSnap);
+			setCurrentUserDocSnap && setCurrentUserDocSnap(currentUserDocSnap);
 
 		} catch (e) {
 			console.error(`LogInWithGoogleButton >> ${e}`);
 		}
-
-		setFirebaseIsloading && setFirebaseIsloading(false);
 
 	}
 
 	/**
 	 * Trigger Google sign in popup.
 	 */
-	const loginWithGoogleClick = (): void => {
+	const loginWithGoogleClick = async (): Promise<void> => {
 
 		/**
 		 * Create auth provider and let the user log in.
 		 */
 		const authProvider = new GoogleAuthProvider();
 
-		signInWithPopup(auth, authProvider)
-			.then((result) => {
-				checkUser(result.user);
-			}).catch((error) => {
-				console.error(`loginWithGoogleClick >> ${error}`);
-			});
+		try {
+			const res = await signInWithPopup(auth, authProvider);
+			checkUser(res.user);
+		} catch(e) {
+			console.error(`LogInWithGoogleButton >> loginWithGoogleClick >> ${e}`);
+		};
 			
 	}
 	
