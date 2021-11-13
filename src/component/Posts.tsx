@@ -33,9 +33,9 @@ const Posts: FunctionComponent<PostsProps> = (props): JSX.Element=> {
 	 });
 
 	return(
-		<div>
+		<>
 			{isLoading ? <Loading/> : postsCollection}
-		</div>
+		</>
 	);
 
 }

@@ -22,7 +22,7 @@ const UserCompleteProfileDependency: FunctionComponent<UserDependencyProps> = (p
 		return <Redirect to="/profile/complete" />;
 	}
 
-	return <div>{children}</div>;
+	return <>{children}</>;
 
 }
 

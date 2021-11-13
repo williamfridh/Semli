@@ -29,7 +29,7 @@ const UserOnlineDependency: FunctionComponent<UserDependencyProps> = (props): JS
 		if (fallback) {
 			return <Redirect to={fallback} />;
 		} else {
-			return <div></div>; // Hide content.
+			return <></>; // Hide content.
 		}
 	}
 
@@ -64,7 +64,7 @@ const UserOnlineDependency: FunctionComponent<UserDependencyProps> = (props): JS
 	if (!authInitilized || isLoading) {
 		return <Loading />;
 	} else if (currentUser) {
-		return <div>{children}</div>;
+		return <>{children}</>;
 	} else {
 		return triggerFallback();
 	}

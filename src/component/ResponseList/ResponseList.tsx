@@ -12,7 +12,7 @@ const ResponseList: FunctionComponent<ResponseListProps> = (props): JSX.Element=
 		return <StyledResponseList.Response type={type} key={key}>{body}</StyledResponseList.Response>;
 	});
 
-	return <div className="response-list">{responseCollection}</div>;
+	return <>{responseCollection}</>;
 
 }
 

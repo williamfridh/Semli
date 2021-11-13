@@ -29,10 +29,10 @@ const Profile: FunctionComponent<ProfileProps> = (props): JSX.Element=> {
 	}
 
 	return(
-		<div className="profile">
+		<>
 			<SC.Title>{isLoading ? <Loading/> : profileData && profileData.username}</SC.Title>
 			<StyledProfile.Bio>{profileData && profileData.bio}</StyledProfile.Bio>
-		</div>
+		</>
 	);
 
 }

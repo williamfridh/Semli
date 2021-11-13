@@ -20,10 +20,10 @@ const HashtagData: FunctionComponent<HashtagDataProps> = (props): JSX.Element =>
 	}
 
 	return(
-		<div>
+		<>
 			{isLoading && <Loading/>}
 			{hashtagData && <SC.SubTitle>{hashtagData['amount']} post{hashtagData['amount'] !== 1 ? `s` : ``}</SC.SubTitle>}
-		</div>
+		</>
 	);
 
 }

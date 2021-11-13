@@ -54,7 +54,7 @@ const App: FunctionComponent = (): JSX.Element => {
 	};
 	
 	return (
-		<div>
+		<>
 			<GlobalStyles />
 			<ThemeProvider theme={theme}>
 				<FirebaseProvider>
@@ -136,7 +136,7 @@ const App: FunctionComponent = (): JSX.Element => {
 					</BrowserRouter>
 				</FirebaseProvider>
 			</ThemeProvider>
-		</div>
+		</>
 	);
 }
 

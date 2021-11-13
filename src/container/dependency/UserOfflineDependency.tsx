@@ -26,14 +26,14 @@ const UserOfflineDependency: FunctionComponent<UserDependencyProps> = (props): J
 		if (fallback) {
 			return <Redirect to={fallback} />;
 		} else {
-			return <div></div>; // Hide content.
+			return <></>; // Hide content.
 		}
 	}
 
 	if (currentUser) {
 		return triggerFallback();
 	} else {
-		return <div>{children}</div>;
+		return <>{children}</>;
 	}
 
 }
