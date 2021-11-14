@@ -1,5 +1,5 @@
 import { signOut, User } from 'firebase/auth';
-import { DocumentData, DocumentReference, DocumentSnapshot, doc } from '@firebase/firestore';
+import { DocumentData, DocumentReference, DocumentSnapshot, doc, getDoc } from '@firebase/firestore';
 import React, { FunctionComponent, useContext, useEffect, useState } from 'react';
 import { auth, firestoreDatabase } from 'firebase';
 import { LogOutInterface, useFirebaseProps } from 'shared/types';
@@ -48,9 +48,19 @@ export const FirebaseProvider: FunctionComponent = ({ children }) => {
 	useEffect(() => {
 		const unsubscribe = auth.onAuthStateChanged(user => {
 			setCurrentUser(user);
-			setAuthInitilized(true);
 			if (user) {
-				setCurrentUserDocRef(doc(firestoreDatabase, 'users', user.uid));
+				console.log(`FirebaseProvider >> useEffect >> Running...`);
+				const currentUserDocRef = doc(firestoreDatabase, 'users', user.uid);
+				setCurrentUserDocRef(currentUserDocRef);
+				getDoc(currentUserDocRef).then(cureUserDocSnap => {
+					setCurrentUserDocSnap(cureUserDocSnap);
+					setAuthInitilized(true);
+					console.log(`FirebaseProvider >> useEffect >> Success`);
+				}).catch(e => {
+					console.warn(`FirebaseProvider >> useEffect >> ${e}`);
+				});
+			} else {
+				setAuthInitilized(true);
 			}
 		});
 

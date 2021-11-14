@@ -10,7 +10,7 @@ import useUsers from "hook/useUsers";
 const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 
 	const { id, body, hashtags, user } = props;
-	const { firestoreDatabase, currentUserDocRef } = useFirebase();
+	const { firestoreDatabase, currentUserDocRef, currentUserDocSnap } = useFirebase();
 	const postDocRef = doc(firestoreDatabase, `posts/${id}`);
 
 	const {likes, handleClick} = useLikeUnlike(postDocRef, currentUserDocRef, props.likes as PostLikeProps[]);
@@ -39,7 +39,7 @@ const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 			
 			<StyledPost.LikeArea>
 				<StyledPost.Likes><span>Liked by <b>{likes ? likes.length : 0}</b> {likes?.length === 1 ? `person` : `people`}</span></StyledPost.Likes>
-				<StyledPost.LikeDislikeButton>{likeOrDislikeButton}</StyledPost.LikeDislikeButton>
+				{currentUserDocSnap && <StyledPost.LikeDislikeButton>{likeOrDislikeButton}</StyledPost.LikeDislikeButton>}
 			</StyledPost.LikeArea>
 
 		</StyledPost.Container>

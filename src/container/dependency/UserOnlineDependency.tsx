@@ -1,9 +1,8 @@
-import { FunctionComponent, useEffect, useState } from "react";
+import { FunctionComponent } from "react";
 import { Redirect } from "react-router";
 import { useFirebase } from 'context/FirebaseContext';
 import { UserDependencyProps } from "shared/types";
 import Loading from "component/Loading";
-import { getDoc } from "@firebase/firestore";
 
 
 
@@ -17,8 +16,7 @@ import { getDoc } from "@firebase/firestore";
 const UserOnlineDependency: FunctionComponent<UserDependencyProps> = (props): JSX.Element => {
 
 	const { fallback, children } = props;
-	const { currentUser, authInitilized, currentUserDocSnap, setCurrentUserDocSnap, currentUserDocRef } = useFirebase();
-	const [isLoading, setIsLoading] = useState(false);
+	const { currentUser, authInitilized } = useFirebase();
 
 	/**
 	 * Use predecided fallback.
@@ -33,35 +31,7 @@ const UserOnlineDependency: FunctionComponent<UserDependencyProps> = (props): JS
 		}
 	}
 
-	useEffect(() => {
-
-		let isMounted = true;
-
-		if (!currentUserDocSnap) {
-			console.log(`UserOnlineDependency >> useEffect >> Running...`);
-			setIsLoading(true);
-			currentUserDocRef && getDoc(currentUserDocRef).then(res => {
-				if (!isMounted) {
-					console.log(`UserOnlineDependency >> useEffect >> Stoped`);
-					return;
-				}
-				setCurrentUserDocSnap && setCurrentUserDocSnap(res);
-				setIsLoading(false);
-				console.log(`UserOnlineDependency >> useEffect >> Success`);
-			}).catch(e => {
-				console.log(`UserOnlineDependency >> useEffect >> ${e}`);
-			});
-		}
-
-		return()=>{
-			isMounted = false;
-			console.log(`UserOnlineDependency >> useEffect >> Dismounted`);
-		}
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentUserDocRef]);
-
-	if (!authInitilized || isLoading) {
+	if (!authInitilized) {
 		return <Loading />;
 	} else if (currentUser) {
 		return <>{children}</>;

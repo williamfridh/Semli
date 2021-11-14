@@ -76,6 +76,7 @@ const CompleteProfileForm: FunctionComponent = (): JSX.Element => {
 			}
 			if (newResponse.length) {
 				setResponse(newResponse);
+				setIsLoading(false);
 				return;
 			}
 
