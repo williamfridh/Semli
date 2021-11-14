@@ -17,9 +17,9 @@ const TopNavigationBar: FunctionComponent = (): JSX.Element => {
 
 	return <StyledTopNavigationBar.Bar>
 		<StyledTopNavigationBar.Container>
-			{currentUser && <StyledTopNavigationBar.Button to={`/settings`}><MdSettings /></StyledTopNavigationBar.Button>}
+			<StyledTopNavigationBar.ButtonHolder>{currentUser && <StyledTopNavigationBar.Button to={`/settings`}><MdSettings /></StyledTopNavigationBar.Button>}</StyledTopNavigationBar.ButtonHolder>
 			<Logo margin="auto" />
-			<StyledTopNavigationBar.Button to={`/search`}><MdSearch /></StyledTopNavigationBar.Button>
+			<StyledTopNavigationBar.ButtonHolder><StyledTopNavigationBar.Button to={`/search`}><MdSearch /></StyledTopNavigationBar.Button></StyledTopNavigationBar.ButtonHolder>
 		</StyledTopNavigationBar.Container>
 	</StyledTopNavigationBar.Bar>;
 }

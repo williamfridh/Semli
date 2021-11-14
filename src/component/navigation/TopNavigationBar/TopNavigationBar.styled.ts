@@ -21,6 +21,12 @@ export const Container = styled.div`
 	padding					: 0 ${props => props.theme.size.distanceBig}px;
 `;
 
+export const ButtonHolder = styled.div`
+	display					: inline-block;
+	min-width				: 10%;
+	height					: 100%;
+`;
+
 export const Button = styled(NavLink)`
 	text-decoration			: 'none';
 	display					: inline-block;
@@ -28,6 +34,7 @@ export const Button = styled(NavLink)`
 	font-size				: 200%;
 	display					: flex;
     align-items				: center;
+	height					: 100%;
 `;
 
 export const ButtonText = styled.span`
