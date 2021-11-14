@@ -9,12 +9,13 @@ import useUsers from "hook/useUsers";
 
 const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 
-	const { id, body, hashtags, user } = props;
+	const { post } = props;
 	const { firestoreDatabase, currentUserDocRef, currentUserDocSnap } = useFirebase();
-	const postDocRef = doc(firestoreDatabase, `posts/${id}`);
+	const postDocRef = doc(firestoreDatabase, `posts/${post.id}`);
+	const postData = post.data();
 
-	const {likes, handleClick} = useLikeUnlike(postDocRef, currentUserDocRef, props.likes as PostLikeProps[]);
-	const {profileData} = useUsers(user);
+	const {likes, handleClick} = useLikeUnlike(postDocRef, currentUserDocRef, postData.likes as PostLikeProps[]);
+	const {profileData} = useUsers(postData.user);
 
 	const likeOrDislikeButton: React.ReactNode =
 		likes &&
@@ -23,7 +24,7 @@ const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 		<MdFavorite onClick={handleClick} /> :
 		<MdFavoriteBorder onClick={handleClick} />;
 
-	const hashtagsCollection: React.ReactNode = hashtags.map((hashtag: QueryDocumentSnapshot<DocumentData>, key: number) => {
+	const hashtagsCollection: React.ReactNode = postData.hashtags.map((hashtag: QueryDocumentSnapshot<DocumentData>, key: number) => {
 		return <StyledPost.Hashtag to={`/hashtag/${hashtag}`} key={key}><span>#{hashtag}</span></StyledPost.Hashtag>;
 	});
 
@@ -34,7 +35,7 @@ const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 				<StyledPost.Username to={profileData ? `/profile/${profileData.id}` : '/error/404'}>{profileData ? profileData.username : 'Loading...'}</StyledPost.Username>
 			</StyledPost.By>
 			
-			<StyledPost.Body>{body}</StyledPost.Body>
+			<StyledPost.Body>{postData.body}</StyledPost.Body>
 			<StyledPost.HashtagHolder>{hashtagsCollection}</StyledPost.HashtagHolder>
 			
 			<StyledPost.LikeArea>

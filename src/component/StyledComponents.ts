@@ -1,3 +1,4 @@
+import React, { MutableRefObject } from 'react';
 import { NavLink } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
@@ -40,6 +41,7 @@ export const Row = styled.div`
  interface ButtonProps {
 	readonly primary?	: boolean;
 	readonly margin?	: string;
+	readonly ref?		: any;
 };
 export const Button = styled.button<ButtonProps>`
 	width				: 100%;

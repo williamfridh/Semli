@@ -63,11 +63,7 @@ export type ResponseProps = {
 	type			: 'success' | 'error'
 }
 export type PostProps = {
-	id?				: string,
-	body			: QueryDocumentSnapshot<DocumentData>,
-	hashtags		: QueryDocumentSnapshot<DocumentData>[],
-	likes?			: PostLikeProps[],
-	user			: DocumentReference<DocumentData>
+	post			: QueryDocumentSnapshot<DocumentData>
 }
 export type PostLikeProps = (QueryDocumentSnapshot<DocumentData>|DocumentReference<DocumentData>)
 

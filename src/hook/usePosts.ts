@@ -1,27 +1,33 @@
-import { collection, DocumentData, DocumentReference, Firestore, getDoc, getDocs, limit, orderBy, query, QueryDocumentSnapshot, where } from "@firebase/firestore";
+import { collection, DocumentData, DocumentReference, Firestore, getDoc, getDocs, limit, orderBy, OrderByDirection, query, QueryConstraint, QueryDocumentSnapshot, startAfter, startAt, where } from "@firebase/firestore";
 import { useEffect, useState } from "react";
 import { PostProps } from "shared/types";
 
 interface usePostsInterface {
 	(
 		firestoreDatabase	: Firestore,
+		byField				: string,
+		byOrder				: OrderByDirection | undefined,
+		runNumber			: number,
+		postsLimit			: number,
 		userDocRef			?: DocumentReference<DocumentData>,
 		hashtagDocRef		?: DocumentReference<DocumentData>
 	): usePostsReturn
 }
 
 type usePostsReturn = {
-	postsData		: PostProps[],
-    isLoading		: boolean,
-    errorCode		: number|null
+	postsData			: QueryDocumentSnapshot<DocumentData>[],
+    isLoading			: boolean,
+    errorCode			: number|null
 }
 
-const usePosts: usePostsInterface = (firestoreDatabase, userDocRef, hashtagDocRef) => {
+
+const usePosts: usePostsInterface = (firestoreDatabase, byField, byOrder, runNumber, postsLimit, userDocRef, hashtagDocRef) => {
 	
-	const [postsData, setPostsData] 	= useState([] as PostProps[]);
-	const [isLoading, setIsLoading] 	= useState(false);
-	const [errorCode, setErrorCode] 	= useState<number|null>(null);
-	const firestoreCollection = collection(firestoreDatabase, 'posts');
+	const [postsData, setPostsData] 		= useState([] as QueryDocumentSnapshot<DocumentData>[]);
+	const [isLoading, setIsLoading] 		= useState(false);
+	const [errorCode, setErrorCode] 		= useState<number|null>(null);
+
+	const firestoreCollection 				= collection(firestoreDatabase, 'posts');
 
 	useEffect(() => {
 
@@ -34,18 +40,25 @@ const usePosts: usePostsInterface = (firestoreDatabase, userDocRef, hashtagDocRe
 				console.log(`usePosts >> useEffect >> getPosts >> Running`);
 				setIsLoading(true);
 				setErrorCode(null);
+				const orderByShort = orderBy(byField, byOrder);
+				const limitShort = limit(postsLimit);
 				
 				let postQuery;
 				if (userDocRef) {
-					postQuery = query(firestoreCollection, where("user", "==", userDocRef), orderBy("created", "desc"), limit(10));
+					postQuery = query(firestoreCollection, where("user", "==", userDocRef), orderByShort, limitShort);
 				} else if (hashtagDocRef) {
 					const hashtagDocSnap = await getDoc(hashtagDocRef);
 					if (!isMounted) {
 						return;
 					}
-					postQuery = query(firestoreCollection, where("hashtags", "array-contains", hashtagDocSnap.id), orderBy("created", "desc"), limit(10));
+					postQuery = query(firestoreCollection, where("hashtags", "array-contains", hashtagDocSnap.id), orderByShort, limitShort);
 				} else {
-					postQuery = query(firestoreCollection, orderBy("created", "desc"), limit(10));
+					postQuery = query(firestoreCollection, orderByShort, limitShort);
+				}
+
+				if (postsData.length) {
+					console.log(postsData[postsData.length - 1]);
+					postQuery = query(postQuery, startAfter(postsData[postsData.length - 1]));
 				}
 				
 				const querySnap = await getDocs(postQuery);
@@ -55,20 +68,14 @@ const usePosts: usePostsInterface = (firestoreDatabase, userDocRef, hashtagDocRe
 				
 				if (querySnap) {
 				
-					let postsToAdd: PostProps[] = [];
+					let newPostsData: QueryDocumentSnapshot<DocumentData>[] = postsData;
 				
 					querySnap.forEach((post: QueryDocumentSnapshot<DocumentData>) => {
 						const { body, hashtags, likes, user } = post.data();
-						postsToAdd.push({
-							id: post.id,
-							body,
-							hashtags,
-							likes,
-							user
-						});
+						newPostsData.push(post);
 					});
 				
-					setPostsData(postsToAdd);
+					setPostsData(newPostsData);
 					console.log(`usePosts >> useEffect >> getPosts >> Success`);
 
 				} else {
@@ -94,7 +101,7 @@ const usePosts: usePostsInterface = (firestoreDatabase, userDocRef, hashtagDocRe
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [byField, byOrder, runNumber]);
 
 	return {postsData, isLoading, errorCode};
 
