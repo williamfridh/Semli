@@ -16,7 +16,7 @@ export const Body = styled.div`
 `;
 
 export const HashtagHolder = styled.div`
-	margin			: ${props => props.theme.size.distanceBig}px 0 0 0;
+	margin			: ${props => props.theme.size.distanceMedium}px 0 0 0;
 `;
 
 export const Hashtag = styled(NavLink)`
@@ -53,12 +53,35 @@ interface UsernameProps {
 	to						: string;
 }
 export const Username = styled(NavLink)<UsernameProps>`
-	text-decoration	: none;
-	color			: ${props => props.theme.color.textBrightHigh};
-	font-weight		: 700;
-	font-size		: 100%;
+	text-decoration			: none;
+	color					: ${props => props.theme.color.textBrightHigh};
+	font-weight				: 700;
+	font-size				: 100%;
+	grid-column				: 2;
+`;
+export const Timestamp = styled.div`
+	color					: ${props => props.theme.color.textBrightMedium};
+	font-size				: 80%;
+	grid-column				: 2;
 `;
 export const By = styled.div`
-	margin			: 0 0 ${props => props.theme.size.distanceMedium}px 0;
+	margin					: 0 0 ${props => props.theme.size.distanceMedium}px 0;
+	display					: grid;
+	grid-template-columns	: min-content auto;
+	grid-column-gap			: ${props => props.theme.size.distanceMedium}px;
+`;
+export const ByData = styled.div`
+`;
+export const Avatar = styled.div`
+	height			: ${props => props.theme.size.distanceHuge}px;
+	width			: ${props => props.theme.size.distanceHuge}px;
+	overflow		: hidden;
+	grid-column		: 1;
+
+	& > img {
+		max-height	: 100%;
+		max-width	: 100%;
+	}
+	
 `;
 

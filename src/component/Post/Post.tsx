@@ -6,6 +6,7 @@ import * as StyledPost from "./Post.styled";
 import { MdFavoriteBorder, MdFavorite } from 'react-icons/md';
 import useLikeUnlike from "hook/useLikeUnlike";
 import useUsers from "hook/useUsers";
+import anonymousAvatar from "media/anonymous_avatar.png";
 
 const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 
@@ -13,6 +14,9 @@ const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 	const { firestoreDatabase, currentUserDocRef, currentUserDocSnap } = useFirebase();
 	const postDocRef = doc(firestoreDatabase, `posts/${post.id}`);
 	const postData = post.data();
+
+	const dateObject = new Date(1970, 0, 1);
+    dateObject.setSeconds(postData.created.seconds);
 
 	const {likes, handleClick} = useLikeUnlike(postDocRef, currentUserDocRef, postData.likes as PostLikeProps[]);
 	const {profileData} = useUsers(postData.user);
@@ -32,7 +36,11 @@ const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 		<StyledPost.Container ref={refToPass}>
 
 			<StyledPost.By>
-				<StyledPost.Username to={profileData ? `/profile/${profileData.id}` : '/error/404'}>{profileData ? profileData.username : 'Loading...'}</StyledPost.Username>
+				<StyledPost.Avatar>{profileData.avatar || <img src={anonymousAvatar} />}</StyledPost.Avatar>
+				<StyledPost.ByData>
+					<StyledPost.Username to={profileData ? `/profile/${profileData.id}` : '/error/404'}>{profileData ? profileData.username : 'Loading...'}</StyledPost.Username>
+					<StyledPost.Timestamp>{dateObject.getFullYear()}-{dateObject.getMonth()}-{dateObject.getDate()} {dateObject.getHours()}:{dateObject.getMinutes()}</StyledPost.Timestamp>
+				</StyledPost.ByData>
 			</StyledPost.By>
 			
 			<StyledPost.Body>{postData.body}</StyledPost.Body>
