@@ -22,7 +22,7 @@ const Profile: FunctionComponent<ProfileProps> = (props): JSX.Element=> {
 	const { firestoreDatabase } = useFirebase();
 	const userDocRef = doc(firestoreDatabase, 'users', uid);
 
-	const {profileData, isLoading, errorCode} = useUsers(userDocRef);
+	const {profileData, profilePicUrl, isLoading, errorCode} = useUsers(userDocRef);
 
 	if (errorCode) {
 		return <Redirect to={`/error/${errorCode}`} />;
@@ -30,6 +30,7 @@ const Profile: FunctionComponent<ProfileProps> = (props): JSX.Element=> {
 
 	return(
 		<>
+			{profileData.hasProfilePic && <StyledProfile.Pic><img src={profilePicUrl} /></StyledProfile.Pic>}
 			<SC.Title>{isLoading ? <Loading/> : profileData && profileData.username}</SC.Title>
 			<StyledProfile.Bio>{profileData && profileData.bio}</StyledProfile.Bio>
 		</>

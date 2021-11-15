@@ -1,4 +1,5 @@
 import { DocumentData, DocumentReference, getDoc } from "@firebase/firestore";
+import { getDownloadURL, getStorage, ref } from "@firebase/storage";
 import { useEffect, useState } from "react";
 
 interface useUsersInterface {
@@ -9,6 +10,7 @@ interface useUsersInterface {
 
 type useUsersProps = {
 	profileData			: DocumentData,
+	profilePicUrl		: string,
 	isLoading			: boolean,
 	errorCode			: number|null
 }
@@ -16,6 +18,7 @@ type useUsersProps = {
 const useUsers: useUsersInterface = (userDocRef) => {
 	
 	const [profileData, setProfileData] 		= useState({} as DocumentData);
+	const [profilePicUrl, setProfilePicUrl]		= useState('');
 	const [isLoading, setIsLoading] 			= useState(false);
 	const [errorCode, setErrorCode] 			= useState<number|null>(null);
 
@@ -27,26 +30,43 @@ const useUsers: useUsersInterface = (userDocRef) => {
 		setIsLoading(true);
 		setErrorCode(null);
 
-		getDoc(userDocRef).then(userDocSnap => {
+		const getUser = async () => {
 
-			if (!isMounted) {
-				return;
-			}
-			
-			if (userDocSnap.exists()) {
-				setProfileData(userDocSnap.data());
+			try {
+
+				const userDocSnap = await getDoc(userDocRef);
+
+				if (!isMounted) return;
+	
+				const userDocSnapData = userDocSnap.data() as DocumentData;
+				
+				if (userDocSnap.exists()) {
+					setProfileData(userDocSnapData);
+				} else {
+					console.error(`useUsers >> useEffect >> getProfile >> No result.`);
+					throw 404;
+				}
+	
+				if (userDocSnapData.hasProfilePic) {
+					const storage = getStorage();
+					const profilePicRef = ref(storage, `profile_picture/${userDocSnapData.id}.${userDocSnapData.profilePicExtension}`);
+
+					const downloadURL = await getDownloadURL(profilePicRef);
+					setProfilePicUrl(downloadURL);
+				}
+
 				setIsLoading(false);
 				console.log(`useUsers >> useEffect >> getProfile >> Success.`);
-			} else {
-				setErrorCode(404);
-				console.error(`useUsers >> useEffect >> getProfile >> No result.`);
+
+			} catch(e) {
+				setErrorCode(400);
+				setIsLoading(false);
+				console.error(`useUsers >> useEffect >> ${e}`);
 			}
 
-		}).catch(e => {
-			setErrorCode(400);
-			setIsLoading(false);
-			console.error(`useUsers >> useEffect >> ${e}`);
-		});
+		}
+
+		getUser();
 
 		return () => {
 			console.log(`Profile >> useEffect >> Dismounted`);
@@ -56,7 +76,7 @@ const useUsers: useUsersInterface = (userDocRef) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	return {profileData, isLoading, errorCode};
+	return {profileData, profilePicUrl, isLoading, errorCode};
 
 }
 

@@ -1,4 +1,5 @@
-import { collection, doc, DocumentData, getDoc, getDocs, query, QueryDocumentSnapshot, updateDoc, where } from "firebase/firestore";
+import { collection, doc, DocumentData, getDoc, getDocs, query, QueryDocumentSnapshot, updateDoc, where } from "@firebase/firestore";
+import { getStorage, ref, uploadBytes } from "@firebase/storage";
 import { FunctionComponent, useState } from "react";
 import ResponseList from "component/ResponseList";
 import { useFirebase } from "context/FirebaseContext";
@@ -24,10 +25,27 @@ const EditProfileForm: FunctionComponent = (): JSX.Element => {
 
 	const userDataArr = currentUserDocSnap?.data();
 
-	const [username, setUsername] 	= useState(userDataArr?.username);
-	const [bio, setBio] 			= useState(userDataArr?.bio);
-	const [response, setResponse] 	= useState([] as ResponseProps[]);
-	const [isLoading, setIsLoading] = useState(false);
+	const [profilePicPath, setProfilePicPath] 				= useState('');
+	const [profilePicExtension, setProfilePicExtension] 	= useState('');
+	const [profilePic, setProfilePic] 						= useState<File>();
+	const [username, setUsername] 							= useState(userDataArr?.username);
+	const [bio, setBio] 									= useState(userDataArr?.bio);
+	const [response, setResponse] 							= useState([] as ResponseProps[]);
+	const [isLoading, setIsLoading] 						= useState(false);
+
+	/**
+	 * Handle profilePic content change.
+	 * 
+	 * @param e - event to track.
+	 */
+	const handleProfilePicChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+		const val = e.target.value;
+		const valArra = val.split('.');
+		const files = e.target.files;
+		setProfilePicPath(val);
+		setProfilePicExtension(valArra[valArra.length-1]);
+		if (files) setProfilePic(files[0]);
+	}
 
 	/**
 	 * handle username content change.
@@ -75,10 +93,21 @@ const EditProfileForm: FunctionComponent = (): JSX.Element => {
 				newResponse.push({body: 'Bio must be minmum 10 characters long.', type: 'error'});
 				setResponse(newResponse);
 			}
+			// Add avatar requrement?
 			if (newResponse.length) {
 				setResponse(newResponse);
 				return;
 			}
+
+			let profilePicRef;
+			if (profilePicPath) {
+
+				const storage = getStorage();
+				profilePicRef = ref(storage, `profile_picture/${userDataArr?.id}.${profilePicExtension}`);
+				await uploadBytes(profilePicRef, profilePic as File);
+
+			}
+
 
 			const q = query(collection(firestoreDatabase, "users"), where("username", "==", username), where("id", "!=", currentUser.uid));
 			const qSnapshop = await getDocs(q);
@@ -105,9 +134,12 @@ const EditProfileForm: FunctionComponent = (): JSX.Element => {
 				 */
 				try {
 					
+					const hasProfilePic = profilePicPath ? true : false;
 					const updatedUserData: UpdateUserDataProps = {
 						username,
-						bio
+						bio,
+						hasProfilePic,
+						profilePicExtension
 					};
 		
 					await updateDoc(currentUserDocRef, updatedUserData);
@@ -134,6 +166,7 @@ const EditProfileForm: FunctionComponent = (): JSX.Element => {
 
 	return(
 		<>
+			<SC.Row><SC.Input type="file" onChange={handleProfilePicChange} value={profilePicPath} /></SC.Row>
 			<SC.Row><SC.Input type="text" onChange={handleUsernameChange} value={username} placeholder="Username*" /></SC.Row>
 			<SC.Row><SC.Textarea onChange={handleBioChange} value={bio} placeholder="I love cats, code, and...*" /></SC.Row>
 			<SC.Row><SC.Button primary onClick={handlePostClick}><SC.ButtonText>Save</SC.ButtonText></SC.Button></SC.Row>

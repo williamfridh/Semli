@@ -1,5 +1,12 @@
 import styled from "styled-components";
 
+export const Pic = styled.div`
+	text-align		: center;
+	& > img {
+		max-height	: 25vh;
+	}
+`;
+
 export const Bio = styled.div`
 	line-height		: 150%;
 	color			: #fff;

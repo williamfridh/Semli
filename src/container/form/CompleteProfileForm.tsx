@@ -6,6 +6,7 @@ import { ifProfileComplete, useFirebase } from "context/FirebaseContext";
 import { ResponseProps, UpdateUserDataProps } from "shared/types";
 import * as SC from 'component/StyledComponents';
 import Loading from "component/Loading";
+import { getStorage, ref, uploadBytes } from "@firebase/storage";
 
 /**
  * Form to complete account.
@@ -24,11 +25,29 @@ const CompleteProfileForm: FunctionComponent = (): JSX.Element => {
 		currentUserDocRef
 	} = useFirebase();
 
+	const [profilePic, setProfilePic] 						= useState<File>();
+	const [profilePicPath, setProfilePicPath] 				= useState('');
+	const [profilePicExtension, setProfilePicExtension] 	= useState('');
+
 	const [username, setUsername] 		= useState('');
 	const [bio, setBio] 				= useState('');
 	const [isComplete, setIsComplete] 	= useState(false);
 	const [isLoading, setIsLoading] 	= useState(false);
 	const [response, setResponse] 		= useState([] as ResponseProps[]);
+
+	/**
+	 * Handle profilePic content change.
+	 * 
+	 * @param e - event to track.
+	 */
+	const handleProfilePicChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+		const val = e.target.value;
+		const valArra = val.split('.');
+		const files = e.target.files;
+		setProfilePicPath(val);
+		setProfilePicExtension(valArra[valArra.length-1]);
+		if (files) setProfilePic(files[0]);
+	}
 
 	/**
 	 * handle username content change.
@@ -80,6 +99,15 @@ const CompleteProfileForm: FunctionComponent = (): JSX.Element => {
 				return;
 			}
 
+			let profilePicRef;
+			if (profilePicPath) {
+
+				const storage = getStorage();
+				profilePicRef = ref(storage, `profile_picture/${currentUser.uid}.${profilePicExtension}`);
+				await uploadBytes(profilePicRef, profilePic as File);
+
+			}
+
 			const q = query(collection(firestoreDatabase, "users"), where("username", "==", username), where("id", "!=", currentUser.uid));
 			const qSnapshop = await getDocs(q);
 
@@ -104,9 +132,12 @@ const CompleteProfileForm: FunctionComponent = (): JSX.Element => {
 				 */
 				try {
 					
+					const hasProfilePic = profilePicPath ? true : false;
 					const updatedUserData: UpdateUserDataProps = {
 						username,
-						bio
+						bio,
+						hasProfilePic,
+						profilePicExtension
 					};
 		
 					await updateDoc(currentUserDocRef, updatedUserData);
@@ -142,6 +173,7 @@ const CompleteProfileForm: FunctionComponent = (): JSX.Element => {
 
 	return(
 		<>
+			<SC.Row><SC.Input type="file" onChange={handleProfilePicChange} value={profilePicPath} /></SC.Row>
 			<SC.Row><SC.Input type="text" onChange={handleUsernameChange} value={username} placeholder="Username*" /></SC.Row>
 			<SC.Row><SC.Textarea onChange={handleBioChange} value={bio} placeholder="I love cats, code, and...*" /></SC.Row>
 			<SC.Row><SC.Button primary onClick={handlePostClick}><SC.ButtonText>Save</SC.ButtonText></SC.Button></SC.Row>

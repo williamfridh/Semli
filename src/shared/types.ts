@@ -1,5 +1,6 @@
 import { Auth, User } from 'firebase/auth';
 import { DocumentData, DocumentReference, DocumentSnapshot, FieldValue, Firestore, QueryDocumentSnapshot } from 'firebase/firestore';
+import { StorageReference } from 'firebase/storage';
 import React, { SetStateAction } from 'react';
 
 
@@ -50,9 +51,11 @@ export type NewUserDataProps = {
 	lastActive		: FieldValue
 }
 export type UpdateUserDataProps = {
-	lastActive?		: FieldValue,
-	username?		: string,
-	bio?			: string
+	username				?: string,
+	bio						?: string,
+	hasProfilePic			?: boolean,
+	profilePicExtension 	?: string,
+	lastActive				?: FieldValue
 }
 export type UserDependencyProps = {
 	children		: React.ReactNode,

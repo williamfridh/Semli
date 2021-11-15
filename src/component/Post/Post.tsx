@@ -19,7 +19,7 @@ const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
     dateObject.setSeconds(postData.created.seconds);
 
 	const {likes, handleClick} = useLikeUnlike(postDocRef, currentUserDocRef, postData.likes as PostLikeProps[]);
-	const {profileData} = useUsers(postData.user);
+	const {profileData, profilePicUrl} = useUsers(postData.user);
 
 	const likeOrDislikeButton: React.ReactNode =
 		likes &&
@@ -36,7 +36,7 @@ const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 		<StyledPost.Container ref={refToPass}>
 
 			<StyledPost.By>
-				<StyledPost.Avatar>{profileData.avatar || <img src={anonymousAvatar} />}</StyledPost.Avatar>
+				<StyledPost.Avatar>{profileData && <img src={profileData.hasProfilePic ? profilePicUrl : anonymousAvatar} />}</StyledPost.Avatar>
 				<StyledPost.ByData>
 					<StyledPost.Username to={profileData ? `/profile/${profileData.id}` : '/error/404'}>{profileData ? profileData.username : 'Loading...'}</StyledPost.Username>
 					<StyledPost.Timestamp>{dateObject.getFullYear()}-{dateObject.getMonth()}-{dateObject.getDate()} {dateObject.getHours()}:{dateObject.getMinutes()}</StyledPost.Timestamp>
