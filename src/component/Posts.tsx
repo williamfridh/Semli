@@ -1,12 +1,10 @@
-import { FunctionComponent, useCallback, useEffect, useRef, useState } from "react";
+import { FunctionComponent, useCallback, useRef, useState } from "react";
 import { useFirebase } from "context/FirebaseContext";
 import { PostsProps } from "shared/types";
 import Post from "./Post/";
-import Loading from "./Loading";
 import usePosts from "hook/usePosts";
 import { Redirect } from "react-router";
 import { doc, DocumentData, OrderByDirection, QueryDocumentSnapshot } from "@firebase/firestore";
-import * as SC from 'component/StyledComponents';
 import LoadingSmall from "./LoadingSmall";
 
 
@@ -20,57 +18,50 @@ import LoadingSmall from "./LoadingSmall";
 const Posts: FunctionComponent<PostsProps> = (props): JSX.Element=> {
 
 	const { uid, hashtagName } 	= props;
+
 	const { firestoreDatabase } = useFirebase();
+
+	// Filtering hooks.
+	const [fetchLimit, setPostsLimit] 	= useState(2);
+	const [byField, setByField] 		= useState('created');
+	const [byOrder, setByOrder] 		= useState<OrderByDirection|undefined>('desc');
+
+	// Pagination hooks.
+	const moreExists 					= useRef(false);
+	const observer 						= useRef<IntersectionObserver|null>(null);
+	const [runNumber, setNunNumber] 	= useState(1);
+
 	const userDocRef = uid ? doc(firestoreDatabase, `users/${uid}`) : undefined;
 	const hashtagDocRef = hashtagName ? doc(firestoreDatabase, `hashtags/${hashtagName}`) : undefined;
+	
+	const { postsData, isLoading, errorCode } = usePosts(firestoreDatabase, byField, byOrder, runNumber, fetchLimit, userDocRef, hashtagDocRef); // Last hook to call.
 
-	const postsLimit = 1;
-	const [byField, setByField] = useState('created');
-	const [byOrder, setByOrder] = useState<OrderByDirection|undefined>('desc');
-	const moreExists = useRef(false);
-	const [runNumber, setNunNumber] = useState(0);
-	// useReducer ^^^
+	const lastPostElementRefAction = useCallback(node => {
 
-	const { postsData, isLoading, errorCode } = usePosts(firestoreDatabase, byField, byOrder, runNumber, postsLimit, userDocRef, hashtagDocRef);
-
-	const observer = useRef<IntersectionObserver|null>(null);
-	const lastPostElementRef = useCallback(node => {
+		if (observer.current) observer.current.disconnect();
 
 		observer.current = new IntersectionObserver(entries => {
-		  if (entries[0].isIntersecting) {
-			setNunNumber(runNumber + 1);
-		  }
-		})
-		if (node) observer.current.observe(node)
+		  if (entries[0].isIntersecting) setNunNumber(runNumber + 1);
+		});
+		if (node) observer.current.observe(node);
 
-		console.log(node);
 	}, [isLoading, moreExists]);
 
-	const handleClick = () => {
-		setNunNumber(runNumber + 1);
-	}
-
-	if (errorCode) {
-		return <Redirect to={`/error/${errorCode}`} />
-	}
+	if (errorCode) return <Redirect to={`/error/${errorCode}`} />;
 
 	const postsCollection: React.ReactNode = postsData && postsData.map((post: QueryDocumentSnapshot<DocumentData>, key: number) => {
-		console.log(postsData);
-		console.log(postsLimit);
-		if (postsData.length === postsLimit) {
-			moreExists.current = true;
-			//setMoreExists(true);
+		moreExists.current = postsData.length === fetchLimit*runNumber ? true : false;
+		if (moreExists.current && key + 1 === postsData.length) {
+			return <Post post={post} key={key} refToPass={lastPostElementRefAction} />;
 		} else {
-			//setMoreExists(false);
-			moreExists.current = false;
+			return <Post post={post} key={key} />;
 		}
-		return <Post post={post} key={key} />;
 	 });
 
 	return(
 		<>
-			{postsCollection && <SC.Row>{postsCollection}</SC.Row>}
-			{moreExists && isLoading ? <LoadingSmall /> : <SC.Button onClick={handleClick} ref={lastPostElementRef}>Load More</SC.Button>}
+			{postsCollection}
+			{isLoading && <LoadingSmall />}
 		</>
 	);
 

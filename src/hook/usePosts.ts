@@ -1,6 +1,19 @@
-import { collection, DocumentData, DocumentReference, Firestore, getDoc, getDocs, limit, orderBy, OrderByDirection, query, QueryConstraint, QueryDocumentSnapshot, startAfter, startAt, where } from "@firebase/firestore";
+import {
+	collection,
+	DocumentData,
+	DocumentReference,
+	Firestore,
+	getDoc,
+	getDocs,
+	limit,
+	orderBy,
+	OrderByDirection,
+	query,
+	QueryDocumentSnapshot,
+	startAfter,
+	where
+} from "@firebase/firestore";
 import { useEffect, useState } from "react";
-import { PostProps } from "shared/types";
 
 interface usePostsInterface {
 	(
@@ -8,7 +21,7 @@ interface usePostsInterface {
 		byField				: string,
 		byOrder				: OrderByDirection | undefined,
 		runNumber			: number,
-		postsLimit			: number,
+		fetchLimit			: number,
 		userDocRef			?: DocumentReference<DocumentData>,
 		hashtagDocRef		?: DocumentReference<DocumentData>
 	): usePostsReturn
@@ -21,7 +34,7 @@ type usePostsReturn = {
 }
 
 
-const usePosts: usePostsInterface = (firestoreDatabase, byField, byOrder, runNumber, postsLimit, userDocRef, hashtagDocRef) => {
+const usePosts: usePostsInterface = (firestoreDatabase, byField, byOrder, runNumber, fetchLimit, userDocRef, hashtagDocRef) => {
 	
 	const [postsData, setPostsData] 		= useState([] as QueryDocumentSnapshot<DocumentData>[]);
 	const [isLoading, setIsLoading] 		= useState(false);
@@ -41,7 +54,7 @@ const usePosts: usePostsInterface = (firestoreDatabase, byField, byOrder, runNum
 				setIsLoading(true);
 				setErrorCode(null);
 				const orderByShort = orderBy(byField, byOrder);
-				const limitShort = limit(postsLimit);
+				const limitShort = limit(fetchLimit);
 				
 				let postQuery;
 				if (userDocRef) {
@@ -71,7 +84,6 @@ const usePosts: usePostsInterface = (firestoreDatabase, byField, byOrder, runNum
 					let newPostsData: QueryDocumentSnapshot<DocumentData>[] = postsData;
 				
 					querySnap.forEach((post: QueryDocumentSnapshot<DocumentData>) => {
-						const { body, hashtags, likes, user } = post.data();
 						newPostsData.push(post);
 					});
 				

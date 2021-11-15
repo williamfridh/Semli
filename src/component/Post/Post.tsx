@@ -9,7 +9,7 @@ import useUsers from "hook/useUsers";
 
 const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 
-	const { post } = props;
+	const { post, refToPass } = props;
 	const { firestoreDatabase, currentUserDocRef, currentUserDocSnap } = useFirebase();
 	const postDocRef = doc(firestoreDatabase, `posts/${post.id}`);
 	const postData = post.data();
@@ -29,7 +29,7 @@ const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 	});
 
 	return(
-		<StyledPost.Container>
+		<StyledPost.Container ref={refToPass}>
 
 			<StyledPost.By>
 				<StyledPost.Username to={profileData ? `/profile/${profileData.id}` : '/error/404'}>{profileData ? profileData.username : 'Loading...'}</StyledPost.Username>
