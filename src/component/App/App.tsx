@@ -20,9 +20,11 @@ import { ThemeContextProps } from 'shared/types';
 import TopNavigationBar from 'component/navigation/TopNavigationBar';
 import DesktopNavigationBar from 'component/navigation/DesktopNavigationBar';
 
+
+
 const App: FunctionComponent = (): JSX.Element => {
 
-	let theme: ThemeContextProps = {
+	let darkTheme: ThemeContextProps = {
 		color: {
 			background					: '#2B2E4A',
 			boxBackground				: '#1a1b2d',
@@ -56,7 +58,7 @@ const App: FunctionComponent = (): JSX.Element => {
 	return (
 		<>
 			<GlobalStyles />
-			<ThemeProvider theme={theme}>
+			<ThemeProvider theme={darkTheme}>
 				<FirebaseProvider>
 					<BrowserRouter>
 

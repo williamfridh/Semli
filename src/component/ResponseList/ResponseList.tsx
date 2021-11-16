@@ -3,12 +3,11 @@ import { ResponseListProps, ResponseProps } from "shared/types";
 import * as StyledResponseList from './ResponseList.styled';
 
 
-const ResponseList: FunctionComponent<ResponseListProps> = (props): JSX.Element=> {
 
-	const { list } = props;
+const ResponseList: FunctionComponent<ResponseListProps> = ({ list }): JSX.Element=> {
 
-	const responseCollection: React.ReactNode = list.map((obj: ResponseProps, key: number) => {
-		const {body, type} = obj;
+	const responseCollection: React.ReactNode = list.map((responseObj: ResponseProps, key: number) => {
+		const {body, type} = responseObj;
 		return <StyledResponseList.Response type={type} key={key}>{body}</StyledResponseList.Response>;
 	});
 

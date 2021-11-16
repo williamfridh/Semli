@@ -2,6 +2,7 @@ import {
 	collection,
 	DocumentData,
 	DocumentReference,
+	DocumentSnapshot,
 	Firestore,
 	getDoc,
 	getDocs,
@@ -28,7 +29,7 @@ interface usePostsInterface {
 }
 
 type usePostsReturn = {
-	postsData			: QueryDocumentSnapshot<DocumentData>[],
+	postsData			: DocumentSnapshot<DocumentData>[],
     isLoading			: boolean,
     errorCode			: number|null
 }
@@ -36,7 +37,7 @@ type usePostsReturn = {
 
 const usePosts: usePostsInterface = (firestoreDatabase, byField, byOrder, runNumber, fetchLimit, userDocRef, hashtagDocRef) => {
 	
-	const [postsData, setPostsData] 		= useState([] as QueryDocumentSnapshot<DocumentData>[]);
+	const [postsData, setPostsData] 		= useState([] as DocumentSnapshot<DocumentData>[]);
 	const [isLoading, setIsLoading] 		= useState(false);
 	const [errorCode, setErrorCode] 		= useState<number|null>(null);
 
@@ -70,7 +71,6 @@ const usePosts: usePostsInterface = (firestoreDatabase, byField, byOrder, runNum
 				}
 
 				if (postsData.length) {
-					console.log(postsData[postsData.length - 1]);
 					postQuery = query(postQuery, startAfter(postsData[postsData.length - 1]));
 				}
 				
@@ -81,9 +81,9 @@ const usePosts: usePostsInterface = (firestoreDatabase, byField, byOrder, runNum
 				
 				if (querySnap) {
 				
-					let newPostsData: QueryDocumentSnapshot<DocumentData>[] = postsData;
+					let newPostsData: DocumentSnapshot<DocumentData>[] = postsData;
 				
-					querySnap.forEach((post: QueryDocumentSnapshot<DocumentData>) => {
+					querySnap.forEach((post: DocumentSnapshot<DocumentData>) => {
 						newPostsData.push(post);
 					});
 				

@@ -1,78 +1,107 @@
-import { DocumentData, DocumentReference, updateDoc } from "@firebase/firestore";
-import { useState } from "react";
-import { PostLikeProps } from "shared/types";
+import {
+	collection,
+	deleteDoc,
+	doc,
+	DocumentData,
+	Firestore,
+	getDoc,
+	getDocs,
+	QuerySnapshot,
+	serverTimestamp,
+	setDoc
+} from "@firebase/firestore";
+import { useEffect, useState } from "react";
 
 interface useLikeUnlikeInterface {
 	(
-		postDocRef			: DocumentReference<DocumentData>,
-		currentUserDocRef	: DocumentReference<DocumentData>|null,
-		initialValue		: PostLikeProps[]
+		postDocSnap			: DocumentData,
+		currentUserDocSnap	: DocumentData,
+		firestoreDatabase	: Firestore
 	): useLikeUnlikereturn
 }
 
 type useLikeUnlikereturn = {
-	likes			: PostLikeProps[],
-	handleClick		: any,
-	isLoading		: boolean,
-	errorCode		: number|null
+	likeAmount			: number,
+	handleClick			: any,
+	isLoading			: boolean,
+	errorCode			: number|null,
+	likedByCurrentUser	: boolean
 }
 
-const useLikeUnlike: useLikeUnlikeInterface = (postDocRef, currentUserDocRef, initialValue) => {
+const useLikeUnlike: useLikeUnlikeInterface = (postDocSnap, currentUserDocSnap, firestoreDatabase) => {
 
-	const [likes, setLikes]				= useState(initialValue ? initialValue : [] as PostLikeProps[]);
-	const [isLoading, setIsLoading] 	= useState(false);
-	const [errorCode, setErrorCode] 	= useState<number|null>(null);
+	const [likeAmount, setLikeAmount]					= useState(0);
+	const [likedByCurrentUser, setLikedByCurrentUser] 	= useState(false);
+	const [isLoading, setIsLoading] 					= useState(false);
+	const [errorCode, setErrorCode] 					= useState<number|null>(null);
+
+	const likeDocCollection = collection(firestoreDatabase, `${postDocSnap.ref.path}/likes`);
+	const likeDocRef = doc(firestoreDatabase, `${postDocSnap.ref.path}/likes/${currentUserDocSnap.id}`);
 
 	const handleClick = async () => {
 		
-		if (!currentUserDocRef) {
+		if (!currentUserDocSnap) {
 			return;
 		}
 
 		console.log(`useLikeUnlike >> handleClick >> Running...`);
 
-		let newLikes;
-
-		if (likes && likes.find((like: PostLikeProps) => like.id === currentUserDocRef.id)) {
-			newLikes = unlike();
-		} else {
-			newLikes = like();
-		}
-		
-		const postDataUpdate = {
-			likes: newLikes
-		};
-
 		try {
 			setErrorCode(null);
 			setIsLoading(true);
-			await updateDoc(postDocRef, postDataUpdate);
-			setIsLoading(false);
-			setLikes(newLikes as PostLikeProps[]);
+			if (!likedByCurrentUser) {
+				await setDoc(likeDocRef, {
+					userRef: currentUserDocSnap.ref,
+					created: serverTimestamp()
+				});
+				setLikedByCurrentUser(true);
+			} else if (likedByCurrentUser) {
+				await deleteDoc(likeDocRef);
+				setLikedByCurrentUser(false);
+			}
+
+			await fetchLikes();
+
 			console.log(`useLikeUnlike >> handleClick >> Success`);
-		} catch (e) {
+		} catch(e) {
 			setErrorCode(400);
-			setIsLoading(false);
 			console.error(`useLikeUnlike >> handleClick >> ${e}`);
+		} finally {
+			setIsLoading(false);
 		}
 
 	}
 
-	const like = () => {
-		if (!currentUserDocRef) {
-			return;
-		}
-		return [...likes, currentUserDocRef];
+	const fetchLikes = async () => {
+		const likes: QuerySnapshot<DocumentData> = await getDocs(likeDocCollection);
+		let i = 0;
+		likes.forEach((likes: DocumentData) => {
+			i++;
+		});
+		setLikeAmount(i);
 	}
 
-	const unlike = () => {
-		if (!currentUserDocRef) {
-			return;
-		}
-		return likes.filter((like: PostLikeProps) => like.id !== currentUserDocRef.id);
-	}
+	useEffect(() => {
 
-	return {likes, handleClick, isLoading, errorCode};
+		const firstFetch = async () => {
+			try {
+				console.log(`useLikeUnlike >> useEffect >> firstFetch >> Running...`);
+				await fetchLikes();
+				const likeDocSnap = await getDoc(likeDocRef);
+				setLikedByCurrentUser(likeDocSnap.exists());
+			} catch (e) {
+				setErrorCode(400);
+				console.error(`useLikeUnlike >> useEffect >> firstFetch >> ${e}`);
+			} finally {
+				setIsLoading(false);
+			}
+		}
+
+		firstFetch();
+
+	}, []);
+
+	return {likeAmount, handleClick, isLoading, errorCode, likedByCurrentUser};
 
 }
 

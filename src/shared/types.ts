@@ -66,7 +66,7 @@ export type ResponseProps = {
 	type			: 'success' | 'error'
 }
 export type PostProps = {
-	post			: QueryDocumentSnapshot<DocumentData>,
+	post			: DocumentData,
 	refToPass		?: any // Allowed here.
 }
 export type PostLikeProps = (QueryDocumentSnapshot<DocumentData>|DocumentReference<DocumentData>)

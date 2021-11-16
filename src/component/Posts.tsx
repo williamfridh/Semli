@@ -4,7 +4,7 @@ import { PostsProps } from "shared/types";
 import Post from "./Post/";
 import usePosts from "hook/usePosts";
 import { Redirect } from "react-router";
-import { doc, DocumentData, OrderByDirection, QueryDocumentSnapshot } from "@firebase/firestore";
+import { doc, DocumentData, DocumentSnapshot, OrderByDirection, QueryDocumentSnapshot } from "@firebase/firestore";
 import LoadingSmall from "./LoadingSmall";
 
 
@@ -49,7 +49,7 @@ const Posts: FunctionComponent<PostsProps> = (props): JSX.Element=> {
 
 	if (errorCode) return <Redirect to={`/error/${errorCode}`} />;
 
-	const postsCollection: React.ReactNode = postsData && postsData.map((post: QueryDocumentSnapshot<DocumentData>, key: number) => {
+	const postsCollection: React.ReactNode = postsData && postsData.map((post: DocumentSnapshot<DocumentData>, key: number) => {
 		moreExists.current = postsData.length === fetchLimit*runNumber ? true : false;
 		if (moreExists.current && key + 1 === postsData.length) {
 			return <Post post={post} key={key} refToPass={lastPostElementRefAction} />;

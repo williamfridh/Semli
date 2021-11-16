@@ -16,25 +16,24 @@ import { doc } from "@firebase/firestore";
  * @param props - Containing uid (user id.)
  * @returns 
  */
-const Profile: FunctionComponent<ProfileProps> = (props): JSX.Element=> {
+const Profile: FunctionComponent<ProfileProps> = ({ uid }): JSX.Element=> {
 
-	const { uid } = props;
 	const { firestoreDatabase } = useFirebase();
 	const userDocRef = doc(firestoreDatabase, 'users', uid);
+	const {
+		profileData,
+		profilePicUrl,
+		isLoading,
+		errorCode
+	} = useUsers(userDocRef);
 
-	const {profileData, profilePicUrl, isLoading, errorCode} = useUsers(userDocRef);
+	if (errorCode) return <Redirect to={`/error/${errorCode}`} />;
 
-	if (errorCode) {
-		return <Redirect to={`/error/${errorCode}`} />;
-	}
-
-	return(
-		<>
-			{profileData.hasProfilePic && <StyledProfile.Pic><img src={profilePicUrl} /></StyledProfile.Pic>}
-			<SC.Title>{isLoading ? <Loading/> : profileData && profileData.username}</SC.Title>
-			<StyledProfile.Bio>{profileData && profileData.bio}</StyledProfile.Bio>
-		</>
-	);
+	return <>
+		{isLoading || profileData.hasProfilePic && <StyledProfile.Pic><img src={profilePicUrl} /></StyledProfile.Pic>}
+		<SC.Title>{isLoading ? <Loading/> : profileData && profileData.username}</SC.Title>
+		<StyledProfile.Bio>{isLoading && profileData && profileData.bio}</StyledProfile.Bio>
+	</>;
 
 }
 

@@ -7,30 +7,17 @@ import { MdFavoriteBorder, MdFavorite } from 'react-icons/md';
 import useLikeUnlike from "hook/useLikeUnlike";
 import useUsers from "hook/useUsers";
 import anonymousAvatar from "media/anonymous_avatar.png";
+import LikeField from "component/LikeField";
 
 const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 
 	const { post, refToPass } = props;
-	const { firestoreDatabase, currentUserDocRef, currentUserDocSnap } = useFirebase();
-	const postDocRef = doc(firestoreDatabase, `posts/${post.id}`);
-	const postData = post.data();
+	const { currentUserDocSnap } = useFirebase();
+	const postData = post.data() as DocumentData;
+	const {profileData, profilePicUrl} 	= useUsers(postData.user);
 
 	const dateObject = new Date(1970, 0, 1);
     dateObject.setSeconds(postData.created.seconds);
-
-	const {likes, handleClick} = useLikeUnlike(postDocRef, currentUserDocRef, postData.likes as PostLikeProps[]);
-	const {profileData, profilePicUrl} = useUsers(postData.user);
-
-	const likeOrDislikeButton: React.ReactNode =
-		likes &&
-		currentUserDocRef && 
-		likes.find((like: PostLikeProps) => like.id === currentUserDocRef.id) ?
-		<MdFavorite onClick={handleClick} /> :
-		<MdFavoriteBorder onClick={handleClick} />;
-
-	const hashtagsCollection: React.ReactNode = postData.hashtags.map((hashtag: QueryDocumentSnapshot<DocumentData>, key: number) => {
-		return <StyledPost.Hashtag to={`/hashtag/${hashtag}`} key={key}><span>#{hashtag}</span></StyledPost.Hashtag>;
-	});
 
 	return(
 		<StyledPost.Container ref={refToPass}>
@@ -44,12 +31,13 @@ const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 			</StyledPost.By>
 			
 			<StyledPost.Body>{postData.body}</StyledPost.Body>
-			<StyledPost.HashtagHolder>{hashtagsCollection}</StyledPost.HashtagHolder>
+			<StyledPost.HashtagHolder>{
+				postData.hashtags.map((hashtag: QueryDocumentSnapshot<DocumentData>, key: number) => {
+					return <StyledPost.Hashtag to={`/hashtag/${hashtag}`} key={key}><span>#{hashtag}</span></StyledPost.Hashtag>;
+				})
+			}</StyledPost.HashtagHolder>
 			
-			<StyledPost.LikeArea>
-				<StyledPost.Likes><span>Liked by <b>{likes ? likes.length : 0}</b> {likes?.length === 1 ? `person` : `people`}</span></StyledPost.Likes>
-				{currentUserDocSnap && <StyledPost.LikeDislikeButton>{likeOrDislikeButton}</StyledPost.LikeDislikeButton>}
-			</StyledPost.LikeArea>
+			<LikeField currentUserDocSnap={currentUserDocSnap} postDocSnap={post} />
 
 		</StyledPost.Container>
 	);
