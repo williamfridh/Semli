@@ -1,10 +1,14 @@
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
+/**
+ * Containers.
+ */
 export const Container = styled.div`
 	background		: #1a1b2d;
 	padding			: ${props => props.theme.size.distanceBig}px;
 	border-radius	: ${props => props.theme.border.radius}px;
+
 	&:not(:first-child) {
 		margin		: ${props => props.theme.size.distanceBig}px 0 0 0;
 	}
@@ -15,6 +19,9 @@ export const Body = styled.div`
 	line-height		: 150%;
 `;
 
+/**
+ * Hashtags.
+ */
 export const HashtagHolder = styled.div`
 	margin			: ${props => props.theme.size.distanceMedium}px 0 0 0;
 `;
@@ -30,25 +37,9 @@ export const Hashtag = styled(NavLink)`
 	margin			: 0 ${props => props.theme.size.distanceMedium}px ${props => props.theme.size.distanceMedium}px 0;
 `;
 
-export const Likes = styled.div`
-	color			: ${props => props.theme.color.textBrightMedium};
-	display			: flex;
-	align-items		: flex-end;
-`;
-
-export const LikeDislikeButton = styled.div`
-	color			: #fff;
-	font-size		: 200%;
-	display			: flex;
-	justify-content	: flex-end;
-`;
-
-export const LikeArea = styled.div`
-	display					: grid;
-	grid-template-columns	: auto auto;
-	font-size				: 80%;
-`;
-
+/**
+ * Data.
+ */
 interface UsernameProps {
 	to						: string;
 }
