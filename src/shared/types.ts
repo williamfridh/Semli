@@ -166,3 +166,22 @@ export type LogoProps = {
 	size?		: number,
 	margin?		: string
 }
+
+
+
+
+
+
+export interface useSearchFormHookInterFace {
+	(
+		firestoreDatabase : Firestore
+	): useSearchFormHookReturn
+}
+
+type useSearchFormHookReturn = {
+	isLoading					: boolean,
+	errorCode					: number|null,
+	searchResult 				: HashtagProps[],
+	handleSearchTermChange		: HandleSearchTermInterface,
+	searchTerm					: string
+}
