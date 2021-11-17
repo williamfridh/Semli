@@ -4,8 +4,8 @@ import { useFirebase } from "context/FirebaseContext";
 import { PostLikeProps, PostProps } from "shared/types";
 import * as StyledPost from "./Post.styled";
 import { MdFavoriteBorder, MdFavorite } from 'react-icons/md';
-import useLikeUnlike from "hook/useLikeUnlike";
-import useUsers from "hook/useUsers";
+import useLikeHook from "hook/useLikeHook";
+import useUserHook from "hook/useUserHook";
 import anonymousAvatar from "media/anonymous_avatar.png";
 import LikeField from "component/LikeField";
 
@@ -14,7 +14,7 @@ const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 	const { post, refToPass } = props;
 	const { currentUserDocSnap } = useFirebase();
 	const postData = post.data() as DocumentData;
-	const {profileData, profilePicUrl} 	= useUsers(postData.user);
+	const {profileData, profilePicUrl} 	= useUserHook(postData.user);
 
 	const dateObject = new Date(1970, 0, 1);
     dateObject.setSeconds(postData.created.seconds);

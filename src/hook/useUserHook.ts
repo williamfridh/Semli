@@ -2,20 +2,20 @@ import { DocumentData, DocumentReference, getDoc } from "@firebase/firestore";
 import { getDownloadURL, getStorage, ref } from "@firebase/storage";
 import { useEffect, useState } from "react";
 
-interface useUsersInterface {
+interface useUserHookInterface {
 	(
 		userDocRef				: DocumentReference<DocumentData>
-	): useUsersProps
+	): useUserHookProps
 }
 
-type useUsersProps = {
+type useUserHookProps = {
 	profileData			: DocumentData,
 	profilePicUrl		: string,
 	isLoading			: boolean,
 	errorCode			: number|null
 }
 
-const useUsers: useUsersInterface = (userDocRef) => {
+const useUserHook: useUserHookInterface = (userDocRef) => {
 	
 	const [profileData, setProfileData] 		= useState({} as DocumentData);
 	const [profilePicUrl, setProfilePicUrl]		= useState('');
@@ -43,7 +43,7 @@ const useUsers: useUsersInterface = (userDocRef) => {
 				if (userDocSnap.exists()) {
 					setProfileData(userDocSnapData);
 				} else {
-					console.error(`useUsers >> useEffect >> getProfile >> No result.`);
+					console.error(`useUserHook >> useEffect >> getProfile >> No result.`);
 					throw 404;
 				}
 	
@@ -56,12 +56,12 @@ const useUsers: useUsersInterface = (userDocRef) => {
 				}
 
 				setIsLoading(false);
-				console.log(`useUsers >> useEffect >> getProfile >> Success.`);
+				console.log(`useUserHook >> useEffect >> getProfile >> Success.`);
 
 			} catch(e) {
 				setErrorCode(400);
 				setIsLoading(false);
-				console.error(`useUsers >> useEffect >> ${e}`);
+				console.error(`useUserHook >> useEffect >> ${e}`);
 			}
 
 		}
@@ -80,4 +80,4 @@ const useUsers: useUsersInterface = (userDocRef) => {
 
 }
 
-export default useUsers;
+export default useUserHook;

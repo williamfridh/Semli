@@ -5,7 +5,7 @@ import { ProfileProps } from "shared/types";
 import * as SC from 'component/StyledComponents';
 import * as StyledProfile from './Profile.styled';
 import Loading from "component/Loading";
-import useUsers from "hook/useUsers";
+import useUserHook from "hook/useUserHook";
 import { doc } from "@firebase/firestore";
 
 
@@ -25,7 +25,7 @@ const Profile: FunctionComponent<ProfileProps> = ({ uid }): JSX.Element=> {
 		profilePicUrl,
 		isLoading,
 		errorCode
-	} = useUsers(userDocRef);
+	} = useUserHook(userDocRef);
 
 	if (errorCode) return <Redirect to={`/error/${errorCode}`} />;
 

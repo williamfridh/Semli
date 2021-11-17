@@ -3,19 +3,19 @@ import { DocumentData, DocumentReference } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { HashtagProps } from "shared/types";
 
-interface useHashtagsInterface {
+interface useHashtagHookInterface {
 	(
 		hashtagDocRef	: DocumentReference<DocumentData>
-	): useHashtagsReturn
+	): useHashtagHookReturn
 }
 
-type useHashtagsReturn = {
+type useHashtagHookReturn = {
 	hashtagData		: HashtagProps,
 	isLoading		: boolean,
 	errorCode		: null|number
 }
 
-const useHashtags: useHashtagsInterface = (hashtagDocRef) => {
+const useHashtagHook: useHashtagHookInterface = (hashtagDocRef) => {
 
 	const [hashtagData, setHashtagData] 	= useState({} as HashtagProps);
 	const [isLoading, setIsLoading] 		= useState(false);
@@ -25,7 +25,7 @@ const useHashtags: useHashtagsInterface = (hashtagDocRef) => {
 
 		let isMounted = true;
 
-		console.log(`useHashtags >> useEffect >> Running...`);
+		console.log(`useHashtagHook >> useEffect >> Running...`);
 
 		setIsLoading(true);
 		setErrorCode(null);
@@ -48,11 +48,11 @@ const useHashtags: useHashtagsInterface = (hashtagDocRef) => {
 				setHashtagData(newData);
 
 				
-				console.log(`useHashtags >> useEffect >> Success.`);
+				console.log(`useHashtagHook >> useEffect >> Success.`);
 
 			} else {
 				setErrorCode(404);
-				console.error(`useHashtags >> useEffect >> Not found.`);
+				console.error(`useHashtagHook >> useEffect >> Not found.`);
 			}
 
 			
@@ -61,7 +61,7 @@ const useHashtags: useHashtagsInterface = (hashtagDocRef) => {
 		}).catch(e => {
 			setErrorCode(400);
 			setIsLoading(false);
-			console.error(`useHashtags >> useEffect >> ${e}`);
+			console.error(`useHashtagHook >> useEffect >> ${e}`);
 		});
 
 		return() => {
@@ -75,5 +75,5 @@ const useHashtags: useHashtagsInterface = (hashtagDocRef) => {
 
 }
 
-export default useHashtags;
+export default useHashtagHook;
 

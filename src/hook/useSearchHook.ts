@@ -2,20 +2,20 @@ import { collection, DocumentData, Firestore, getDocs, orderBy, query, QueryDocu
 import { useEffect, useState } from "react";
 import { HashtagProps } from "shared/types";
 
-interface useSearchInterFace {
+interface useSearchHookInterFace {
 	(
 		firestoreDatabase	: Firestore,
 		term				: string
-	): useSearchReturn
+	): useSearchHookReturn
 }
 
-type useSearchReturn = {
+type useSearchHookReturn = {
 	isLoading		: boolean,
 	errorCode		: number|null,
 	searchResult 	: HashtagProps[]
 }
 
-const useSearch: useSearchInterFace = (firestoreDatabase, term) => {
+const useSearchHook: useSearchHookInterFace = (firestoreDatabase, term) => {
 
 	const [searchResult, setSearchResult]	= useState([] as HashtagProps[]);
 	const [isLoading, setIsLoading] 		= useState(false);
@@ -32,7 +32,7 @@ const useSearch: useSearchInterFace = (firestoreDatabase, term) => {
 
 		setIsLoading(true);
 		setErrorCode(null);
-		console.log(`useSearch >> useEffect >> Running...`);
+		console.log(`useSearchHook >> useEffect >> Running...`);
 
 		const q = query(collection(firestoreDatabase, "hashtags"), where("name", ">=", term), where("name", "<=", term + '\uf8ff'), orderBy("name", "asc"));
 		getDocs(q).then(qDocSnap => {
@@ -55,11 +55,11 @@ const useSearch: useSearchInterFace = (firestoreDatabase, term) => {
 
 			setSearchResult(hashtagArr);
 			setIsLoading(false);
-			console.log(`useSearch >> useEffect >> Success`);
+			console.log(`useSearchHook >> useEffect >> Success`);
 				
 		}).catch(e => {
 			setErrorCode(400);
-			console.error(`useSearch >> useEffect >> ${e}`);
+			console.error(`useSearchHook >> useEffect >> ${e}`);
 		});
 
 		return() => {
@@ -73,5 +73,5 @@ const useSearch: useSearchInterFace = (firestoreDatabase, term) => {
 
 }
 
-export default useSearch;
+export default useSearchHook;
 

@@ -3,7 +3,7 @@ import { useFirebase } from "context/FirebaseContext";
 import { HandleSearchTermInterface, HashtagProps } from "shared/types";
 import * as SC from 'component/StyledComponents';
 import SvgLoadingDark from "component/icon/LoadingDark";
-import useSearch from "hook/useSearch";
+import useSearchHook from "hook/useSearchHook";
 import { Redirect } from "react-router";
 
 const SearchForm: FunctionComponent = () => {
@@ -14,7 +14,7 @@ const SearchForm: FunctionComponent = () => {
 		isLoading,
 		errorCode,
 		searchResult
-	} = useSearch(firestoreDatabase, term);
+	} = useSearchHook(firestoreDatabase, term);
 
 	const handleTermChange: HandleSearchTermInterface = e => {
 

@@ -12,15 +12,15 @@ import {
 } from "@firebase/firestore";
 import { useEffect, useState } from "react";
 
-interface useLikeUnlikeInterface {
+interface useLikeHookInterface {
 	(
 		postDocSnap			: DocumentData,
 		currentUserDocSnap	: DocumentData,
 		firestoreDatabase	: Firestore
-	): useLikeUnlikereturn
+	): useLikeHookreturn
 }
 
-type useLikeUnlikereturn = {
+type useLikeHookreturn = {
 	likeAmount			: number,
 	handleClick			: any,
 	isLoading			: boolean,
@@ -28,7 +28,7 @@ type useLikeUnlikereturn = {
 	likedByCurrentUser	: boolean
 }
 
-const useLikeUnlike: useLikeUnlikeInterface = (postDocSnap, currentUserDocSnap, firestoreDatabase) => {
+const useLikeHook: useLikeHookInterface = (postDocSnap, currentUserDocSnap, firestoreDatabase) => {
 
 	const [likeAmount, setLikeAmount]					= useState(0);
 	const [likedByCurrentUser, setLikedByCurrentUser] 	= useState(false);
@@ -44,7 +44,7 @@ const useLikeUnlike: useLikeUnlikeInterface = (postDocSnap, currentUserDocSnap, 
 			return;
 		}
 
-		console.log(`useLikeUnlike >> handleClick >> Running...`);
+		console.log(`useLikeHook >> handleClick >> Running...`);
 
 		try {
 			setErrorCode(null);
@@ -62,10 +62,10 @@ const useLikeUnlike: useLikeUnlikeInterface = (postDocSnap, currentUserDocSnap, 
 
 			await fetchLikes();
 
-			console.log(`useLikeUnlike >> handleClick >> Success`);
+			console.log(`useLikeHook >> handleClick >> Success`);
 		} catch(e) {
 			setErrorCode(400);
-			console.error(`useLikeUnlike >> handleClick >> ${e}`);
+			console.error(`useLikeHook >> handleClick >> ${e}`);
 		} finally {
 			setIsLoading(false);
 		}
@@ -85,13 +85,13 @@ const useLikeUnlike: useLikeUnlikeInterface = (postDocSnap, currentUserDocSnap, 
 
 		const firstFetch = async () => {
 			try {
-				console.log(`useLikeUnlike >> useEffect >> firstFetch >> Running...`);
+				console.log(`useLikeHook >> useEffect >> firstFetch >> Running...`);
 				await fetchLikes();
 				const likeDocSnap = await getDoc(likeDocRef);
 				setLikedByCurrentUser(likeDocSnap.exists());
 			} catch (e) {
 				setErrorCode(400);
-				console.error(`useLikeUnlike >> useEffect >> firstFetch >> ${e}`);
+				console.error(`useLikeHook >> useEffect >> firstFetch >> ${e}`);
 			} finally {
 				setIsLoading(false);
 			}
@@ -105,5 +105,5 @@ const useLikeUnlike: useLikeUnlikeInterface = (postDocSnap, currentUserDocSnap, 
 
 }
 
-export default useLikeUnlike;
+export default useLikeHook;
 

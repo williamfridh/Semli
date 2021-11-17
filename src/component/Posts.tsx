@@ -2,7 +2,7 @@ import { FunctionComponent, useCallback, useRef, useState } from "react";
 import { useFirebase } from "context/FirebaseContext";
 import { PostsProps } from "shared/types";
 import Post from "./Post/";
-import usePosts from "hook/usePosts";
+import usePostHook from "hook/usePostHook";
 import { Redirect } from "react-router";
 import { doc, DocumentData, DocumentSnapshot, OrderByDirection, QueryDocumentSnapshot } from "@firebase/firestore";
 import LoadingSmall from "./LoadingSmall";
@@ -34,7 +34,7 @@ const Posts: FunctionComponent<PostsProps> = (props): JSX.Element=> {
 	const userDocRef = uid ? doc(firestoreDatabase, `users/${uid}`) : undefined;
 	const hashtagDocRef = hashtagName ? doc(firestoreDatabase, `hashtags/${hashtagName}`) : undefined;
 	
-	const { postsData, isLoading, errorCode } = usePosts(firestoreDatabase, byField, byOrder, runNumber, fetchLimit, userDocRef, hashtagDocRef); // Last hook to call.
+	const { postsData, isLoading, errorCode } = usePostHook(firestoreDatabase, byField, byOrder, runNumber, fetchLimit, userDocRef, hashtagDocRef); // Last hook to call.
 
 	const lastPostElementRefAction = useCallback(node => {
 

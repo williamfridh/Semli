@@ -16,7 +16,7 @@ import {
 } from "@firebase/firestore";
 import { useEffect, useState } from "react";
 
-interface usePostsInterface {
+interface usePostHookInterface {
 	(
 		firestoreDatabase	: Firestore,
 		byField				: string,
@@ -25,17 +25,17 @@ interface usePostsInterface {
 		fetchLimit			: number,
 		userDocRef			?: DocumentReference<DocumentData>,
 		hashtagDocRef		?: DocumentReference<DocumentData>
-	): usePostsReturn
+	): usePostHookReturn
 }
 
-type usePostsReturn = {
+type usePostHookReturn = {
 	postsData			: DocumentSnapshot<DocumentData>[],
     isLoading			: boolean,
     errorCode			: number|null
 }
 
 
-const usePosts: usePostsInterface = (firestoreDatabase, byField, byOrder, runNumber, fetchLimit, userDocRef, hashtagDocRef) => {
+const usePostHook: usePostHookInterface = (firestoreDatabase, byField, byOrder, runNumber, fetchLimit, userDocRef, hashtagDocRef) => {
 	
 	const [postsData, setPostsData] 		= useState([] as DocumentSnapshot<DocumentData>[]);
 	const [isLoading, setIsLoading] 		= useState(false);
@@ -51,7 +51,7 @@ const usePosts: usePostsInterface = (firestoreDatabase, byField, byOrder, runNum
 
 			try {
 
-				console.log(`usePosts >> useEffect >> getPosts >> Running`);
+				console.log(`usePostHook >> useEffect >> getPosts >> Running`);
 				setIsLoading(true);
 				setErrorCode(null);
 				const orderByShort = orderBy(byField, byOrder);
@@ -88,7 +88,7 @@ const usePosts: usePostsInterface = (firestoreDatabase, byField, byOrder, runNum
 					});
 				
 					setPostsData(newPostsData);
-					console.log(`usePosts >> useEffect >> getPosts >> Success`);
+					console.log(`usePostHook >> useEffect >> getPosts >> Success`);
 
 				} else {
 					console.warn("Posts >> useEffect >> getPosts >> No posts found.");
@@ -98,7 +98,7 @@ const usePosts: usePostsInterface = (firestoreDatabase, byField, byOrder, runNum
 				setIsLoading(false);
 						
 			} catch(e) {
-				console.error(`usePosts >> useEffect >> getPosts >> ${e}`);
+				console.error(`usePostHook >> useEffect >> getPosts >> ${e}`);
 				setIsLoading(false);
 				setErrorCode(400);
 			}
@@ -108,7 +108,7 @@ const usePosts: usePostsInterface = (firestoreDatabase, byField, byOrder, runNum
 		getPosts();
 
 		return() => {
-			console.log(`usePosts >> useEffect >> Dismounted`);
+			console.log(`usePostHook >> useEffect >> Dismounted`);
 			isMounted = false;
 		}
 
@@ -119,5 +119,5 @@ const usePosts: usePostsInterface = (firestoreDatabase, byField, byOrder, runNum
 
 }
 
-export default usePosts;
+export default usePostHook;
 

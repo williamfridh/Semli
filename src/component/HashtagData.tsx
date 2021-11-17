@@ -3,7 +3,7 @@ import { HashtagDataProps } from "shared/types";
 import { useFirebase } from "context/FirebaseContext";
 import Loading from "./Loading";
 import * as SC from 'component/StyledComponents';
-import useHashtags from "hook/useHashtags";
+import useHashtagHook from "hook/useHashtagHook";
 import { Redirect } from "react-router";
 import { doc } from "@firebase/firestore";
 
@@ -19,7 +19,7 @@ const HashtagData: FunctionComponent<HashtagDataProps> = (props): JSX.Element =>
 		hashtagData,
 		isLoading,
 		errorCode
-	} = useHashtags(hashtagDocRef);
+	} = useHashtagHook(hashtagDocRef);
 
 	if (errorCode) return <Redirect to={`/error/${errorCode}`} />;
 
