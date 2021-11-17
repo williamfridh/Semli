@@ -132,11 +132,11 @@ const CompleteProfileForm: FunctionComponent = (): JSX.Element => {
 				 */
 				try {
 					
-					const hasProfilePic = profilePicPath ? true : false;
+					const profilePicExists = profilePicPath ? true : false;
 					const updatedUserData: UpdateUserDataProps = {
 						username,
 						bio,
-						hasProfilePic,
+						profilePicExists,
 						profilePicExtension
 					};
 		

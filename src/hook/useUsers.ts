@@ -47,7 +47,7 @@ const useUsers: useUsersInterface = (userDocRef) => {
 					throw 404;
 				}
 	
-				if (userDocSnapData.hasProfilePic) {
+				if (userDocSnapData.profilePicExists) {
 					const storage = getStorage();
 					const profilePicRef = ref(storage, `profile_picture/${userDocSnapData.id}.${userDocSnapData.profilePicExtension}`);
 

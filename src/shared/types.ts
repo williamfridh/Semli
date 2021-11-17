@@ -53,7 +53,7 @@ export type NewUserDataProps = {
 export type UpdateUserDataProps = {
 	username				?: string,
 	bio						?: string,
-	hasProfilePic			?: boolean,
+	profilePicExists			?: boolean,
 	profilePicExtension 	?: string,
 	lastActive				?: FieldValue
 }
