@@ -23,7 +23,7 @@ const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 		<StyledPost.Container ref={refToPass}>
 
 			<StyledPost.By>
-				<StyledPost.Avatar>{profileData && <img src={profileData.hasProfilePic ? profilePicUrl : anonymousAvatar} />}</StyledPost.Avatar>
+				<StyledPost.Avatar>{profileData && <img src={profileData.profilePicExists ? profilePicUrl : anonymousAvatar} />}</StyledPost.Avatar>
 				<StyledPost.ByData>
 					<StyledPost.Username to={profileData ? `/profile/${profileData.id}` : '/error/404'}>{profileData ? profileData.username : 'Loading...'}</StyledPost.Username>
 					<StyledPost.Timestamp>{dateObject.getFullYear()}-{dateObject.getMonth()}-{dateObject.getDate()} {dateObject.getHours()}:{dateObject.getMinutes()}</StyledPost.Timestamp>
