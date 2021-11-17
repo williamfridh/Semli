@@ -21,7 +21,6 @@ import React, { SetStateAction } from 'react';
 	auth					: Auth,
 	authInitilized			: boolean,
 	currentUser				: User|null,
-	currentUserDocRef		: DocumentReference<DocumentData>|null,
 	currentUserDocSnap		: DocumentSnapshot<DocumentData>|null,
 	setCurrentUserDocSnap	: React.Dispatch<React.SetStateAction<DocumentSnapshot<DocumentData> | null>>|null,
 	firestoreDatabase		: Firestore

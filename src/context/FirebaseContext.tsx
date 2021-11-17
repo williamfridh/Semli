@@ -13,7 +13,6 @@ const FirebaseContext = React.createContext<useFirebaseProps>({
 	auth,
 	authInitilized			: false,
 	currentUser				: null,
-	currentUserDocRef		: null,
 	currentUserDocSnap		: null,
 	setCurrentUserDocSnap	: null,
 	firestoreDatabase
@@ -43,7 +42,6 @@ export const FirebaseProvider: FunctionComponent = ({ children }) => {
 	const [authInitilized, setAuthInitilized] 			= useState(false);
 	const [currentUser, setCurrentUser] 				= useState<User|null>(null);
 	const [currentUserDocSnap, setCurrentUserDocSnap] 	= useState<DocumentSnapshot<DocumentData>|null>(null);
-	const [currentUserDocRef, setCurrentUserDocRef] 	= useState<DocumentReference<DocumentData>|null>(null);
 
 	useEffect(() => {
 		const unsubscribe = auth.onAuthStateChanged(user => {
@@ -51,7 +49,6 @@ export const FirebaseProvider: FunctionComponent = ({ children }) => {
 			if (user) {
 				console.log(`FirebaseProvider >> useEffect >> Running...`);
 				const currentUserDocRef = doc(firestoreDatabase, 'users', user.uid);
-				setCurrentUserDocRef(currentUserDocRef);
 				getDoc(currentUserDocRef).then(cureUserDocSnap => {
 					setCurrentUserDocSnap(cureUserDocSnap);
 					setAuthInitilized(true);
@@ -71,7 +68,6 @@ export const FirebaseProvider: FunctionComponent = ({ children }) => {
 		auth,
 		authInitilized,
 		currentUser,
-		currentUserDocRef,
 		currentUserDocSnap,
 		setCurrentUserDocSnap,
 		firestoreDatabase

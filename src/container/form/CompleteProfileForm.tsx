@@ -1,4 +1,4 @@
-import { getDoc, updateDoc, query, where, collection, getDocs, QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
+import { getDoc, updateDoc, query, where, collection, getDocs, QueryDocumentSnapshot, DocumentData, DocumentReference } from "firebase/firestore";
 import { FunctionComponent, useEffect, useState } from "react";
 import { Redirect } from "react-router";
 import ResponseList from "component/ResponseList";
@@ -6,7 +6,7 @@ import { ifProfileComplete, useFirebase } from "context/FirebaseContext";
 import { ResponseProps, UpdateUserDataProps } from "shared/types";
 import * as SC from 'component/StyledComponents';
 import Loading from "component/Loading";
-import { getStorage, ref, uploadBytes } from "@firebase/storage";
+import { getStorage, ref, StorageReference, uploadBytes } from "@firebase/storage";
 
 /**
  * Form to complete account.
@@ -21,8 +21,7 @@ const CompleteProfileForm: FunctionComponent = (): JSX.Element => {
 		currentUser,
 		firestoreDatabase,
 		currentUserDocSnap,
-		setCurrentUserDocSnap,
-		currentUserDocRef
+		setCurrentUserDocSnap
 	} = useFirebase();
 
 	const [profilePic, setProfilePic] 						= useState<File>();
@@ -31,14 +30,15 @@ const CompleteProfileForm: FunctionComponent = (): JSX.Element => {
 
 	const [username, setUsername] 		= useState('');
 	const [bio, setBio] 				= useState('');
-	const [isComplete, setIsComplete] 	= useState(false);
 	const [isLoading, setIsLoading] 	= useState(false);
 	const [response, setResponse] 		= useState([] as ResponseProps[]);
 
 	/**
-	 * Handle profilePic content change.
+	 * Handle profilePic change.
 	 * 
 	 * @param e - event to track.
+	 * 
+	 * @returns nothing.
 	 */
 	const handleProfilePicChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
 		const val = e.target.value;
@@ -53,6 +53,8 @@ const CompleteProfileForm: FunctionComponent = (): JSX.Element => {
 	 * handle username content change.
 	 * 
 	 * @param e - event to track.
+	 * 
+	 * @returns nothing.
 	 */
 	const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
 		setUsername(e.target.value);
@@ -62,6 +64,8 @@ const CompleteProfileForm: FunctionComponent = (): JSX.Element => {
 	 * Handle bio change.
 	 * 
 	 * @param e - event to track.
+	 * 
+	 * @returns nothing.
 	 */
 	const handleBioChange = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
 		setBio(e.target.value);
@@ -71,80 +75,71 @@ const CompleteProfileForm: FunctionComponent = (): JSX.Element => {
 	 * Handle post click.
 	 * 
 	 * Assemble the new post data and create a new doc in firestoreDatabase.
+	 * 
+	 * @returns nothing.
 	 */
 	const handlePostClick = async (): Promise<void> => {
 
-		if (!currentUser) {
-			return;
-		}
-
-		setIsLoading(true);
+		if (!currentUser) return;
 
 		try {
+
+			setIsLoading(true);
 
 			let newResponse: ResponseProps[] = [];
 
 			/**
 			 * Check input.
 			 */
-			if (username.length < 4) {
-				newResponse.push({body: 'Usernames must be minmum 4 characters long.', type: 'error'});
-			}
-			if (bio.length < 10) {
-				newResponse.push({body: 'Bio must be minmum 10 characters long.', type: 'error'});
-			}
+			if (username.length < 4) newResponse.push({body: 'Usernames must be minmum 4 characters long.', type: 'error'});
+			if (bio.length < 10) newResponse.push({body: 'Bio must be minmum 10 characters long.', type: 'error'});
 			if (newResponse.length) {
 				setResponse(newResponse);
 				setIsLoading(false);
 				return;
 			}
 
-			let profilePicRef;
+			/**
+			 * Upload profile picture.
+			 */
+			let profilePicRef: StorageReference;
 			if (profilePicPath) {
-
 				const storage = getStorage();
 				profilePicRef = ref(storage, `profile_picture/${currentUser.uid}.${profilePicExtension}`);
 				await uploadBytes(profilePicRef, profilePic as File);
-
 			}
 
-			const q = query(collection(firestoreDatabase, "users"), where("username", "==", username), where("id", "!=", currentUser.uid));
-			const qSnapshop = await getDocs(q);
+			const usersQuery = query(collection(firestoreDatabase, "users"), where("username", "==", username), where("id", "!=", currentUser.uid));
+			const usersSnap = await getDocs(usersQuery);
 
-			qSnapshop.forEach((obj: QueryDocumentSnapshot<DocumentData>) => {
-				const foundUsername = obj.data()['username'];
+			usersSnap.forEach((user: QueryDocumentSnapshot<DocumentData>) => {
+				const foundUsername = user.data()['username'];
 				if (foundUsername === username)  {
 					setResponse([{body: 'Username already in use.', type: 'error'}]);
 					return;
 				}
 			});
-
-			/**
-			 * Target, get and check if user doc exists.
-			 */
-			const currentUserDocSnap = currentUserDocRef && await getDoc(currentUserDocRef);
-			const currentUserDocExists = currentUserDocSnap && currentUserDocSnap.exists();
 	
-			if (currentUserDocExists) {
+			if (currentUserDocSnap && currentUserDocSnap.exists()) {
 				
 				/**
 				 * Update user doc.
 				 */
 				try {
 					
-					const profilePicExists = profilePicPath ? true : false;
 					const updatedUserData: UpdateUserDataProps = {
 						username,
 						bio,
-						profilePicExists,
+						'profilePicExists': profilePicPath ? true : false,
 						profilePicExtension
 					};
 		
-					await updateDoc(currentUserDocRef, updatedUserData);
+					await updateDoc(currentUserDocSnap.ref as DocumentReference, updatedUserData);
 
-					// Update data.
-					const currentUserDocSnap = await getDoc(currentUserDocRef);
-					setCurrentUserDocSnap && setCurrentUserDocSnap(currentUserDocSnap);
+					setResponse([{body: 'Saved.', type: 'success'}]);
+
+					const newCurrentUserDocSnap = await getDoc(currentUserDocSnap.ref);
+					setCurrentUserDocSnap && setCurrentUserDocSnap(newCurrentUserDocSnap);
 
 				} catch (e) {
 					console.error("Error adding document: ", e);
@@ -160,17 +155,9 @@ const CompleteProfileForm: FunctionComponent = (): JSX.Element => {
 
 	}
 
-	useEffect(() => {
-		if (ifProfileComplete(currentUserDocSnap)) {
-			setIsComplete(true);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentUserDocSnap]);
-
-	if (isComplete) {
-		return <Redirect to={`/profile/${currentUser?.uid}`} />;
-	}
-
+	/**
+	 * Main content.
+	 */
 	return(
 		<>
 			<SC.Row><SC.Input type="file" onChange={handleProfilePicChange} value={profilePicPath} /></SC.Row>

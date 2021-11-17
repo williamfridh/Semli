@@ -34,7 +34,7 @@ const EditProfileForm: FunctionComponent = (): JSX.Element => {
 	const [isLoading, setIsLoading] 						= useState(false);
 
 	/**
-	 * Handle profilePic content change.
+	 * Handle profilePic change.
 	 * 
 	 * @param e - event to track.
 	 */
@@ -134,11 +134,10 @@ const EditProfileForm: FunctionComponent = (): JSX.Element => {
 				 */
 				try {
 					
-					const profilePicExists = profilePicPath ? true : false;
 					const updatedUserData: UpdateUserDataProps = {
 						username,
 						bio,
-						profilePicExists,
+						'profilePicExists': profilePicPath ? true : false,,
 						profilePicExtension
 					};
 		
