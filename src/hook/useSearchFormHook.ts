@@ -74,12 +74,13 @@ const useSearchFormHook: useSearchFormHookInterFace = (firestoreDatabase) => {
 			});
 
 			setSearchResult(hashtagArr);
-			setIsLoading(false);
 			console.log(`useSearchFormHook >> useEffect >> Success`);
 				
 		}).catch(e => {
 			setErrorCode(400);
 			console.error(`useSearchFormHook >> useEffect >> ${e}`);
+		}).finally(() => {
+			setIsLoading(false);
 		});
 
 		return() => {
