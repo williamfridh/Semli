@@ -30,7 +30,7 @@ const Profile: FunctionComponent<ProfileProps> = ({ uid }): JSX.Element=> {
 	if (errorCode) return <Redirect to={`/error/${errorCode}`} />;
 
 	return <>
-		{isLoading || profileData.profilePicExists && <StyledProfile.Pic><img src={profilePicUrl} /></StyledProfile.Pic>}
+		{isLoading || (profileData.profilePicExists && <StyledProfile.Pic><img src={profilePicUrl} alt={`Profile pic of ${profileData.username}`} /></StyledProfile.Pic>)}
 		<SC.Title>{isLoading ? <Loading/> : profileData && profileData.username}</SC.Title>
 		<StyledProfile.Bio>{isLoading && profileData && profileData.bio}</StyledProfile.Bio>
 	</>;

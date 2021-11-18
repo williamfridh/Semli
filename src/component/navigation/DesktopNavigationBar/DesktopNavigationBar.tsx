@@ -6,13 +6,13 @@ import { useFirebase } from 'context/FirebaseContext';
 
 const DesktopNavigationBar = () => {
 
-	const { currentUser } = useFirebase();
+	const { currentUserDocSnap } = useFirebase();
 	
 	return(
 		<StyledDesktopNavigationBar.Bar>
 			<StyledDesktopNavigationBar.FlexContainer>
 				<Logo />
-				{currentUser ? <OnlineOptions /> : <OfflineOptions />}
+				{currentUserDocSnap ? <OnlineOptions /> : <OfflineOptions />}
 			</StyledDesktopNavigationBar.FlexContainer>
 		</StyledDesktopNavigationBar.Bar>
 	);

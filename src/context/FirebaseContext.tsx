@@ -1,5 +1,5 @@
 import { signOut, User } from 'firebase/auth';
-import { DocumentData, DocumentReference, DocumentSnapshot, doc, getDoc } from '@firebase/firestore';
+import { DocumentData, DocumentSnapshot, doc, getDoc } from '@firebase/firestore';
 import React, { FunctionComponent, useContext, useEffect, useState } from 'react';
 import { auth, firestoreDatabase } from 'firebase';
 import { LogOutInterface, useFirebaseProps } from 'shared/types';

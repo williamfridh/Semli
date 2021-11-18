@@ -20,13 +20,9 @@ const UserInCompleteProfileDependency: FunctionComponent<UserDependencyProps> = 
 		authInitilized
 	} = useFirebase();
 
-	if (!authInitilized) {
-		return <Loading />;
-	}
+	if (!authInitilized) return <Loading />;
 
-	if (currentUserDocSnap && ifProfileComplete(currentUserDocSnap)) {
-		return <Redirect to={`profile/${currentUserDocSnap.id}`} />;
-	}
+	if (currentUserDocSnap && ifProfileComplete(currentUserDocSnap)) return <Redirect to={`profile/${currentUserDocSnap.id}`} />;
 
 	return <>{children}</>;
 

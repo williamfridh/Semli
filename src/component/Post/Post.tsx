@@ -1,10 +1,8 @@
-import { doc, DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
+import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
 import { FunctionComponent } from "react";
 import { useFirebase } from "context/FirebaseContext";
-import { PostLikeProps, PostProps } from "shared/types";
+import { PostProps } from "shared/types";
 import * as StyledPost from "./Post.styled";
-import { MdFavoriteBorder, MdFavorite } from 'react-icons/md';
-import useLikeHook from "hook/useLikeHook";
 import useUserHook from "hook/useUserHook";
 import anonymousAvatar from "media/anonymous_avatar.png";
 import LikeField from "component/LikeField";
@@ -23,7 +21,7 @@ const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 		<StyledPost.Container ref={refToPass}>
 
 			<StyledPost.By>
-				<StyledPost.Avatar>{profileData && <img src={profileData.profilePicExists ? profilePicUrl : anonymousAvatar} />}</StyledPost.Avatar>
+				<StyledPost.Avatar>{profileData && <img src={profileData.profilePicExists ? profilePicUrl : anonymousAvatar} alt={`Profile pic of ${profileData.username}`} />}</StyledPost.Avatar>
 				<StyledPost.ByData>
 					<StyledPost.Username to={profileData ? `/profile/${profileData.id}` : '/error/404'}>{profileData ? profileData.username : 'Loading...'}</StyledPost.Username>
 					<StyledPost.Timestamp>{dateObject.getFullYear()}-{dateObject.getMonth()}-{dateObject.getDate()} {dateObject.getHours()}:{dateObject.getMinutes()}</StyledPost.Timestamp>

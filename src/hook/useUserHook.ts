@@ -2,11 +2,14 @@ import { DocumentData, DocumentReference, getDoc } from "@firebase/firestore";
 import { getDownloadURL, getStorage, ref } from "@firebase/storage";
 import { useEffect, useState } from "react";
 
-interface useUserHookInterface {
-	(
-		userDocRef				: DocumentReference<DocumentData>
-	): useUserHookProps
-}
+
+
+/**
+ * Types.
+ */
+type useUserHookType = (
+	userDocRef			: DocumentReference<DocumentData>
+) => useUserHookProps;
 
 type useUserHookProps = {
 	profileData			: DocumentData,
@@ -15,13 +18,28 @@ type useUserHookProps = {
 	errorCode			: number|null
 }
 
-const useUserHook: useUserHookInterface = (userDocRef) => {
+
+
+/**
+ * Use User Hook.
+ * 
+ * This hook loads user data.
+ * 
+ * @param userDocRef - user for targeting the user.
+ * @returns - A hook.
+ */
+const useUserHook: useUserHookType = (userDocRef) => {
 	
 	const [profileData, setProfileData] 		= useState({} as DocumentData);
 	const [profilePicUrl, setProfilePicUrl]		= useState('');
 	const [isLoading, setIsLoading] 			= useState(false);
 	const [errorCode, setErrorCode] 			= useState<number|null>(null);
 
+
+
+	/**
+	 * This hook triggers on mount and fetches the suer data.
+	 */
 	useEffect(() => {
 
 		let isMounted = true;
@@ -44,7 +62,7 @@ const useUserHook: useUserHookInterface = (userDocRef) => {
 					setProfileData(userDocSnapData);
 				} else {
 					console.error(`useUserHook >> useEffect >> getProfile >> No result.`);
-					throw 404;
+					throw new Error('404');
 				}
 	
 				if (userDocSnapData.profilePicExists) {
@@ -55,13 +73,13 @@ const useUserHook: useUserHookInterface = (userDocRef) => {
 					setProfilePicUrl(downloadURL);
 				}
 
-				setIsLoading(false);
 				console.log(`useUserHook >> useEffect >> getProfile >> Success.`);
 
 			} catch(e) {
 				setErrorCode(400);
-				setIsLoading(false);
 				console.error(`useUserHook >> useEffect >> ${e}`);
+			} finally {
+				setIsLoading(false);
 			}
 
 		}
@@ -76,6 +94,11 @@ const useUserHook: useUserHookInterface = (userDocRef) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+
+
+	/**
+	 * Returns the hook content.
+	 */
 	return {profileData, profilePicUrl, isLoading, errorCode};
 
 }

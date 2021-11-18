@@ -4,7 +4,7 @@ import { PostsProps } from "shared/types";
 import Post from "./Post/";
 import usePostHook from "hook/usePostHook";
 import { Redirect } from "react-router";
-import { doc, DocumentData, DocumentSnapshot, OrderByDirection, QueryDocumentSnapshot } from "@firebase/firestore";
+import { doc, DocumentData, DocumentSnapshot, OrderByDirection } from "@firebase/firestore";
 import LoadingSmall from "./LoadingSmall";
 
 
@@ -22,9 +22,12 @@ const Posts: FunctionComponent<PostsProps> = (props): JSX.Element=> {
 	const { firestoreDatabase } = useFirebase();
 
 	// Filtering hooks.
-	const [fetchLimit, setPostsLimit] 	= useState(2);
-	const [byField, setByField] 		= useState('created');
-	const [byOrder, setByOrder] 		= useState<OrderByDirection|undefined>('desc');
+	// eslint-disable-next-line
+	const [fetchLimit, setPostsLimit] 			= useState(2);
+	// eslint-disable-next-line
+	const [orderByField, setOrderByField] 		= useState('created');
+	// eslint-disable-next-line
+	const [orderByKeyword, setOrderByKeyword] 	= useState<OrderByDirection|undefined>('desc');
 
 	// Pagination hooks.
 	const moreExists 					= useRef(false);
@@ -34,7 +37,7 @@ const Posts: FunctionComponent<PostsProps> = (props): JSX.Element=> {
 	const userDocRef = uid ? doc(firestoreDatabase, `users/${uid}`) : undefined;
 	const hashtagDocRef = hashtagName ? doc(firestoreDatabase, `hashtags/${hashtagName}`) : undefined;
 	
-	const { postsData, isLoading, errorCode } = usePostHook(firestoreDatabase, byField, byOrder, runNumber, fetchLimit, userDocRef, hashtagDocRef); // Last hook to call.
+	const { postsData, isLoading, errorCode } = usePostHook(firestoreDatabase, orderByField, orderByKeyword, runNumber, fetchLimit, userDocRef, hashtagDocRef); // Last hook to call.
 
 	const lastPostElementRefAction = useCallback(node => {
 
@@ -45,6 +48,7 @@ const Posts: FunctionComponent<PostsProps> = (props): JSX.Element=> {
 		});
 		if (node) observer.current.observe(node);
 
+		// eslint-disable-next-line
 	}, [isLoading, moreExists]);
 
 	if (errorCode) return <Redirect to={`/error/${errorCode}`} />;

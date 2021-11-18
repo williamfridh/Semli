@@ -1,8 +1,44 @@
-import { collection, DocumentData, getDocs, orderBy, query, QueryDocumentSnapshot, where } from "@firebase/firestore";
+import {
+	collection,
+	DocumentData,
+	Firestore,
+	getDocs,
+	orderBy,
+	query,
+	QueryDocumentSnapshot,
+	where
+} from "@firebase/firestore";
 import { useEffect, useState } from "react";
-import { HandleSearchTermInterface, HashtagProps, useSearchFormHookInterFace } from "shared/types";
+import { HandleSearchTermInterface, HashtagProps } from "shared/types";
 
-const useSearchFormHook: useSearchFormHookInterFace = (firestoreDatabase) => {
+
+
+/**
+ * Types.
+ */
+type useSearchFormHookType = (
+	firestoreDatabase : Firestore
+) => useSearchFormHookReturn;
+
+type useSearchFormHookReturn = {
+	isLoading					: boolean,
+	errorCode					: number|null,
+	searchResult 				: HashtagProps[],
+	handleSearchTermChange		: HandleSearchTermInterface,
+	searchTerm					: string
+}
+
+
+
+/**
+ * Use Seach Form Hook.
+ * 
+ * A hook created to seperate logic from a view.
+ * 
+ * @param firestoreDatabase - Firestore session.1
+ * @returns - a hook.
+ */
+const useSearchFormHook: useSearchFormHookType = (firestoreDatabase) => {
 	
 	const [searchResult, setSearchResult]	= useState([] as HashtagProps[]);
 	const [isLoading, setIsLoading] 		= useState(false);
@@ -59,7 +95,7 @@ const useSearchFormHook: useSearchFormHookInterFace = (firestoreDatabase) => {
 		
 		getDocs(q).then(qDocSnap => {
 
-			if (!isMounted)  return;
+			if (!isMounted) return;
 		
 			let hashtagArr: HashtagProps[] = [];
 		
@@ -87,6 +123,7 @@ const useSearchFormHook: useSearchFormHookInterFace = (firestoreDatabase) => {
 			isMounted = false;
 		}
 
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [searchTerm]);
 
 

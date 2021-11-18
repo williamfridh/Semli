@@ -1,9 +1,9 @@
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent } from "react";
 import { useFirebase } from "context/FirebaseContext";
-import { HandleSearchTermInterface, HashtagProps } from "shared/types";
+import { HashtagProps } from "shared/types";
 import * as SC from 'component/StyledComponents';
 import SvgLoadingDark from "component/icon/LoadingDark";
-import useSearchFormHook from "hook/useSearchFormHook";
+import useSearchFormHook from "container/form/SearchForm/useSearchFormHook";
 import { Redirect } from "react-router";
 
 const SearchForm: FunctionComponent = () => {

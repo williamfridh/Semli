@@ -20,51 +20,34 @@ import {
 
 
 /**
- * Types & interfaces.
+ * Types.
  */
-interface UseCreatePostFormHookInterface {
-	(
-		currentUserDocSnap	: DocumentSnapshot<DocumentData> | null,
-		firestoreDatabase	: Firestore
-	): UseCreatePostFormHookReturn
-}
+type UseCreatePostFormHookType = (
+	currentUserDocSnap	: DocumentSnapshot<DocumentData> | null,
+	firestoreDatabase	: Firestore
+) => UseCreatePostFormHookReturn;
 
 type UseCreatePostFormHookReturn = {
 	body					: string,
-	handleBodyChange		: HandleBodyChangeInterface,
+	handleBodyChange		: HandleBodyChangeType,
 	hashtags				: string,
-	handleHashtagChange		: HandleHashtagChangeInterface,
-	handlePostClick			: HandlePostClickInterface,
+	handleHashtagChange		: HandleHashtagChangeType,
+	handlePostClick			: HandlePostClickType,
 	isLoading				: boolean,
 	isComplete				: boolean,
 	response				: ResponseProps[]
 }
 
-interface HandleBodyChangeInterface {
-	(
-		e: React.ChangeEvent<HTMLTextAreaElement>
-	): void
-}
+type HandleBodyChangeType = (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 
-interface HandleHashtagChangeInterface {
-	(
-		e: React.ChangeEvent<HTMLTextAreaElement>
-	): void
-}
+type HandleHashtagChangeType = (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 
-interface HashtagStringToArrayInterface {
-	(
-		string: string
-	): string[]
-}
+type HashtagStringToArrayType = (string: string) => string[];
 
-interface HandlePostClickInterface {
-	(): Promise<void>
-}
+type HandlePostClickType = () => Promise<void>;
 
-interface CheckProvidedDataInterface {
-	(): boolean
-}
+type CheckProvidedDataType = () => boolean;
+
 
 
 /**
@@ -76,7 +59,7 @@ interface CheckProvidedDataInterface {
  * @param firestoreDatabase - a Firestore instance.
  * @returns a hook.
  */
-const useCreatePostFormHook: UseCreatePostFormHookInterface = (currentUserDocSnap, firestoreDatabase) => {
+const useCreatePostFormHook: UseCreatePostFormHookType = (currentUserDocSnap, firestoreDatabase) => {
 
 	const [body, setBody] 					= useState('');
 	const [hashtags, setHashtag] 			= useState('');
@@ -85,17 +68,21 @@ const useCreatePostFormHook: UseCreatePostFormHookInterface = (currentUserDocSna
 	const [isComplete, setIsComplete] 		= useState(false);
 	const [response, setResponse] 			= useState([] as ResponseProps[]);
 
+
+
 	/**
 	 * Handle body content change.
 	 * 
 	 * @param e - event to track.
 	 * @returns - nothing.
 	 */
-	const handleBodyChange: HandleBodyChangeInterface = e => {
+	const handleBodyChange: HandleBodyChangeType = e => {
 		const val = e.target.value;
 		if (val.length > 200) return;
 		setBody(val);
 	}
+
+
 
 	/**
 	 * Handle hashtags change.
@@ -103,12 +90,14 @@ const useCreatePostFormHook: UseCreatePostFormHookInterface = (currentUserDocSna
 	 * @param e - event to track.
 	 * @returns - nothing.
 	 */
-	const handleHashtagChange: HandleHashtagChangeInterface = e => {
+	const handleHashtagChange: HandleHashtagChangeType = e => {
 		const val = e.target.value;
 		if (val.length > 150) return;
 		setHashtag(val);
 		setHashtagArr(hashtagStringToArray(val));
 	}
+
+
 
 	/**
 	 * Turn a string containing hashtags into an array of hashtags.
@@ -116,7 +105,7 @@ const useCreatePostFormHook: UseCreatePostFormHookInterface = (currentUserDocSna
 	 * @param - strin containing hashtags.
 	 * @returns - the hashtags split into a array.
 	 */
-	const hashtagStringToArray: HashtagStringToArrayInterface = string => {
+	const hashtagStringToArray: HashtagStringToArrayType = string => {
 
 		if (!string) return [];
 
@@ -133,12 +122,14 @@ const useCreatePostFormHook: UseCreatePostFormHookInterface = (currentUserDocSna
 		return newHashtagsArr;
 	}
 
+
+
 	/**
 	 * Check provided data.
 	 * 
 	 * @returns - true|false depending on check result.
 	 */
-	const checkProvidedData: CheckProvidedDataInterface = () => {
+	const checkProvidedData: CheckProvidedDataType = () => {
 
 		let newResponse: ResponseProps[] = [];
 
@@ -162,6 +153,8 @@ const useCreatePostFormHook: UseCreatePostFormHookInterface = (currentUserDocSna
 
 	}
 
+
+
 	/**
 	 * Handle post click.
 	 * 
@@ -169,13 +162,11 @@ const useCreatePostFormHook: UseCreatePostFormHookInterface = (currentUserDocSna
 	 * 
 	 * @return - a promise that returns void.
 	 */
-	const handlePostClick: HandlePostClickInterface = async () => {
+	const handlePostClick: HandlePostClickType = async () => {
 
 		try {
 
-			if (!currentUserDocSnap) return;
-
-			if (!checkProvidedData()) return;
+			if (!currentUserDocSnap || !checkProvidedData()) return;
 
 			setIsLoading(true);
 
@@ -200,6 +191,8 @@ const useCreatePostFormHook: UseCreatePostFormHookInterface = (currentUserDocSna
 		}
 
 	}
+
+
 
 	/**
 	 * Save hashtag in database.
@@ -236,6 +229,8 @@ const useCreatePostFormHook: UseCreatePostFormHookInterface = (currentUserDocSna
 
 	}
 
+
+	
 	/**
 	 * Return all of which is required.
 	 */

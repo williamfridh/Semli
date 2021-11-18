@@ -4,7 +4,7 @@ import ResponseList from "component/ResponseList";
 import { useFirebase } from "context/FirebaseContext";
 import * as SC from 'component/StyledComponents';
 import Loading from "component/Loading";
-import useCreatePostFormHook from "hook/useCreatePostFormHook";
+import useCreatePostFormHook from "container/form/CreatePostForm/useCreatePostFormHook";
 
 const CreatePostForm: FunctionComponent = (): JSX.Element => {
 
