@@ -12,7 +12,7 @@ import Loading from "component/Loading";
  * @param children - Automatixaly provided by React. Children of the element to be returned on a successful check.
  * @returns the children.
  */
-const UserCompleteProfileDependency: FunctionComponent<UserDependencyProps> = (props): JSX.Element => {
+const UserInCompleteProfileDependency: FunctionComponent<UserDependencyProps> = (props): JSX.Element => {
 
 	const { children } = props;
 	const {
@@ -22,11 +22,11 @@ const UserCompleteProfileDependency: FunctionComponent<UserDependencyProps> = (p
 
 	if (!authInitilized) return <Loading />;
 
-	if (currentUserDocSnap && !ifProfileComplete(currentUserDocSnap)) return <Redirect to="/profile/complete" />;
+	if (currentUserDocSnap && ifProfileComplete(currentUserDocSnap)) return <Redirect to={`profile/${currentUserDocSnap.id}`} />;
 
 	return <>{children}</>;
 
 }
 
-export default UserCompleteProfileDependency;
+export default UserInCompleteProfileDependency;
 

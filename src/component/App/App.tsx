@@ -16,9 +16,45 @@ import ErrorPage from 'container/page/ErrorPage';
 import { FunctionComponent } from 'react';
 import GlobalStyles from 'shared/GlobalStyles';
 import { ThemeProvider } from 'styled-components';
-import { ThemeContextProps } from 'shared/types';
 import TopNavigationBar from 'component/navigation/TopNavigationBar';
 import DesktopNavigationBar from 'component/navigation/DesktopNavigationBar';
+import UserInCompleteProfileDependency from 'container/dependency/UserInCompleteProfileDependency';
+
+
+
+/**
+ * Types.
+ */
+type ThemeContextProps = {
+	color: {
+		background					: string,
+		boxBackground				: string,
+		inputBackground				: string,
+		callToAction				: string,
+		callToActionDark			: string,
+		textBrightHigh				: string,
+		textBrightMedium			: string,
+		textDarkHigh				: string
+		darkCover					: string,
+		bar							: string,
+		success						: string,
+		error						: string
+	},
+	size: {
+		container					: number,
+		distanceHuge				: number,
+		distanceBig					: number,
+		distanceMedium				: number,
+		distanceSmall				: number,
+		topNavigationBarMobile		: number,
+		bottomNavigationBarMobile	: number,
+		desktopNavigationBar		: number
+	},
+	border: {
+		radius						: number,
+		width						: number
+	}
+};
 
 
 
@@ -94,7 +130,9 @@ const App: FunctionComponent = (): JSX.Element => {
 							{/* ======== COMPLETE ACCOUNT ======== */}
 							<Route exact path="/profile/complete">
 								<UserOnlineDependency fallback="/log_in">
-									<CompleteAccountPage />
+									<UserInCompleteProfileDependency>
+										<CompleteAccountPage />
+									</UserInCompleteProfileDependency>
 								</UserOnlineDependency>
 							</Route>
 

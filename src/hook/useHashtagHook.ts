@@ -3,38 +3,55 @@ import { DocumentData, DocumentReference } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { HashtagProps } from "shared/types";
 
-interface useHashtagsInterface {
-	(
-		hashtagDocRef	: DocumentReference<DocumentData>
-	): useHashtagsReturn
-}
 
-type useHashtagsReturn = {
+
+/**
+ * Types.
+ */
+type useHashtagHookType = (
+	hashtagDocRef	: DocumentReference<DocumentData>
+) => useHashtagHookReturn;
+
+type useHashtagHookReturn = {
 	hashtagData		: HashtagProps,
 	isLoading		: boolean,
 	errorCode		: null|number
 }
 
-const useHashtags: useHashtagsInterface = (hashtagDocRef) => {
+
+
+/**
+ * Hashtag hook.
+ * 
+ * This hook can load hashtag data.
+ * 
+ * @param hashtagDocRef - Firestore reference to hashtag doc.
+ * @returns - a hook.
+ */
+const useHashtagHook: useHashtagHookType = (hashtagDocRef) => {
 
 	const [hashtagData, setHashtagData] 	= useState({} as HashtagProps);
 	const [isLoading, setIsLoading] 		= useState(false);
 	const [errorCode, setErrorCode] 		= useState<number|null>(null);
 
+
+	
+	/**
+	 * This useEffect hook handels the magic.
+	 * On mount, it fetches the hashtag data from Firestore.
+	 */
 	useEffect(() => {
 
 		let isMounted = true;
 
-		console.log(`useHashtags >> useEffect >> Running...`);
+		console.log(`useHashtagHook >> useEffect >> Running...`);
 
 		setIsLoading(true);
 		setErrorCode(null);
 
 		getDoc(hashtagDocRef).then(hashtahDocSnap => {
 
-			if (!isMounted) {
-				return false;
-			}
+			if (!isMounted) return false;
 
 			if (hashtahDocSnap.exists()) {
 
@@ -46,22 +63,19 @@ const useHashtags: useHashtagsInterface = (hashtagDocRef) => {
 				}
 
 				setHashtagData(newData);
-
 				
-				console.log(`useHashtags >> useEffect >> Success.`);
+				console.log(`useHashtagHook >> useEffect >> Success.`);
 
 			} else {
 				setErrorCode(404);
-				console.error(`useHashtags >> useEffect >> Not found.`);
+				console.error(`useHashtagHook >> useEffect >> Not found.`);
 			}
-
-			
-			setIsLoading(false);
 
 		}).catch(e => {
 			setErrorCode(400);
+			console.error(`useHashtagHook >> useEffect >> ${e}`);
+		}).finally(() => {
 			setIsLoading(false);
-			console.error(`useHashtags >> useEffect >> ${e}`);
 		});
 
 		return() => {
@@ -75,5 +89,5 @@ const useHashtags: useHashtagsInterface = (hashtagDocRef) => {
 
 }
 
-export default useHashtags;
+export default useHashtagHook;
 

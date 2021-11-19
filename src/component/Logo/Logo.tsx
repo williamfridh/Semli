@@ -1,6 +1,17 @@
 import { FunctionComponent } from 'react';
-import { LogoProps } from 'shared/types';
 import * as StyledLogo from './Logo.styled';
+
+
+
+/**
+ * Types.
+ */
+type LogoProps = {
+	size?		: number,
+	margin?		: string
+}
+
+
 
 /**
  * Logo element.

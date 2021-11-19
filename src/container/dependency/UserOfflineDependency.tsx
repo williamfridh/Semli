@@ -15,7 +15,7 @@ import { UserDependencyProps } from "shared/types";
 const UserOfflineDependency: FunctionComponent<UserDependencyProps> = (props): JSX.Element => {
 
 	const { fallback, children } = props;
-	const { currentUser } = useFirebase();
+	const { currentUserDocSnap } = useFirebase();
 
 	/**
 	 * Use predecided fallback.
@@ -30,7 +30,7 @@ const UserOfflineDependency: FunctionComponent<UserDependencyProps> = (props): J
 		}
 	}
 
-	if (currentUser) {
+	if (currentUserDocSnap) {
 		return triggerFallback();
 	} else {
 		return <>{children}</>;

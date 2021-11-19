@@ -1,12 +1,21 @@
 import { FunctionComponent } from "react";
 import { Redirect } from "react-router";
 import { useFirebase } from "context/FirebaseContext";
-import { ProfileProps } from "shared/types";
 import * as SC from 'component/StyledComponents';
 import * as StyledProfile from './Profile.styled';
 import Loading from "component/Loading";
-import useUsers from "hook/useUsers";
+import useUserHook from "hook/useUserHook";
 import { doc } from "@firebase/firestore";
+import anonymousAvatar from "media/anonymous_avatar.png";
+
+
+
+/**
+ * Types.
+ */
+type ProfileProps =  {
+	uid				: string
+}
 
 
 
@@ -25,12 +34,12 @@ const Profile: FunctionComponent<ProfileProps> = ({ uid }): JSX.Element=> {
 		profilePicUrl,
 		isLoading,
 		errorCode
-	} = useUsers(userDocRef);
+	} = useUserHook(userDocRef);
 
 	if (errorCode) return <Redirect to={`/error/${errorCode}`} />;
 
 	return <>
-		{isLoading || profileData.profilePicExists && <StyledProfile.Pic><img src={profilePicUrl} /></StyledProfile.Pic>}
+		{isLoading || <StyledProfile.Pic><img src={profilePicUrl ? profilePicUrl : anonymousAvatar} alt={`Profile pic of ${profileData.username}`} /></StyledProfile.Pic>}
 		<SC.Title>{isLoading ? <Loading/> : profileData && profileData.username}</SC.Title>
 		<StyledProfile.Bio>{isLoading && profileData && profileData.bio}</StyledProfile.Bio>
 	</>;

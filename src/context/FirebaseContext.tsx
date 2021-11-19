@@ -1,8 +1,27 @@
-import { signOut, User } from 'firebase/auth';
-import { DocumentData, DocumentReference, DocumentSnapshot, doc, getDoc } from '@firebase/firestore';
+import { signOut, User, Auth } from '@firebase/auth';
+import { DocumentData, DocumentSnapshot, doc, getDoc, Firestore } from '@firebase/firestore';
 import React, { FunctionComponent, useContext, useEffect, useState } from 'react';
 import { auth, firestoreDatabase } from 'firebase';
-import { LogOutInterface, useFirebaseProps } from 'shared/types';
+
+
+
+/**
+ * Types.
+ */
+type useFirebaseProps = {
+	auth					: Auth,
+	authInitilized			: boolean,
+	currentUser				: User|null,
+	currentUserDocSnap		: DocumentSnapshot<DocumentData>|null,
+	setCurrentUserDocSnap	: React.Dispatch<React.SetStateAction<DocumentSnapshot<DocumentData> | null>>|null,
+	firestoreDatabase		: Firestore
+}
+
+interface LogOutInterface {
+	(
+		auth: Auth
+	): Promise<void>
+};
 
 
 
@@ -13,7 +32,6 @@ const FirebaseContext = React.createContext<useFirebaseProps>({
 	auth,
 	authInitilized			: false,
 	currentUser				: null,
-	currentUserDocRef		: null,
 	currentUserDocSnap		: null,
 	setCurrentUserDocSnap	: null,
 	firestoreDatabase
@@ -43,7 +61,6 @@ export const FirebaseProvider: FunctionComponent = ({ children }) => {
 	const [authInitilized, setAuthInitilized] 			= useState(false);
 	const [currentUser, setCurrentUser] 				= useState<User|null>(null);
 	const [currentUserDocSnap, setCurrentUserDocSnap] 	= useState<DocumentSnapshot<DocumentData>|null>(null);
-	const [currentUserDocRef, setCurrentUserDocRef] 	= useState<DocumentReference<DocumentData>|null>(null);
 
 	useEffect(() => {
 		const unsubscribe = auth.onAuthStateChanged(user => {
@@ -51,7 +68,6 @@ export const FirebaseProvider: FunctionComponent = ({ children }) => {
 			if (user) {
 				console.log(`FirebaseProvider >> useEffect >> Running...`);
 				const currentUserDocRef = doc(firestoreDatabase, 'users', user.uid);
-				setCurrentUserDocRef(currentUserDocRef);
 				getDoc(currentUserDocRef).then(cureUserDocSnap => {
 					setCurrentUserDocSnap(cureUserDocSnap);
 					setAuthInitilized(true);
@@ -71,7 +87,6 @@ export const FirebaseProvider: FunctionComponent = ({ children }) => {
 		auth,
 		authInitilized,
 		currentUser,
-		currentUserDocRef,
 		currentUserDocSnap,
 		setCurrentUserDocSnap,
 		firestoreDatabase

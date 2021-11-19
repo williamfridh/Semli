@@ -4,14 +4,14 @@ import { MdHome, MdAccountCircle, MdAddCircleOutline, MdSettings, MdSearch } fro
 
 const OnlineOptions = () => {
 
-	const { currentUser } = useFirebase();
+	const { currentUserDocSnap } = useFirebase();
 
 	return (
 		<StyledDesktopNavigationBar.ButtonHolder>
 			<StyledDesktopNavigationBar.Button to={`/`}><MdHome /></StyledDesktopNavigationBar.Button>
 			<StyledDesktopNavigationBar.Button to={`/search`}><MdSearch /></StyledDesktopNavigationBar.Button>
 			<StyledDesktopNavigationBar.Button to={`/post/create`}><MdAddCircleOutline /></StyledDesktopNavigationBar.Button>
-			<StyledDesktopNavigationBar.Button to={`/profile/${currentUser?.uid}`}><MdAccountCircle /></StyledDesktopNavigationBar.Button>
+			<StyledDesktopNavigationBar.Button to={`/profile/${currentUserDocSnap?.id}`}><MdAccountCircle /></StyledDesktopNavigationBar.Button>
 			<StyledDesktopNavigationBar.Button to={`/settings`}><MdSettings /></StyledDesktopNavigationBar.Button>
 		</StyledDesktopNavigationBar.ButtonHolder>
 	);

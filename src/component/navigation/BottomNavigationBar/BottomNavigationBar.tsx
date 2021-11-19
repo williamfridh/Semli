@@ -13,9 +13,9 @@ import OfflineOptions from 'component/navigation/BottomNavigationBar/collections
  */
 const BottomNavigationBar: FunctionComponent = (): JSX.Element => {
 
-	const { currentUser } = useFirebase();
+	const { currentUserDocSnap } = useFirebase();
 
-	return <StyledBottomNavigationBar.Bar>{currentUser ? <OnlineOptions /> : <OfflineOptions />}</StyledBottomNavigationBar.Bar>;
+	return <StyledBottomNavigationBar.Bar>{currentUserDocSnap ? <OnlineOptions /> : <OfflineOptions />}</StyledBottomNavigationBar.Bar>;
 }
 
 export default BottomNavigationBar;

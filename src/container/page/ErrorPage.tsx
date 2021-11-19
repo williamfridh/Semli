@@ -1,7 +1,15 @@
 import { FunctionComponent } from "react";
 import { useParams } from "react-router-dom";
-import { ErrorPageParams } from "shared/types";
 import * as SC from 'component/StyledComponents';
+
+
+
+/**
+ * Types.
+ */
+type ErrorPageParams = {
+	code			: string
+}
 
 const ErrorPage: FunctionComponent = (): JSX.Element => {
 

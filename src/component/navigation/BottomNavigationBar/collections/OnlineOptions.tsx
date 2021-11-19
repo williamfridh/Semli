@@ -4,13 +4,13 @@ import { MdHome, MdAccountCircle, MdAddCircleOutline } from 'react-icons/md';
 
 const OnlineOptions = () => {
 
-	const { currentUser } = useFirebase();
+	const { currentUserDocSnap } = useFirebase();
 
 	return (
 		<StyledBottomNavigationBar.Container>
 			<StyledBottomNavigationBar.Button to={`/`}><MdHome /></StyledBottomNavigationBar.Button>
 			<StyledBottomNavigationBar.Button to={`/post/create`}><MdAddCircleOutline /></StyledBottomNavigationBar.Button>
-			<StyledBottomNavigationBar.Button to={`/profile/${currentUser?.uid}`}><MdAccountCircle /></StyledBottomNavigationBar.Button>
+			<StyledBottomNavigationBar.Button to={`/profile/${currentUserDocSnap?.id}`}><MdAccountCircle /></StyledBottomNavigationBar.Button>
 		</StyledBottomNavigationBar.Container>
 	);
 

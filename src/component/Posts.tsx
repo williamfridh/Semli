@@ -1,11 +1,20 @@
 import { FunctionComponent, useCallback, useRef, useState } from "react";
 import { useFirebase } from "context/FirebaseContext";
-import { PostsProps } from "shared/types";
 import Post from "./Post/";
-import usePosts from "hook/usePosts";
+import usePostHook from "hook/usePostHook";
 import { Redirect } from "react-router";
-import { doc, DocumentData, DocumentSnapshot, OrderByDirection, QueryDocumentSnapshot } from "@firebase/firestore";
+import { doc, DocumentData, DocumentSnapshot, OrderByDirection } from "@firebase/firestore";
 import LoadingSmall from "./LoadingSmall";
+
+
+
+/**
+ * Types.
+ */
+type PostsProps = {
+	uid?			: string,
+	hashtagName?	: string
+}
 
 
 
@@ -22,9 +31,12 @@ const Posts: FunctionComponent<PostsProps> = (props): JSX.Element=> {
 	const { firestoreDatabase } = useFirebase();
 
 	// Filtering hooks.
-	const [fetchLimit, setPostsLimit] 	= useState(2);
-	const [byField, setByField] 		= useState('created');
-	const [byOrder, setByOrder] 		= useState<OrderByDirection|undefined>('desc');
+	// eslint-disable-next-line
+	const [fetchLimit, setPostsLimit] 			= useState(2);
+	// eslint-disable-next-line
+	const [orderByField, setOrderByField] 		= useState('created');
+	// eslint-disable-next-line
+	const [orderByKeyword, setOrderByKeyword] 	= useState<OrderByDirection|undefined>('desc');
 
 	// Pagination hooks.
 	const moreExists 					= useRef(false);
@@ -34,7 +46,7 @@ const Posts: FunctionComponent<PostsProps> = (props): JSX.Element=> {
 	const userDocRef = uid ? doc(firestoreDatabase, `users/${uid}`) : undefined;
 	const hashtagDocRef = hashtagName ? doc(firestoreDatabase, `hashtags/${hashtagName}`) : undefined;
 	
-	const { postsData, isLoading, errorCode } = usePosts(firestoreDatabase, byField, byOrder, runNumber, fetchLimit, userDocRef, hashtagDocRef); // Last hook to call.
+	const { postsData, isLoading, errorCode } = usePostHook(firestoreDatabase, orderByField, orderByKeyword, runNumber, fetchLimit, userDocRef, hashtagDocRef); // Last hook to call.
 
 	const lastPostElementRefAction = useCallback(node => {
 
@@ -45,16 +57,17 @@ const Posts: FunctionComponent<PostsProps> = (props): JSX.Element=> {
 		});
 		if (node) observer.current.observe(node);
 
+		// eslint-disable-next-line
 	}, [isLoading, moreExists]);
 
 	if (errorCode) return <Redirect to={`/error/${errorCode}`} />;
 
-	const postsCollection: React.ReactNode = postsData && postsData.map((post: DocumentSnapshot<DocumentData>, key: number) => {
+	const postsCollection: React.ReactNode = postsData && postsData.map((postDocSnap: DocumentSnapshot<DocumentData>, key: number) => {
 		moreExists.current = postsData.length === fetchLimit*runNumber ? true : false;
 		if (moreExists.current && key + 1 === postsData.length) {
-			return <Post post={post} key={key} refToPass={lastPostElementRefAction} />;
+			return <Post postDocSnap={postDocSnap} key={key} refToPass={lastPostElementRefAction} />;
 		} else {
-			return <Post post={post} key={key} />;
+			return <Post postDocSnap={postDocSnap} key={key} />;
 		}
 	 });
 

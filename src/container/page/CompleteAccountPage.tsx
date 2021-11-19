@@ -1,12 +1,12 @@
 import LogOutButton from "component/LogOutButton";
-import CompleteProfileForm from "container/form/CompleteProfileForm";
+import EditProfileForm from "container/form/EditProfileForm";
 import * as SC from 'component/StyledComponents';
 
 const CompleteAccountPage = () => {
 	return(
 		<SC.Page>
 			<SC.Title>Complete Account</SC.Title>
-			<CompleteProfileForm />
+			<EditProfileForm />
 			<LogOutButton />
 		</SC.Page>
 	);
