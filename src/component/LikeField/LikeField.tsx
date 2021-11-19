@@ -1,6 +1,7 @@
-import { DocumentData } from '@firebase/firestore';
+import { DocumentData, DocumentSnapshot } from '@firebase/firestore';
 import { useFirebase } from 'context/FirebaseContext';
 import useLikeHook from 'hook/useLikeHook';
+import { FunctionComponent } from 'react';
 import { MdFavorite, MdFavoriteBorder } from 'react-icons/md';
 import * as StyledLikeField from './LikeField.styled';
 
@@ -9,10 +10,10 @@ import * as StyledLikeField from './LikeField.styled';
 /**
  * Types.
  */
-type LikeFieldType = (
-	postDocSnap				: DocumentData,
-	currentUserDocSnap		: DocumentData
-) => JSX.Element;
+type LikeFieldProps = {
+	postDocSnap				: DocumentSnapshot<DocumentData>,
+	currentUserDocSnap		: DocumentSnapshot<DocumentData> | null
+};
 
 
 /**
@@ -22,7 +23,7 @@ type LikeFieldType = (
  * @param currentUserDocSnap - current user Firebase doc snap.
  * @returns a element called "like area" containing a like/unlike button and a like counter.
  */
-const LikeField: LikeFieldType = ( postDocSnap, currentUserDocSnap ) => {
+const LikeField: FunctionComponent<LikeFieldProps> = ({ postDocSnap, currentUserDocSnap }) => {
 
 	const { firestoreDatabase } = useFirebase();
 

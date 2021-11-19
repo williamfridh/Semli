@@ -1,8 +1,18 @@
 import { useParams } from "react-router";
 import Posts from "component/Posts";
 import Profile from "component/Profile";
-import { ProfilePageParamsProps } from "shared/types";
 import * as SC from 'component/StyledComponents';
+
+
+
+/**
+ * Types.
+ */
+type ProfilePageParamsProps = {
+	uid				: string;
+}
+
+
 
 /**
  * User profile page element.

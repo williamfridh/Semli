@@ -1,6 +1,15 @@
 import { FunctionComponent } from "react";
-import { ResponseListProps, ResponseProps } from "shared/types";
+import { ResponseProps } from "shared/types";
 import * as StyledResponseList from './ResponseList.styled';
+
+
+
+/**
+ * Types.
+ */
+type ResponseListProps = {
+	list			: ResponseProps[]
+}
 
 
 

@@ -3,6 +3,7 @@ import {
 	deleteDoc,
 	doc,
 	DocumentData,
+	DocumentSnapshot,
 	Firestore,
 	getDoc,
 	getDocs,
@@ -18,8 +19,8 @@ import { useEffect, useState } from "react";
  * Types.
  */
 type useLikeHookType = (
-	postDocSnap			: DocumentData,
-	currentUserDocSnap	: DocumentData,
+	postDocSnap			: DocumentSnapshot<DocumentData>,
+	currentUserDocSnap	: DocumentSnapshot<DocumentData>|null,
 	firestoreDatabase	: Firestore
 ) => useLikeHookreturn;
 
@@ -57,7 +58,7 @@ const useLikeHook: useLikeHookType = (postDocSnap, currentUserDocSnap, firestore
 	const [errorCode, setErrorCode] 					= useState<number|null>(null);
 
 	const likeDocCollection = collection(firestoreDatabase, `${postDocSnap.ref.path}/likes`);
-	const likeDocRef = doc(firestoreDatabase, `${postDocSnap.ref.path}/likes/${currentUserDocSnap.id}`);
+	const likeDocRef = doc(firestoreDatabase, `${postDocSnap.ref.path}/likes/${currentUserDocSnap?.id}`);
 
 
 

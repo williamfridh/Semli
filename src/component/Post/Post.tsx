@@ -1,17 +1,21 @@
-import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
+import { DocumentData, QueryDocumentSnapshot, DocumentSnapshot } from "@firebase/firestore";
 import { FunctionComponent } from "react";
 import { useFirebase } from "context/FirebaseContext";
-import { PostProps } from "shared/types";
 import * as StyledPost from "./Post.styled";
 import useUserHook from "hook/useUserHook";
 import anonymousAvatar from "media/anonymous_avatar.png";
 import LikeField from "component/LikeField";
 
-const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 
-	const { post, refToPass } = props;
+type PostProps = {
+	postDocSnap		: DocumentSnapshot<DocumentData>,
+	refToPass		?: any // Allowed here.
+}
+
+const Post: FunctionComponent<PostProps> = ({ postDocSnap, refToPass }): JSX.Element => {
+	
 	const { currentUserDocSnap } = useFirebase();
-	const postData = post.data() as DocumentData;
+	const postData = postDocSnap.data() as DocumentData;
 	const {profileData, profilePicUrl} 	= useUserHook(postData.user);
 
 	const dateObject = new Date(1970, 0, 1);
@@ -35,7 +39,7 @@ const Post: FunctionComponent<PostProps> = (props): JSX.Element => {
 				})
 			}</StyledPost.HashtagHolder>
 			
-			<LikeField currentUserDocSnap={currentUserDocSnap} postDocSnap={post} />
+			<LikeField postDocSnap={postDocSnap} currentUserDocSnap={currentUserDocSnap} />
 
 		</StyledPost.Container>
 	);

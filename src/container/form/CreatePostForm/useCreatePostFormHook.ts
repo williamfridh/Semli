@@ -7,20 +7,17 @@ import {
 	setDoc,
 	DocumentSnapshot,
 	Firestore,
-	DocumentData
+	DocumentData,
+	DocumentReference,
+	FieldValue
 } from "@firebase/firestore";
 import { useState } from "react";
-import {
-	HashtagName,
-	NewPostDataProps,
-	ResponseProps,
-	SaveHashtagInterface
-} from "shared/types";
+import { ResponseProps } from "shared/types";
 
 
 
 /**
- * Types.
+ * Types & interfaces.
  */
 type UseCreatePostFormHookType = (
 	currentUserDocSnap	: DocumentSnapshot<DocumentData> | null,
@@ -47,6 +44,20 @@ type HashtagStringToArrayType = (string: string) => string[];
 type HandlePostClickType = () => Promise<void>;
 
 type CheckProvidedDataType = () => boolean;
+
+interface SaveHashtagInterface {
+	(
+		hashtag: string,
+		newPostDocRef: DocumentReference<DocumentData>
+	): Promise<void>
+}
+
+type NewPostDataProps = {
+	body			: string,
+	hashtags		: string[]|null,
+	created			: FieldValue,
+	user			: DocumentReference<DocumentData>
+}
 
 
 
@@ -110,7 +121,7 @@ const useCreatePostFormHook: UseCreatePostFormHookType = (currentUserDocSnap, fi
 		if (!string) return [];
 
 		let newHashtagsArr: string[] = string.toLocaleLowerCase().replaceAll(" ", "").replaceAll("å", "a").replaceAll("ä", "a").replaceAll("ö", "o").split('#');
-		newHashtagsArr = newHashtagsArr.filter((hashtag: HashtagName) => hashtag !== "");
+		newHashtagsArr = newHashtagsArr.filter((hashtag: string) => hashtag !== "");
 
 		if (typeof newHashtagsArr !== 'object') return [];
 
@@ -179,7 +190,7 @@ const useCreatePostFormHook: UseCreatePostFormHookType = (currentUserDocSnap, fi
 
 			const newPostDocRef = await addDoc(collection(firestoreDatabase, `posts`), newPostData);
 
-			hashtagArr.forEach((hashtag: HashtagName) => saveHashtag(hashtag, newPostDocRef));
+			hashtagArr.forEach((hashtag: string) => saveHashtag(hashtag, newPostDocRef));
 
 			setIsLoading(false);
 			setIsComplete(true);

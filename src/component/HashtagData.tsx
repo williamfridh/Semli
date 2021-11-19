@@ -1,11 +1,19 @@
 import { FunctionComponent } from "react";
-import { HashtagDataProps } from "shared/types";
 import { useFirebase } from "context/FirebaseContext";
 import Loading from "./Loading";
 import * as SC from 'component/StyledComponents';
 import useHashtagHook from "hook/useHashtagHook";
 import { Redirect } from "react-router";
 import { doc } from "@firebase/firestore";
+
+
+
+/**
+ * Types.
+ */
+type HashtagDataProps = {
+	hashtagName: string
+}
 
 
 

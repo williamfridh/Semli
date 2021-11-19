@@ -1,8 +1,27 @@
-import { signOut, User } from 'firebase/auth';
-import { DocumentData, DocumentSnapshot, doc, getDoc } from '@firebase/firestore';
+import { signOut, User, Auth } from '@firebase/auth';
+import { DocumentData, DocumentSnapshot, doc, getDoc, Firestore } from '@firebase/firestore';
 import React, { FunctionComponent, useContext, useEffect, useState } from 'react';
 import { auth, firestoreDatabase } from 'firebase';
-import { LogOutInterface, useFirebaseProps } from 'shared/types';
+
+
+
+/**
+ * Types.
+ */
+type useFirebaseProps = {
+	auth					: Auth,
+	authInitilized			: boolean,
+	currentUser				: User|null,
+	currentUserDocSnap		: DocumentSnapshot<DocumentData>|null,
+	setCurrentUserDocSnap	: React.Dispatch<React.SetStateAction<DocumentSnapshot<DocumentData> | null>>|null,
+	firestoreDatabase		: Firestore
+}
+
+interface LogOutInterface {
+	(
+		auth: Auth
+	): Promise<void>
+};
 
 
 

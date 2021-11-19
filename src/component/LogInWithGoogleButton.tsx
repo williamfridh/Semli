@@ -1,10 +1,22 @@
 import { GoogleAuthProvider, signInWithPopup, User } from 'firebase/auth';
-import { doc, getDoc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, serverTimestamp, setDoc, updateDoc, FieldValue } from '@firebase/firestore';
 import { FunctionComponent } from 'react';
 import { useFirebase } from 'context/FirebaseContext';
-import { NewUserDataProps, UpdateUserDataProps } from 'shared/types';
+import { UpdateUserDataProps } from 'shared/types';
 import * as SC from './StyledComponents';
 import { AiOutlineGoogle } from 'react-icons/ai';
+
+
+
+/**
+ * Types.
+ */
+type NewUserDataProps = {
+	id				: string,
+	email			: string|null,
+	created			: FieldValue,
+	lastActive		: FieldValue
+}
 
 
 

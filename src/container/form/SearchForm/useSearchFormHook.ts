@@ -9,16 +9,14 @@ import {
 	where
 } from "@firebase/firestore";
 import { useEffect, useState } from "react";
-import { HandleSearchTermInterface, HashtagProps } from "shared/types";
+import { HashtagProps } from "shared/types";
 
 
 
 /**
  * Types.
  */
-type useSearchFormHookType = (
-	firestoreDatabase : Firestore
-) => useSearchFormHookReturn;
+type useSearchFormHookType = (firestoreDatabase : Firestore) => useSearchFormHookReturn;
 
 type useSearchFormHookReturn = {
 	isLoading					: boolean,
@@ -27,6 +25,8 @@ type useSearchFormHookReturn = {
 	handleSearchTermChange		: HandleSearchTermInterface,
 	searchTerm					: string
 }
+
+type HandleSearchTermInterface  = (e: React.ChangeEvent<HTMLInputElement>) => void;
 
 
 
