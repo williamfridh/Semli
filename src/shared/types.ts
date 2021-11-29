@@ -14,8 +14,7 @@ export type UpdateUserDataProps = {
 	username				?: string,
 	bio						?: string,
 	profilePicExists			?: boolean,
-	profilePicExtension 	?: string,
-	lastActive				?: FieldValue
+	profilePicExtension 	?: string
 }
 export type UserDependencyProps = {
 	children		: React.ReactNode,

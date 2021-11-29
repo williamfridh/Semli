@@ -9,7 +9,12 @@ import {
 	updateDoc,
 	where
 } from "@firebase/firestore";
-import { getStorage, ref, uploadBytes } from "@firebase/storage";
+import {
+	getStorage,
+	ref,
+	uploadBytes,
+	deleteObject
+} from "@firebase/storage";
 import { useState } from "react";
 import { ResponseProps, UpdateUserDataProps } from "shared/types";
 import { DocumentSnapshot } from "firebase/firestore";
@@ -64,8 +69,8 @@ const useEditProfileFormHook: UseEditProfileFormHookType = (firestoreDatabase, c
 	const [profilePicPath, setProfilePicPath] 				= useState('');
 	const [profilePicExtension, setProfilePicExtension] 	= useState('');
 	const [profilePic, setProfilePic] 						= useState<File>();
-	const [username, setUsername] 							= useState(userDataArr?.username);
-	const [bio, setBio] 									= useState(userDataArr?.bio);
+	const [username, setUsername] 							= useState(userDataArr?.username || '');
+	const [bio, setBio] 									= useState(userDataArr?.bio || '');
 	const [response, setResponse] 							= useState([] as ResponseProps[]);
 	const [isLoading, setIsLoading] 						= useState(false);
 
@@ -95,7 +100,9 @@ const useEditProfileFormHook: UseEditProfileFormHookType = (firestoreDatabase, c
 	 * @returns - nothing
 	 */
 	const handleUsernameChange: HandleUsernameChangeType = e => {
-		setUsername(e.target.value);
+		let val = e.target.value;
+		val = val.toLocaleUpperCase();
+		setUsername(val);
 	}
 
 
@@ -138,11 +145,15 @@ const useEditProfileFormHook: UseEditProfileFormHookType = (firestoreDatabase, c
 
 			// handle profile pic.
 			if (profilePicPath) {
-				// Remove old profile pic.
-				// Upload profile pic if any.
 				const storage = getStorage();
-				const profilePicRef = ref(storage, `profile_picture/${userDataArr?.id}.${profilePicExtension}`);
-				await uploadBytes(profilePicRef, profilePic as File);
+				// Remove old profile pic.
+				if (userDataArr?.profilePicExtension) {
+					const oldProfilePicRef = ref(storage, `profile_picture/${userDataArr?.id}.${userDataArr?.profilePicExtension}`);
+					await deleteObject(oldProfilePicRef);
+				}
+				// Upload profile pic if any.
+				const newProfilePicRef = ref(storage, `profile_picture/${userDataArr?.id}.${profilePicExtension}`);
+				await uploadBytes(newProfilePicRef, profilePic as File);
 			}
 
 			const userQuery = query(collection(firestoreDatabase, "users"), where("username", "==", username), where("id", "!=", currentUserDocSnap.id));
@@ -159,28 +170,20 @@ const useEditProfileFormHook: UseEditProfileFormHookType = (firestoreDatabase, c
 			/**
 			 * Update user doc.
 			 */
-			try {
-					
-				const updatedUserData: UpdateUserDataProps = {
-					username,
-					bio,
-					'profilePicExists': profilePicPath ? true : false,
-					profilePicExtension
-				};
+			const updatedUserData: UpdateUserDataProps = {
+				username,
+				bio,
+				'profilePicExists': profilePicPath ? true : false,
+				profilePicExtension
+			};
 		
-				await updateDoc(currentUserDocSnap.ref, updatedUserData);
+			await updateDoc(currentUserDocSnap.ref, updatedUserData);
 
-				setResponse([{body: 'Saved.', type: 'success'}]);
+			setResponse([{body: 'Saved.', type: 'success'}]);
 
-				// Update data.
-				const newCurrentUserDocSnap = await getDoc(currentUserDocSnap.ref);
-				setCurrentUserDocSnap && setCurrentUserDocSnap(newCurrentUserDocSnap);
-
-			} catch (e) {
-				console.error(`EditProfileForm >> handlePostClick >> Update user >> ${e}`);
-			} finally {
-				setIsLoading(false);
-			}
+			// Update data.
+			const newCurrentUserDocSnap = await getDoc(currentUserDocSnap.ref);
+			setCurrentUserDocSnap && setCurrentUserDocSnap(newCurrentUserDocSnap);
 
 		} catch (e) {
 			console.error(`EditProfileForm >> handlePostClick >> ${e}`);
