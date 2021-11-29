@@ -16,7 +16,7 @@ const Post: FunctionComponent<PostProps> = ({ postDocSnap, refToPass }): JSX.Ele
 	
 	const { currentUserDocSnap } = useFirebase();
 	const postData = postDocSnap.data() as DocumentData;
-	const {profileData, profilePicUrl} 	= useUserHook(postData.user);
+	const {profileData, compressedProfilePicUrl} 	= useUserHook(postData.user);
 
 	const dateObject = new Date(1970, 0, 1);
     dateObject.setSeconds(postData.created.seconds);
@@ -25,7 +25,7 @@ const Post: FunctionComponent<PostProps> = ({ postDocSnap, refToPass }): JSX.Ele
 		<StyledPost.Container ref={refToPass}>
 
 			<StyledPost.By>
-				<StyledPost.Avatar>{profileData && <img src={profileData.profilePicExists ? profilePicUrl : anonymousAvatar} alt={`Profile pic of ${profileData.username}`} />}</StyledPost.Avatar>
+				<StyledPost.Avatar>{profileData && <img src={compressedProfilePicUrl ? compressedProfilePicUrl : anonymousAvatar} alt={`Profile pic of ${profileData.username}`} />}</StyledPost.Avatar>
 				<StyledPost.ByData>
 					<StyledPost.Username to={profileData ? `/profile/${profileData.id}` : '/error/404'}>{profileData ? profileData.username : 'Loading...'}</StyledPost.Username>
 					<StyledPost.Timestamp>{dateObject.getFullYear()}-{dateObject.getMonth()}-{dateObject.getDate()} {dateObject.getHours()}:{dateObject.getMinutes()}</StyledPost.Timestamp>

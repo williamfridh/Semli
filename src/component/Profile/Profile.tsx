@@ -31,7 +31,7 @@ const Profile: FunctionComponent<ProfileProps> = ({ uid }): JSX.Element=> {
 	const userDocRef = doc(firestoreDatabase, 'users', uid);
 	const {
 		profileData,
-		profilePicUrl,
+		compressedProfilePicUrl,
 		isLoading,
 		errorCode
 	} = useUserHook(userDocRef);
@@ -39,7 +39,7 @@ const Profile: FunctionComponent<ProfileProps> = ({ uid }): JSX.Element=> {
 	if (errorCode) return <Redirect to={`/error/${errorCode}`} />;
 
 	return <>
-		{isLoading || <StyledProfile.Pic><img src={profilePicUrl ? profilePicUrl : anonymousAvatar} alt={`Profile pic of ${profileData.username}`} /></StyledProfile.Pic>}
+		{isLoading || <StyledProfile.Pic><img src={compressedProfilePicUrl ? compressedProfilePicUrl : anonymousAvatar} alt={`Profile pic of ${profileData.username}`} /></StyledProfile.Pic>}
 		<SC.Title>{isLoading ? <Loading/> : profileData && profileData.username}</SC.Title>
 		<StyledProfile.Bio>{isLoading && profileData && profileData.bio}</StyledProfile.Bio>
 	</>;

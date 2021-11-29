@@ -14,7 +14,7 @@ service firebase.storage {
 
 		// Check profile pic file-format.
 		function checkProfilePicFileFormat() {
-			return request.resource.size < 5 * 1024 * 1024 && request.resource.contentType.matches('image/.*');
+			return request.resource.contentType.matches('image/.*');
 		}
 
 
@@ -23,7 +23,7 @@ service firebase.storage {
 		// fileName is equal to a userId.
 		match /users/{userId}/{fileName} {
 			allow read;
-			allow write: if userIsOnline() && userIsOwner(userId) && checkProfilePicFileFormat();
+			allow create: if userIsOnline() && userIsOwner(userId) && checkProfilePicFileFormat();
 			allow delete: if userIsOnline() && userIsOwner(userId);
 		}
 	}

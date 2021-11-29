@@ -12,10 +12,11 @@ type useUserHookType = (
 ) => useUserHookProps;
 
 type useUserHookProps = {
-	profileData			: DocumentData,
-	profilePicUrl		: string,
-	isLoading			: boolean,
-	errorCode			: number|null
+	profileData					: DocumentData,
+	originalProfilePicUrl		: string,
+	compressedProfilePicUrl		: string,
+	isLoading					: boolean,
+	errorCode					: number|null
 }
 
 
@@ -30,10 +31,11 @@ type useUserHookProps = {
  */
 const useUserHook: useUserHookType = (userDocRef) => {
 	
-	const [profileData, setProfileData] 		= useState({} as DocumentData);
-	const [profilePicUrl, setProfilePicUrl]		= useState('');
-	const [isLoading, setIsLoading] 			= useState(false);
-	const [errorCode, setErrorCode] 			= useState<number|null>(null);
+	const [profileData, setProfileData] 							= useState({} as DocumentData);
+	const [originalProfilePicUrl, setOriginalProfilePicUrl]			= useState('');
+	const [compressedProfilePicUrl, setCompressedProfilePicUrl]		= useState('');
+	const [isLoading, setIsLoading] 								= useState(false);
+	const [errorCode, setErrorCode] 								= useState<number|null>(null);
 
 
 
@@ -69,10 +71,15 @@ const useUserHook: useUserHookType = (userDocRef) => {
 		
 					if (userDocSnapData.profilePicExists) {
 						const storage = getStorage();
-						const profilePicRef = ref(storage, `users/${userDocRef.id}/avatar.${userDocSnapData.profilePicExtension}`);
+						
+						const originalProfilePicRef = ref(storage, `users/${userDocRef.id}/avatar.${userDocSnapData.profilePicExtension}`);
+						const compressedProfilePicRef = ref(storage, `users/${userDocRef.id}/avatar_400x400.webp`);
 
-						const downloadURL = await getDownloadURL(profilePicRef);
-						setProfilePicUrl(downloadURL);
+						const originalProfilePicDownloadURL = await getDownloadURL(originalProfilePicRef);
+						const compressedProfilePicDownloadURL = await getDownloadURL(compressedProfilePicRef);
+
+						setOriginalProfilePicUrl(originalProfilePicDownloadURL);
+						setCompressedProfilePicUrl(compressedProfilePicDownloadURL);
 					}
 
 				} catch(e) {
@@ -106,7 +113,7 @@ const useUserHook: useUserHookType = (userDocRef) => {
 	/**
 	 * Returns the hook content.
 	 */
-	return {profileData, profilePicUrl, isLoading, errorCode};
+	return {profileData, originalProfilePicUrl, compressedProfilePicUrl, isLoading, errorCode};
 
 }
 
