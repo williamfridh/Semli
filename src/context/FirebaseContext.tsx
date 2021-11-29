@@ -19,7 +19,8 @@ type useFirebaseProps = {
 
 interface LogOutInterface {
 	(
-		auth: Auth
+		auth: Auth,
+		setCurrentUserDocSnap: React.Dispatch<React.SetStateAction<DocumentSnapshot<DocumentData> | null>>|null
 	): Promise<void>
 };
 
@@ -104,10 +105,11 @@ export const FirebaseProvider: FunctionComponent = ({ children }) => {
  * @param auth - the current auth object used by Firebase for authentication.
  * @param setCurrentUserDocSnap - a setter for current user doc snap.
  */
-export const logOut: LogOutInterface = async ( auth ) => {
+export const logOut: LogOutInterface = async ( auth, setCurrentUserDocSnap ) => {
 	try {
 		// Do not change this order!
 		await signOut(auth);
+		setCurrentUserDocSnap && setCurrentUserDocSnap(null);
 	} catch (err) {
 		console.log("Logout: failed");
 	}

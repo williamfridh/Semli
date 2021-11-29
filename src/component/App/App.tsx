@@ -18,7 +18,7 @@ import GlobalStyles from 'shared/globalStyles';
 import { ThemeProvider } from 'styled-components';
 import TopNavigationBar from 'component/navigation/TopNavigationBar';
 import DesktopNavigationBar from 'component/navigation/DesktopNavigationBar';
-import UserInCompleteProfileDependency from 'container/dependency/UserInCompleteProfileDependency';
+import UserIncompleteProfileDependency from 'container/dependency/UserIncompleteProfileDependency';
 
 
 
@@ -130,9 +130,9 @@ const App: FunctionComponent = (): JSX.Element => {
 							{/* ======== COMPLETE ACCOUNT ======== */}
 							<Route exact path="/profile/complete">
 								<UserOnlineDependency fallback="/log_in">
-									<UserInCompleteProfileDependency>
+									<UserIncompleteProfileDependency>
 										<CompleteAccountPage />
-									</UserInCompleteProfileDependency>
+									</UserIncompleteProfileDependency>
 								</UserOnlineDependency>
 							</Route>
 
