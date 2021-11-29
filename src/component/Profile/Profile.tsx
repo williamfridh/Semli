@@ -14,7 +14,7 @@ import anonymousAvatar from "media/anonymous_avatar.png";
  * Types.
  */
 type ProfileProps =  {
-	uid				: string
+	uid: string
 }
 
 

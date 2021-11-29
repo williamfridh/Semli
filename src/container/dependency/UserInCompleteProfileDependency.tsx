@@ -12,7 +12,7 @@ import Loading from "component/Loading";
  * @param children - Automatixaly provided by React. Children of the element to be returned on a successful check.
  * @returns the children.
  */
-const UserInCompleteProfileDependency: FunctionComponent<UserDependencyProps> = (props): JSX.Element => {
+const UserIncompleteProfileDependency: FunctionComponent<UserDependencyProps> = (props): JSX.Element => {
 
 	const { children } = props;
 	const {
@@ -28,5 +28,5 @@ const UserInCompleteProfileDependency: FunctionComponent<UserDependencyProps> = 
 
 }
 
-export default UserInCompleteProfileDependency;
+export default UserIncompleteProfileDependency;
 
