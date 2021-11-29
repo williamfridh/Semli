@@ -14,7 +14,7 @@ import HashtagPage from 'container/page/HashtagPage';
 import SearchPage from 'container/page/SearchPage';
 import ErrorPage from 'container/page/ErrorPage';
 import { FunctionComponent } from 'react';
-import GlobalStyles from 'shared/GlobalStyles';
+import GlobalStyles from 'shared/globalStyles';
 import { ThemeProvider } from 'styled-components';
 import TopNavigationBar from 'component/navigation/TopNavigationBar';
 import DesktopNavigationBar from 'component/navigation/DesktopNavigationBar';
