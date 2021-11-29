@@ -69,7 +69,7 @@ const useUserHook: useUserHookType = (userDocRef) => {
 		
 					if (userDocSnapData.profilePicExists) {
 						const storage = getStorage();
-						const profilePicRef = ref(storage, `profile_picture/${userDocRef.id}.${userDocSnapData.profilePicExtension}`);
+						const profilePicRef = ref(storage, `users/${userDocRef.id}/avatar.${userDocSnapData.profilePicExtension}`);
 
 						const downloadURL = await getDownloadURL(profilePicRef);
 						setProfilePicUrl(downloadURL);
