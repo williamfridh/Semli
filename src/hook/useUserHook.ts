@@ -64,13 +64,20 @@ const useUserHook: useUserHookType = (userDocRef) => {
 					console.error(`useUserHook >> useEffect >> getProfile >> No result.`);
 					throw new Error('404');
 				}
-	
-				if (userDocSnapData.profilePicExists) {
-					const storage = getStorage();
-					const profilePicRef = ref(storage, `profile_picture/${userDocRef.id}.${userDocSnapData.profilePicExtension}`);
 
-					const downloadURL = await getDownloadURL(profilePicRef);
-					setProfilePicUrl(downloadURL);
+				try {
+		
+					if (userDocSnapData.profilePicExists) {
+						const storage = getStorage();
+						const profilePicRef = ref(storage, `profile_picture/${userDocRef.id}.${userDocSnapData.profilePicExtension}`);
+
+						const downloadURL = await getDownloadURL(profilePicRef);
+						setProfilePicUrl(downloadURL);
+					}
+
+				} catch(e) {
+					console.error(`useUserHook >> useEffect >> ${e}`);
+					console.warn(`Default profile pic will be used.`);
 				}
 
 				console.log(`useUserHook >> useEffect >> getProfile >> Success.`);

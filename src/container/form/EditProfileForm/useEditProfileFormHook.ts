@@ -148,11 +148,11 @@ const useEditProfileFormHook: UseEditProfileFormHookType = (firestoreDatabase, c
 				const storage = getStorage();
 				// Remove old profile pic.
 				if (userDataArr?.profilePicExtension) {
-					const oldProfilePicRef = ref(storage, `profile_picture/${userDataArr?.id}.${userDataArr?.profilePicExtension}`);
+					const oldProfilePicRef = ref(storage, `profile_picture/${currentUserDocSnap.id}.${userDataArr?.profilePicExtension}`);
 					await deleteObject(oldProfilePicRef);
 				}
 				// Upload profile pic if any.
-				const newProfilePicRef = ref(storage, `profile_picture/${userDataArr?.id}.${profilePicExtension}`);
+				const newProfilePicRef = ref(storage, `profile_picture/${currentUserDocSnap.id}.${profilePicExtension}`);
 				await uploadBytes(newProfilePicRef, profilePic as File);
 			}
 
