@@ -1,8 +1,7 @@
 import { GoogleAuthProvider, signInWithPopup, User } from 'firebase/auth';
-import { doc, getDoc, serverTimestamp, setDoc, updateDoc, FieldValue } from '@firebase/firestore';
+import { doc, getDoc, setDoc } from '@firebase/firestore';
 import { FunctionComponent } from 'react';
 import { useFirebase } from 'context/FirebaseContext';
-import { UpdateUserDataProps } from 'shared/types';
 import * as SC from './StyledComponents';
 import { AiOutlineGoogle } from 'react-icons/ai';
 
@@ -13,9 +12,7 @@ import { AiOutlineGoogle } from 'react-icons/ai';
  */
 type NewUserDataProps = {
 	id				: string,
-	email			: string|null,
-	created			: FieldValue,
-	lastActive		: FieldValue
+	email			: string|null
 }
 
 
@@ -45,31 +42,14 @@ const LogInWithGoogleButton: FunctionComponent = (): JSX.Element => {
 			const currentUserDocRef 	= doc(firestoreDatabase, 'users', currentUser.uid);
 			const currentUserDocSnap 	= await getDoc(currentUserDocRef);
 
-			if (currentUserDocSnap.exists()) {
-				
-				// Update user doc.
-				try {
-				
-					const updatedUserData: UpdateUserDataProps = {
-						lastActive: serverTimestamp()
-					};
-
-					await updateDoc(currentUserDocRef, updatedUserData);
-
-				} catch (e) {
-					console.error(`LogInWithGoogleButton >> checkUser >> ${e}`);
-				}
-				
-			} else {
+			if (!currentUserDocSnap.exists()) {
 
 				// Add new user doc.
 				try {
 				
 					const newUserData: NewUserDataProps = {
 						id			: currentUser.uid,
-						email		: currentUser.email,
-						created		: serverTimestamp(),
-						lastActive	: serverTimestamp()
+						email		: currentUser.email
 					};
 
 					await setDoc(doc(firestoreDatabase, `users`, currentUser.uid), newUserData);

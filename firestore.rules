@@ -15,7 +15,7 @@ service cloud.firestore {
 		
 		// User complete check.
 		function userIsComplete() {
-			return userIsOnline() && currentUserDoc().data.username != null && currentUserDoc().data.bio != null;
+			return currentUserDoc().data.username != null && currentUserDoc().data.bio != null;
 		}
 		
 
@@ -25,9 +25,14 @@ service cloud.firestore {
 			return request.resource.data.body != null && request.resource.data.hashtags != null && request.resource.data.created != null && request.resource.data.user.path == "users/" + currentUserDoc().id;
 		}
 
-		// User data check.
-		function userDataCheck() {
-			return userIsOnline() && request.resource.data.username != null && request.resource.data.bio != null && request.resource.data.email != null && request.auth.uid == userId;
+		// Edit user data check.
+		function editUserDataCheck(userId) {
+			return request.resource.data.username != null && request.resource.data.bio != null && request.resource.data.profilePicExists != null && request.resource.data.profilePicExtension != null && request.auth.uid == userId;
+		}
+
+		// Create user data check.
+		function createUserDataCheck() {
+			return request.resource.data.id == request.auth.uid && request.resource.data.email != null;
 		}
 
 		// Hashtag data check.
@@ -45,26 +50,26 @@ service cloud.firestore {
 		// Posts.
 		match /posts/{postId} {
 			allow read;
-			allow create: if userIsComplete() && postDataCheck();
+			allow create: if userIsOnline() && userIsComplete() && postDataCheck();
 		}
 
 		// Post likes.
 		match /posts/{postId}/likes/{userId} {
 			allow read;
-			allow create: if userIsComplete() && postLikeDataCheck();
+			allow create: if uuserIsOnline() && serIsComplete() && postLikeDataCheck();
 		}
 		
 		// Users.
 		match /users/{userId} {
 			allow read;
-			allow update: if userIsComplete() && userDataCheck();
-			allow create: if userIsOnline() && userDataCheck();
+			allow update: if userIsOnline() && editUserDataCheck(userId);
+			allow create: if userIsOnline() && createUserDataCheck();
 		}
 		
 		// Hashtags.
 		match /hashtags/{hashtagId} {
 			allow read;
-			allow create: if userIsComplete() && hashtagDataCheck();
+			allow create: if userIsOnline() && userIsComplete() && hashtagDataCheck();
 		}
 	
 	}
