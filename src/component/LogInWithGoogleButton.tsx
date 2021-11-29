@@ -11,8 +11,8 @@ import { AiOutlineGoogle } from 'react-icons/ai';
  * Types.
  */
 type NewUserDataProps = {
-	id				: string,
-	email			: string|null
+	id		: string,
+	email	: string|null
 }
 
 
@@ -64,7 +64,7 @@ const LogInWithGoogleButton: FunctionComponent = (): JSX.Element => {
 			setCurrentUserDocSnap && setCurrentUserDocSnap(currentUserDocSnap);
 
 		} catch (e) {
-			console.error(`LogInWithGoogleButton >> ${e}`);
+			console.error(`LogInWithGoogleButton >> checkUser >> ${e}`);
 		}
 
 	}

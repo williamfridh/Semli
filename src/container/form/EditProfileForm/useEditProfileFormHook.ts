@@ -140,7 +140,7 @@ const useEditProfileFormHook: UseEditProfileFormHookType = (firestoreDatabase, c
 			if (bio.length < 10) newResponse.push({body: 'Bio must be minmum 10 characters long.', type: 'error'});
 			if (newResponse.length) {
 				setResponse(newResponse);
-				return;
+				throw new Error('Input issue.');
 			}
 
 			// handle profile pic.
