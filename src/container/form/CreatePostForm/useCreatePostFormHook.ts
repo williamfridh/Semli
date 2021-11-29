@@ -53,10 +53,10 @@ interface SaveHashtagInterface {
 }
 
 type NewPostDataProps = {
-	body			: string,
-	hashtags		: string[]|null,
-	created			: FieldValue,
-	user			: DocumentReference<DocumentData>
+	body		: string,
+	hashtags	: string[]|null,
+	created		: FieldValue,
+	user		: DocumentReference<DocumentData>
 }
 
 
@@ -192,11 +192,10 @@ const useCreatePostFormHook: UseCreatePostFormHookType = (currentUserDocSnap, fi
 
 			hashtagArr.forEach((hashtag: string) => saveHashtag(hashtag, newPostDocRef));
 
-			setIsLoading(false);
 			setIsComplete(true);
 
 		} catch (e) {
-			console.error("Error adding document: ", e);
+			console.error(`useCreatePostFormHook >> handlePostClick >> ${e}`);
 		} finally {
 			setIsLoading(false);
 		}
@@ -235,7 +234,7 @@ const useCreatePostFormHook: UseCreatePostFormHookType = (currentUserDocSnap, fi
 			}
 
 		} catch (e) {
-			console.error("Error adding document: ", e);
+			console.error(`useCreatePostFormHook >> saveHashtag >> ${e}`);
 		}
 
 	}

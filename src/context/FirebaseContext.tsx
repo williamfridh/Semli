@@ -110,8 +110,8 @@ export const logOut: LogOutInterface = async ( auth, setCurrentUserDocSnap ) => 
 		// Do not change this order!
 		await signOut(auth);
 		setCurrentUserDocSnap && setCurrentUserDocSnap(null);
-	} catch (err) {
-		console.log("Logout: failed");
+	} catch (e) {
+		console.error(`logOut >> ${e}`);
 	}
 }
 
