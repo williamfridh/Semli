@@ -18,7 +18,7 @@ I decided not to build this project using Redux to get more practice using exist
 
 ## Live version
 
-If you want to take a look at the project, simply visit [semli-38800.firebaseapp.com](https://semli-38800.firebaseapp.com/).
+If you want to take a look at the project, simply visit [semli-38800.web.app](https://semli-38800.web.app/).
 
 ## Comment
 
