@@ -16,5 +16,5 @@ If you want to take a look at the project, simply visit [semli-38800.firebaseapp
 
 There are multiple parts of the applications that can be improved and functions to be added. However, since this was for educational purposes, I decided to not dive too deep into this.
 
-The rules used for Firebase are available in the files [firestore.rules](Semli/firestore.rules) and [storage.rules](Semli/storage.rules).
+The rules used for Firebase are available in the files [firestore.rules](firestore.rules) and [storage.rules](storage.rules).
 
