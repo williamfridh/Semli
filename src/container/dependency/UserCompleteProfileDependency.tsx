@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 import { Redirect } from "react-router";
-import {  ifProfileComplete, useFirebase } from 'context/FirebaseContext';
+import {  useFirebase } from 'context/FirebaseContext';
 import { UserDependencyProps } from "shared/types";
 import Loading from "component/Loading";
 
@@ -12,17 +12,18 @@ import Loading from "component/Loading";
  * @param children - Automatixaly provided by React. Children of the element to be returned on a successful check.
  * @returns the children.
  */
-const UserCompleteProfileDependency: FunctionComponent<UserDependencyProps> = (props): JSX.Element => {
+const UserCompleteProfileDependency: FunctionComponent<UserDependencyProps> = ({ children }): JSX.Element => {
 
-	const { children } = props;
 	const {
 		currentUserDocSnap,
 		authInitilized
 	} = useFirebase();
 
+	const currentUserData = currentUserDocSnap?.data();
+
 	if (!authInitilized) return <Loading />;
 
-	if (currentUserDocSnap && !ifProfileComplete(currentUserDocSnap)) return <Redirect to="/profile/complete" />;
+	if (currentUserDocSnap && !currentUserData?.isComplete) return <Redirect to="/profile/complete" />;
 
 	return <>{children}</>;
 

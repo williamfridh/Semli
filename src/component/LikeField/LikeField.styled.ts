@@ -1,8 +1,5 @@
 import styled from 'styled-components';
 
-/**
- * Likes.
- */
 export const Likes = styled.div`
 	color			: ${props => props.theme.color.textBrightMedium};
 	display			: flex;

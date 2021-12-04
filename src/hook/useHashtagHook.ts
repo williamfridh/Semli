@@ -1,5 +1,4 @@
-import { getDoc } from "@firebase/firestore";
-import { DocumentData, DocumentReference } from "firebase/firestore";
+import { collectionGroup, doc, Firestore, getDoc, getDocs, query, where } from "@firebase/firestore";
 import { useEffect, useState } from "react";
 import { HashtagProps } from "shared/types";
 
@@ -9,7 +8,8 @@ import { HashtagProps } from "shared/types";
  * Types.
  */
 type useHashtagHookType = (
-	hashtagDocRef	: DocumentReference<DocumentData>
+	firestoreDatabase	: Firestore,
+	hashtagName			: string
 ) => useHashtagHookReturn;
 
 type useHashtagHookReturn = {
@@ -28,12 +28,11 @@ type useHashtagHookReturn = {
  * @param hashtagDocRef - Firestore reference to hashtag doc.
  * @returns - a hook.
  */
-const useHashtagHook: useHashtagHookType = (hashtagDocRef) => {
+const useHashtagHook: useHashtagHookType = (firestoreDatabase, hashtagName) => {
 
 	const [hashtagData, setHashtagData] 	= useState({} as HashtagProps);
 	const [isLoading, setIsLoading] 		= useState(false);
 	const [errorCode, setErrorCode] 		= useState<number|null>(null);
-
 
 	
 	/**
@@ -49,22 +48,27 @@ const useHashtagHook: useHashtagHookType = (hashtagDocRef) => {
 		setIsLoading(true);
 		setErrorCode(null);
 
-		getDoc(hashtagDocRef).then(hashtahDocSnap => {
+		getDoc(doc(firestoreDatabase, `hashtags/${hashtagName}`)).then(hashtahDocSnap => {
 
 			if (!isMounted) return false;
 
 			if (hashtahDocSnap.exists()) {
 
-				const tempData = hashtahDocSnap.data();
+				const hashtagData = hashtahDocSnap.data();
 
-				const newData = {
-					name: String(tempData?.name),
-					amount: parseInt(tempData?.amount)
-				}
+				const postsCollection = collectionGroup(firestoreDatabase, `posts`);
+				const postsQuery = query(postsCollection, where("hashtags", "array-contains", hashtagData.name));
 
-				setHashtagData(newData);
-				
-				console.log(`useHashtagHook >> useEffect >> Success.`);
+				getDocs(postsQuery).then(postsWithHashtag => {
+
+					setHashtagData({
+						name: hashtagData.name as string,
+						amount: postsWithHashtag.size as number
+					});
+					
+					console.log(`useHashtagHook >> useEffect >> Success.`);
+
+				});
 
 			} else {
 				setErrorCode(404);
@@ -83,7 +87,7 @@ const useHashtagHook: useHashtagHookType = (hashtagDocRef) => {
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [hashtagName]);
 
 	return {hashtagData, isLoading, errorCode};
 

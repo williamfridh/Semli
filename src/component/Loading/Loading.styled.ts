@@ -1,6 +1,5 @@
 import styled from "styled-components";
 
-
 export const Holder = styled.div`
 	position		: fixed;
 	left			: 0;

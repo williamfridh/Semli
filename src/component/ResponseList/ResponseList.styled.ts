@@ -1,8 +1,19 @@
 import styled, { css } from "styled-components";
 
+
+
+/**
+ * Interfaces.
+ */
 interface ResponseProps {
 	readonly type?		: string;
 };
+
+
+
+/**
+ * Styles.
+ */
 export const Response = styled.div<ResponseProps>`
 	padding			: ${props => props.theme.size.distanceBig}px;
 	border-radius	: ${props => props.theme.border.radius}px;

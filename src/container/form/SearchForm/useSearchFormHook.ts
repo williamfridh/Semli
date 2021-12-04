@@ -1,11 +1,10 @@
 import {
 	collection,
-	DocumentData,
+	collectionGroup,
 	Firestore,
 	getDocs,
 	orderBy,
 	query,
-	QueryDocumentSnapshot,
 	where
 } from "@firebase/firestore";
 import { useEffect, useState } from "react";
@@ -82,34 +81,43 @@ const useSearchFormHook: useSearchFormHookType = (firestoreDatabase) => {
 
 		let isMounted = true;
 
-		if (!searchTerm || searchTerm.length <= 2) {
-			setSearchResult([]);
-			return;
-		}
+		setSearchResult([]);
+
+		if (!searchTerm || searchTerm.length <= 2) return;
 
 		setIsLoading(true);
 		setErrorCode(null);
 		console.log(`useSearchFormHook >> useEffect >> Running...`);
 
-		const q = query(collection(firestoreDatabase, "hashtags"), where("name", ">=", searchTerm), where("name", "<=", searchTerm + '\uf8ff'), orderBy("name", "asc"));
+		const q = query(
+			collection(firestoreDatabase, "hashtags"),
+			where("name", ">=", searchTerm),
+			where("name", "<=", searchTerm + '\uf8ff'),
+			orderBy("name", "asc")
+			);
 		
 		getDocs(q).then(qDocSnap => {
 
 			if (!isMounted) return;
-		
-			let hashtagArr: HashtagProps[] = [];
-		
-			qDocSnap.forEach((hashtagSnap: QueryDocumentSnapshot<DocumentData>) => {
-				const hashtagData = hashtagSnap.data();
-				const name = hashtagData.name;
-				const amount = hashtagData.amount;
-				hashtagArr.push({
-					name,
-					amount
-				});
-			});
 
-			setSearchResult(hashtagArr);
+			for (let i = 0; i < qDocSnap.size; i++) {
+
+				const hashtagSnap = qDocSnap.docs[i];
+				const hashtagData = hashtagSnap.data();
+				
+				const postsCollection = collectionGroup(firestoreDatabase, `posts`);
+				const postsQuery = query(postsCollection, where("hashtags", "array-contains", hashtagData.name));
+
+				getDocs(postsQuery).then(postsWithHashtag => {
+	
+					setSearchResult(prev => [...prev, {
+						'name': hashtagData.name,
+						'amount': postsWithHashtag.size
+					}]);
+
+				});
+
+			}
 			console.log(`useSearchFormHook >> useEffect >> Success`);
 				
 		}).catch(e => {

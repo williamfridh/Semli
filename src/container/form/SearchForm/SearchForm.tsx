@@ -6,6 +6,12 @@ import SvgLoadingDark from "component/icon/LoadingDark";
 import useSearchFormHook from "container/form/SearchForm/useSearchFormHook";
 import { Redirect } from "react-router";
 
+
+/**
+ * Search form.
+ * 
+ * @returns an element.
+ */
 const SearchForm: FunctionComponent = () => {
 
 	const { firestoreDatabase } = useFirebase();

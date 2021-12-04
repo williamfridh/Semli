@@ -37,3 +37,4 @@ function SvgLoadingBright(props: React.SVGProps<SVGSVGElement>) {
 }
 
 export default SvgLoadingBright;
+

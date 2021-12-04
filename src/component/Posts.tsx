@@ -1,9 +1,9 @@
-import { FunctionComponent, useCallback, useRef, useState } from "react";
+import { FunctionComponent, useCallback, useEffect, useRef, useState } from "react";
 import { useFirebase } from "context/FirebaseContext";
 import Post from "./Post/";
 import usePostHook from "hook/usePostHook";
 import { Redirect } from "react-router";
-import { doc, DocumentData, DocumentSnapshot, OrderByDirection } from "@firebase/firestore";
+import { DocumentData, DocumentSnapshot, OrderByDirection } from "@firebase/firestore";
 import LoadingSmall from "./LoadingSmall";
 
 
@@ -12,48 +12,48 @@ import LoadingSmall from "./LoadingSmall";
  * Types.
  */
 type PostsProps = {
-	uid?			: string,
-	hashtagName?	: string
+	fetchLimit			: number,
+	orderByField		: string,
+	orderByDirection	: OrderByDirection | undefined,
+	uid					?: string,
+	hashtagName			?: string
 }
 
 
 
 /**
- * Print post list element.
+ * Post list element.
  * 
- * @param props 
- * @returns 
+ * @param fetchLimit - the number of items to fetch each round.
+ * @param orderByField - name of a field to order the fetched documents by.
+ * @param orderByDirection - direction of the order (desc, asc).
+ * @param uid - target owner of docs to fetch.
+ * @param hashtagName - target hashtag of docs to fetch.
+ * @returns an element.
  */
 const Posts: FunctionComponent<PostsProps> = (props): JSX.Element=> {
 
-	const { uid, hashtagName } 	= props;
-
+	const { fetchLimit, orderByField, orderByDirection, uid, hashtagName } = props;
 	const { firestoreDatabase } = useFirebase();
-
-	// Filtering hooks.
-	// eslint-disable-next-line
-	const [fetchLimit, setPostsLimit] 			= useState(2);
-	// eslint-disable-next-line
-	const [orderByField, setOrderByField] 		= useState('created');
-	// eslint-disable-next-line
-	const [orderByKeyword, setOrderByKeyword] 	= useState<OrderByDirection|undefined>('desc');
 
 	// Pagination hooks.
 	const moreExists 					= useRef(false);
 	const observer 						= useRef<IntersectionObserver|null>(null);
-	const [runNumber, setNunNumber] 	= useState(1);
+	const [runNumber, setRunNumber] 	= useState(0);
 
-	const userDocRef = uid ? doc(firestoreDatabase, `users/${uid}`) : undefined;
-	const hashtagDocRef = hashtagName ? doc(firestoreDatabase, `hashtags/${hashtagName}`) : undefined;
+	// Detect change of provided data. Other changes (fetchLimit, orderByField, orderByDirection) will be detected inside the 
+	useEffect(() => {
+		setRunNumber(0);
+	}, [props]);
 	
-	const { postsData, isLoading, errorCode } = usePostHook(firestoreDatabase, orderByField, orderByKeyword, runNumber, fetchLimit, userDocRef, hashtagDocRef); // Last hook to call.
+	const { postsData, isLoading, errorCode } = usePostHook(firestoreDatabase, orderByField, orderByDirection, runNumber, fetchLimit, uid, hashtagName); // Last hook to call.
 
 	const lastPostElementRefAction = useCallback(node => {
 
 		if (observer.current) observer.current.disconnect();
 
 		observer.current = new IntersectionObserver(entries => {
-		  if (entries[0].isIntersecting) setNunNumber(runNumber + 1);
+		  if (entries[0].isIntersecting) setRunNumber(runNumber + 1);
 		});
 		if (node) observer.current.observe(node);
 
@@ -63,7 +63,11 @@ const Posts: FunctionComponent<PostsProps> = (props): JSX.Element=> {
 	if (errorCode) return <Redirect to={`/error/${errorCode}`} />;
 
 	const postsCollection: React.ReactNode = postsData && postsData.map((postDocSnap: DocumentSnapshot<DocumentData>, key: number) => {
-		moreExists.current = postsData.length === fetchLimit*runNumber ? true : false;
+		if (postsData.length === fetchLimit*(runNumber+1)) {
+			moreExists.current = true;
+		} else {
+			moreExists.current = false;
+		}
 		if (moreExists.current && key + 1 === postsData.length) {
 			return <Post postDocSnap={postDocSnap} key={key} refToPass={lastPostElementRefAction} />;
 		} else {

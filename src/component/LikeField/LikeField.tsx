@@ -29,12 +29,10 @@ const LikeField: FunctionComponent<LikeFieldProps> = ({ postDocSnap, currentUser
 
 	const {likeAmount, handleClick, likedByCurrentUser} = useLikeHook(postDocSnap, currentUserDocSnap, firestoreDatabase);
 
-	const likeOrDislikeButton: JSX.Element = <span onClick={handleClick}>{likedByCurrentUser ? <MdFavorite /> : <MdFavoriteBorder />}</span>;
-
 	return (
 		<StyledLikeField.LikeArea>
 			<StyledLikeField.Likes><span>Liked by <b>{likeAmount}</b> {likeAmount === 1 ? `person` : `people`}</span></StyledLikeField.Likes>
-			{currentUserDocSnap && <StyledLikeField.LikeDislikeButton>{likeOrDislikeButton}</StyledLikeField.LikeDislikeButton>}
+			{currentUserDocSnap && <StyledLikeField.LikeDislikeButton><span onClick={handleClick}>{likedByCurrentUser ? <MdFavorite /> : <MdFavoriteBorder />}</span></StyledLikeField.LikeDislikeButton>}
 		</StyledLikeField.LikeArea>
 	);
 

@@ -8,12 +8,11 @@ import { useEffect, useState } from "react";
  * Types.
  */
 type useUserHookType = (
-	userDocRef			: DocumentReference<DocumentData>
+	userDocRef			: DocumentReference<DocumentData> | null
 ) => useUserHookProps;
 
 type useUserHookProps = {
 	profileData					: DocumentData,
-	originalProfilePicUrl		: string,
 	compressedProfilePicUrl		: string,
 	isLoading					: boolean,
 	errorCode					: number|null
@@ -22,7 +21,7 @@ type useUserHookProps = {
 
 
 /**
- * Use User Hook.
+ * User Hook.
  * 
  * This hook loads user data.
  * 
@@ -32,7 +31,6 @@ type useUserHookProps = {
 const useUserHook: useUserHookType = (userDocRef) => {
 	
 	const [profileData, setProfileData] 							= useState({} as DocumentData);
-	const [originalProfilePicUrl, setOriginalProfilePicUrl]			= useState('');
 	const [compressedProfilePicUrl, setCompressedProfilePicUrl]		= useState('');
 	const [isLoading, setIsLoading] 								= useState(false);
 	const [errorCode, setErrorCode] 								= useState<number|null>(null);
@@ -54,6 +52,8 @@ const useUserHook: useUserHookType = (userDocRef) => {
 
 			try {
 
+				if (!userDocRef) return;
+
 				const userDocSnap = await getDoc(userDocRef);
 
 				if (!isMounted) return;
@@ -71,14 +71,9 @@ const useUserHook: useUserHookType = (userDocRef) => {
 		
 					if (userDocSnapData.profilePicExists) {
 						const storage = getStorage();
-						
-						const originalProfilePicRef = ref(storage, `users/${userDocRef.id}/avatar.${userDocSnapData.profilePicExtension}`);
 						const compressedProfilePicRef = ref(storage, `users/${userDocRef.id}/avatar_400x400.webp`);
-
-						const originalProfilePicDownloadURL = await getDownloadURL(originalProfilePicRef);
 						const compressedProfilePicDownloadURL = await getDownloadURL(compressedProfilePicRef);
 
-						setOriginalProfilePicUrl(originalProfilePicDownloadURL);
 						setCompressedProfilePicUrl(compressedProfilePicDownloadURL);
 					}
 
@@ -113,8 +108,9 @@ const useUserHook: useUserHookType = (userDocRef) => {
 	/**
 	 * Returns the hook content.
 	 */
-	return {profileData, originalProfilePicUrl, compressedProfilePicUrl, isLoading, errorCode};
+	return {profileData, compressedProfilePicUrl, isLoading, errorCode};
 
 }
 
 export default useUserHook;
+

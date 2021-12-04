@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import * as SC from 'component/StyledComponents';
 
@@ -8,12 +8,23 @@ import * as SC from 'component/StyledComponents';
  * Types.
  */
 type ErrorPageParams = {
-	code			: string
+	code: string
 }
 
+
+
+/**
+ * Error page.
+ * 
+ * @returns a element.
+ */
 const ErrorPage: FunctionComponent = (): JSX.Element => {
 
 	const { code }: ErrorPageParams = useParams();
+
+	useEffect(() => {
+		document.title = `Error ${code}`;
+	}, [code])
 
 	return(
 		<SC.Page>

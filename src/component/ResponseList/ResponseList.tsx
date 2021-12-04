@@ -8,11 +8,17 @@ import * as StyledResponseList from './ResponseList.styled';
  * Types.
  */
 type ResponseListProps = {
-	list			: ResponseProps[]
+	list: ResponseProps[]
 }
 
 
 
+/**
+ * Response list element.
+ * 
+ * @param list - an array contnaining reponse codes.
+ * @returns a element.
+ */
 const ResponseList: FunctionComponent<ResponseListProps> = ({ list }): JSX.Element=> {
 
 	const responseCollection: React.ReactNode = list.map((responseObj: ResponseProps, key: number) => {
