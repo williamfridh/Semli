@@ -11,8 +11,7 @@ import { AiOutlineGoogle } from 'react-icons/ai';
  * Types.
  */
 type NewUserDataProps = {
-	id		: string,
-	email	: string|null
+	isComplete: boolean
 }
 
 
@@ -48,8 +47,7 @@ const LogInWithGoogleButton: FunctionComponent = (): JSX.Element => {
 				try {
 				
 					const newUserData: NewUserDataProps = {
-						id			: currentUser.uid,
-						email		: currentUser.email
+						isComplete: false
 					};
 
 					await setDoc(doc(firestoreDatabase, `users`, currentUser.uid), newUserData);

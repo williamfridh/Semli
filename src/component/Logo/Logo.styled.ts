@@ -1,15 +1,22 @@
 import styled, { css } from 'styled-components';
 
+
+
 /**
  * Interfaces.
  */
 interface HolderInterface {
-	margin					?: string;
+	margin	?: string;
 }
 interface LetterInterface {
-	size					: number;
+	size	: number;
 }
 
+
+
+/**
+ * Styles.
+ */
 export const Holder = styled.div<HolderInterface>`
 	display					: flex;
 	align-items				: center;

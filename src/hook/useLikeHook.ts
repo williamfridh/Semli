@@ -50,13 +50,11 @@ type fetchAndCalcLikesType = () => Promise<void>;
  */
 const useLikeHook: useLikeHookType = (postDocSnap, currentUserDocSnap, firestoreDatabase) => {
 
-	console.log(postDocSnap);
-
 	const [likeAmount, setLikeAmount]					= useState(0);
 	const [likedByCurrentUser, setLikedByCurrentUser] 	= useState(false);
 	const [isLoading, setIsLoading] 					= useState(false);
 	const [errorCode, setErrorCode] 					= useState<number|null>(null);
-
+	
 	const likeDocCollection = collection(firestoreDatabase, `${postDocSnap.ref.path}/likes`);
 	const likeDocRef = doc(firestoreDatabase, `${postDocSnap.ref.path}/likes/${currentUserDocSnap?.id}`);
 
@@ -83,7 +81,7 @@ const useLikeHook: useLikeHookType = (postDocSnap, currentUserDocSnap, firestore
 				setLikedByCurrentUser(false);
 			} else if (!likedByCurrentUser) {
 				await setDoc(likeDocRef, {
-					userRef: currentUserDocSnap.ref,
+					userId: currentUserDocSnap.id,
 					created: serverTimestamp()
 				});
 				setLikedByCurrentUser(true);
@@ -113,11 +111,7 @@ const useLikeHook: useLikeHookType = (postDocSnap, currentUserDocSnap, firestore
 	 */
 	const fetchAndCalcLikes: fetchAndCalcLikesType = async () => {
 		const likes: QuerySnapshot<DocumentData> = await getDocs(likeDocCollection);
-		let i = 0;
-		likes.forEach((likes: DocumentData) => {
-			i++;
-		});
-		setLikeAmount(i);
+		setLikeAmount(likes.size);
 	}
 
 	
@@ -163,7 +157,13 @@ const useLikeHook: useLikeHookType = (postDocSnap, currentUserDocSnap, firestore
 	/**
 	 * Return hook content.
 	 */
-	return {likeAmount, handleClick, isLoading, errorCode, likedByCurrentUser};
+	return {
+		likeAmount,
+		handleClick,
+		isLoading,
+		errorCode,
+		likedByCurrentUser
+	};
 
 }
 

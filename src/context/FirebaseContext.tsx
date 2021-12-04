@@ -64,6 +64,7 @@ export const FirebaseProvider: FunctionComponent = ({ children }) => {
 	const [currentUserDocSnap, setCurrentUserDocSnap] 	= useState<DocumentSnapshot<DocumentData>|null>(null);
 
 	useEffect(() => {
+
 		const unsubscribe = auth.onAuthStateChanged(user => {
 			setCurrentUser(user);
 			if (user) {
@@ -82,6 +83,7 @@ export const FirebaseProvider: FunctionComponent = ({ children }) => {
 		});
 
 		return unsubscribe;
+		
 	}, []);
 
 	const newValue: useFirebaseProps = {
@@ -112,22 +114,6 @@ export const logOut: LogOutInterface = async ( auth, setCurrentUserDocSnap ) => 
 		setCurrentUserDocSnap && setCurrentUserDocSnap(null);
 	} catch (e) {
 		console.error(`logOut >> ${e}`);
-	}
-}
-
-
-export const ifProfileComplete = (currentUserDocSnap: any)  => {
-	if (currentUserDocSnap) {
-		const currentUserSnapData = currentUserDocSnap.data();
-		if (
-			!currentUserSnapData ||
-			'username' in currentUserSnapData === false ||
-			'bio' in currentUserSnapData === false
-		) {
-			return false;
-		} else {
-			return true;
-		}
 	}
 }
 

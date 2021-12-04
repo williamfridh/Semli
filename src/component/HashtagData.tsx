@@ -4,7 +4,6 @@ import Loading from "./Loading";
 import * as SC from 'component/StyledComponents';
 import useHashtagHook from "hook/useHashtagHook";
 import { Redirect } from "react-router";
-import { doc } from "@firebase/firestore";
 
 
 
@@ -17,17 +16,21 @@ type HashtagDataProps = {
 
 
 
-const HashtagData: FunctionComponent<HashtagDataProps> = (props): JSX.Element => {
+/**
+ * Hashtag data element.
+ * 
+ * @param hashtagName - name of target hashtag.
+ * @returns an element.
+ */
+const HashtagData: FunctionComponent<HashtagDataProps> = ({hashtagName}): JSX.Element => {
 
-	const { hashtagName } 			= props;
-	const { firestoreDatabase } 	= useFirebase();
-	const hashtagDocRef 			= doc(firestoreDatabase, `hashtags/${hashtagName}`);
+	const { firestoreDatabase } = useFirebase();
 	
 	const {
 		hashtagData,
 		isLoading,
 		errorCode
-	} = useHashtagHook(hashtagDocRef);
+	} = useHashtagHook(firestoreDatabase, hashtagName);
 
 	if (errorCode) return <Redirect to={`/error/${errorCode}`} />;
 

@@ -16,7 +16,7 @@ import {
 	deleteObject
 } from "@firebase/storage";
 import { useState } from "react";
-import { ResponseProps, UpdateUserDataProps } from "shared/types";
+import { ResponseProps } from "shared/types";
 import { DocumentSnapshot } from "firebase/firestore";
 
 
@@ -50,6 +50,13 @@ type HandleBioChangeType = (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 
 type HandlePostClickType = () => Promise<void>;
 
+type UpdateUserDataProps = {
+	username				?: string,
+	bio						?: string,
+	profilePicExists		?: boolean,
+	isComplete				: boolean
+}
+
 
 
 /**
@@ -67,7 +74,6 @@ const useEditProfileFormHook: UseEditProfileFormHookType = (firestoreDatabase, c
 	const userDataArr = currentUserDocSnap?.data();
 
 	const [profilePicPath, setProfilePicPath] 				= useState('');
-	const [profilePicExtension, setProfilePicExtension] 	= useState('');
 	const [profilePic, setProfilePic] 						= useState<File>();
 	const [username, setUsername] 							= useState(userDataArr?.username || '');
 	const [bio, setBio] 									= useState(userDataArr?.bio || '');
@@ -84,10 +90,8 @@ const useEditProfileFormHook: UseEditProfileFormHookType = (firestoreDatabase, c
 	 */
 	const handleProfilePicChange: HandleProfilePicChangeType = e => {
 		const val = e.target.value;
-		const valArra = val.split('.');
 		const files = e.target.files;
 		setProfilePicPath(val);
-		setProfilePicExtension(valArra[valArra.length-1]);
 		if (files) setProfilePic(files[0]);
 	}
 
@@ -114,7 +118,8 @@ const useEditProfileFormHook: UseEditProfileFormHookType = (firestoreDatabase, c
 	 * @returns - nothing
 	 */
 	const handleBioChange: HandleBioChangeType = e => {
-		setBio(e.target.value);
+		let val = e.target.value;
+		setBio(val);
 	}
 
 
@@ -143,17 +148,26 @@ const useEditProfileFormHook: UseEditProfileFormHookType = (firestoreDatabase, c
 				throw new Error('Input issue.');
 			}
 
-			// handle profile pic.
+			// Handle profile pic.
 			if (profilePicPath) {
 				const storage = getStorage();
 				// Remove old profile pic.
-				if (userDataArr?.profilePicExtension) {
-					const oldProfilePicRef = ref(storage, `users/${currentUserDocSnap.id}/avatar.${userDataArr?.profilePicExtension}`);
-					await deleteObject(oldProfilePicRef);
+				// This can be removed, but it's nice to have full control.
+				if (userDataArr?.profilePicExists) {
+					try {
+						const oldProfilePicRef = ref(storage, `users/${currentUserDocSnap.id}/avatar_400x400.webp`);
+						await deleteObject(oldProfilePicRef);
+					} catch (e) {
+						console.error(`useEditProfileFormHook >> handlePostClick >> delete old pic >> ${e}`);
+					}
 				}
 				// Upload profile pic if any.
-				const newProfilePicRef = ref(storage, `users/${currentUserDocSnap.id}/avatar.${profilePicExtension}`);
-				await uploadBytes(newProfilePicRef, profilePic as File);
+				try {
+					const newProfilePicRef = ref(storage, `users/${currentUserDocSnap.id}/avatar.webp`);
+					await uploadBytes(newProfilePicRef, profilePic as File);
+				} catch (e) {
+					console.error(`useEditProfileFormHook >> handlePostClick >> ${e}`);
+				}
 			}
 
 			const userQuery = query(collection(firestoreDatabase, "users"), where("username", "==", username), where("id", "!=", currentUserDocSnap.id));
@@ -174,7 +188,7 @@ const useEditProfileFormHook: UseEditProfileFormHookType = (firestoreDatabase, c
 				username,
 				bio,
 				'profilePicExists': profilePicPath ? true : false,
-				profilePicExtension
+				'isComplete': true
 			};
 		
 			await updateDoc(currentUserDocSnap.ref, updatedUserData);
@@ -186,7 +200,7 @@ const useEditProfileFormHook: UseEditProfileFormHookType = (firestoreDatabase, c
 			setCurrentUserDocSnap && setCurrentUserDocSnap(newCurrentUserDocSnap);
 
 		} catch (e) {
-			console.error(`EditProfileForm >> handlePostClick >> ${e}`);
+			console.error(`useEditProfileFormHook >> handlePostClick >> ${e}`);
 		} finally {
 			setIsLoading(false);
 		}

@@ -55,8 +55,7 @@ interface SaveHashtagInterface {
 type NewPostDataProps = {
 	body		: string,
 	hashtags	: string[]|null,
-	created		: FieldValue,
-	user		: DocumentReference<DocumentData>
+	created		: FieldValue
 }
 
 
@@ -184,11 +183,10 @@ const useCreatePostFormHook: UseCreatePostFormHookType = (currentUserDocSnap, fi
 			const newPostData: NewPostDataProps = {
 				body,
 				hashtags: hashtagArr,
-				created: serverTimestamp(),
-				user: doc(firestoreDatabase, 'users', currentUserDocSnap.id)
+				created: serverTimestamp()
 			}
 
-			const newPostDocRef = await addDoc(collection(firestoreDatabase, `posts`), newPostData);
+			const newPostDocRef = await addDoc(collection(firestoreDatabase, `users`, currentUserDocSnap.id, `posts`), newPostData);
 
 			hashtagArr.forEach((hashtag: string) => saveHashtag(hashtag, newPostDocRef));
 
@@ -215,21 +213,12 @@ const useCreatePostFormHook: UseCreatePostFormHookType = (currentUserDocSnap, fi
 
 		try {
 
-			const hashtahDocRef = doc(firestoreDatabase, `hashtags/${hashtag}`);
+			const hashtahDocRef = doc(firestoreDatabase, `hashtags`, hashtag);
 			const hashtahDocSnap = await getDoc(hashtahDocRef);
 
-			if (hashtahDocSnap.exists()) {
-				const { amount, posts } = hashtahDocSnap.data();
+			if (!hashtahDocSnap.exists()) {
 				await setDoc(hashtahDocRef, {
-					name: hashtag,
-					amount: (amount+1),
-					posts: [...posts, newPostDocRef]
-				});
-			} else {
-				await setDoc(hashtahDocRef, {
-					name: hashtag,
-					amount: 1,
-					posts: [newPostDocRef]
+					name: hashtag
 				});
 			}
 

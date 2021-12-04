@@ -7,16 +7,30 @@ import anonymousAvatar from "media/anonymous_avatar.png";
 import LikeField from "component/LikeField";
 
 
+/**
+ * Types.
+ */
 type PostProps = {
 	postDocSnap		: DocumentSnapshot<DocumentData>,
 	refToPass		?: any // Allowed here.
 }
 
+
+/**
+ * Post element.
+ * 
+ * @param postDocSnap - a firestor doc snap of the post.
+ * @param refToPass - a referense used for infinity scroll.
+ * @returns a post element.
+ */
 const Post: FunctionComponent<PostProps> = ({ postDocSnap, refToPass }): JSX.Element => {
 	
 	const { currentUserDocSnap } = useFirebase();
+
 	const postData = postDocSnap.data() as DocumentData;
-	const {profileData, compressedProfilePicUrl} 	= useUserHook(postData.user);
+	const userDocRef = postDocSnap.ref.parent.parent;
+	
+	const {profileData, compressedProfilePicUrl} = useUserHook(userDocRef);
 
 	const dateObject = new Date(1970, 0, 1);
     dateObject.setSeconds(postData.created.seconds);
@@ -27,7 +41,7 @@ const Post: FunctionComponent<PostProps> = ({ postDocSnap, refToPass }): JSX.Ele
 			<StyledPost.By>
 				<StyledPost.Avatar>{profileData && <img src={compressedProfilePicUrl ? compressedProfilePicUrl : anonymousAvatar} alt={`Profile pic of ${profileData.username}`} />}</StyledPost.Avatar>
 				<StyledPost.ByData>
-					<StyledPost.Username to={profileData ? `/profile/${profileData.id}` : '/error/404'}>{profileData ? profileData.username : 'Loading...'}</StyledPost.Username>
+					<StyledPost.Username to={profileData ? `/profile/${userDocRef?.id}` : '/error/404'}>{profileData ? profileData.username : 'Loading...'}</StyledPost.Username>
 					<StyledPost.Timestamp>{dateObject.getFullYear()}-{dateObject.getMonth()}-{dateObject.getDate()} {dateObject.getHours()}:{dateObject.getMinutes()}</StyledPost.Timestamp>
 				</StyledPost.ByData>
 			</StyledPost.By>

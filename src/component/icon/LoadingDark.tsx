@@ -37,3 +37,4 @@ function SvgLoadingDark(props: React.SVGProps<SVGSVGElement>) {
 }
 
 export default SvgLoadingDark;
+

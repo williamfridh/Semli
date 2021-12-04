@@ -21,11 +21,12 @@ type LogoProps = {
  */
 const Logo: FunctionComponent<LogoProps> = (props): JSX.Element => {
 
-	let { size, margin } = props;
+	const { margin } = props;
+	let { size } = props;
 
 	size = size || 1;
 
-	return(
+	return (
 		<StyledLogo.Holder margin={margin}>
 			<StyledLogo.Letter size={size}>S</StyledLogo.Letter>
 			<StyledLogo.Letter size={size}>E</StyledLogo.Letter>

@@ -1,75 +1,108 @@
+rules_version = '2';
+
 service cloud.firestore {
 	match /databases/{database}/documents {
-		
-
-
-		// Current user doc ref.
-		function currentUserDoc() {
-			return get(/databases/$(database)/documents/users/$(request.auth.uid));
-		}
 
 		// User online check.
 		function userIsOnline() {
 			return request.auth != null;
 		}
-		
-		// User complete check.
-		function userIsComplete() {
-			return currentUserDoc().data.username != null && currentUserDoc().data.bio != null;
+
+		// Current user doc ref.
+		function currentUserDoc() {
+			return get(/databases/$(database)/documents/users/$(request.auth.uid));
 		}
-		
+				
+		// User complete check.
+		function currentUserIsComplete() {
+			return currentUserDoc().data.isComplete == true;
+		}
+
+		// Is owner.
+		function isOwner(userId) {
+			return userId == request.auth.uid;
+		}
+				
 
 
 		// Post data check.
-		function postDataCheck() {
-			return request.resource.data.body != null && request.resource.data.hashtags != null && request.resource.data.created != null && request.resource.data.user.path == "users/" + currentUserDoc().id;
+		function checkPostCreateData(docData) {
+			return (
+				docData.keys().hasOnly(['body', 'hashtags', 'created']) &&
+				docData.body is string &&
+				docData.hashtags is list &&
+				docData.created is timestamp
+				);
 		}
 
 		// Edit user data check.
-		function editUserDataCheck(userId) {
-			return request.resource.data.username != null && request.resource.data.bio != null && request.resource.data.profilePicExists != null && request.resource.data.profilePicExtension != null && request.auth.uid == userId;
+		function checkEditUserData(docData) {
+			return (
+				docData.keys().hasOnly(['username', 'bio', 'profilePicExists', 'isComplete']) &&
+				docData.username is string &&
+				docData.bio is string &&
+				docData.get('profilePicExists', false) is bool &&
+				docData.get('isComplete', true) is bool
+				);
 		}
 
 		// Create user data check.
-		function createUserDataCheck() {
-			return request.resource.data.id == request.auth.uid && request.resource.data.email != null;
+		function checkCreateUserData(docData) {
+			return (
+				docData.keys().hasOnly(['isComplete']) &&
+				docData.isComplete is bool &&
+				docData.isComplete == false
+			);
 		}
 
 		// Hashtag data check.
-		function hashtagDataCheck() {
-			return request.resource.data.amount != null && request.resource.data.name != null;
+		function checkCreateHashtagData(docData) {
+			return (
+				docData.keys().hasOnly(['name']) &&
+				docData.name is string
+			);
 		}
 
-		// Post like data check.
-		function postLikeDataCheck() {
-			return request.resource.data.user.path == "users/" + currentUserDoc().id && request.resource.data.created != null;
+		// Post like create data check.
+		function checkCreatePostLikeData(docData) {
+			return (
+				docData.keys().hasOnly(['userId', 'created']) &&
+				docData.userId == request.auth.uid &&
+				docData.created is timestamp
+			);
 		}
-		
 		
 
-		// Posts.
-		match /posts/{postId} {
-			allow read;
-			allow create: if userIsOnline() && userIsComplete() && postDataCheck();
-		}
 
-		// Post likes.
-		match /posts/{postId}/likes/{userId} {
-			allow read;
-			allow create: if uuserIsOnline() && serIsComplete() && postLikeDataCheck();
-		}
-		
 		// Users.
 		match /users/{userId} {
 			allow read;
-			allow update: if userIsOnline() && editUserDataCheck(userId);
-			allow create: if userIsOnline() && createUserDataCheck();
+			allow update: if userIsOnline() && isOwner(userId) && checkEditUserData(request.resource.data);
+			allow create: if userIsOnline() && checkCreateUserData(request.resource.data);
+			// Posts.
+			match /posts/{postId} {
+				allow create: if userIsOnline() && currentUserIsComplete() && isOwner(userId) && checkPostCreateData(request.resource.data);
+				// Likes.
+				match /likes/{likerId} {
+					allow create: if userIsOnline() && currentUserIsComplete() && checkCreatePostLikeData(request.resource.data);
+					allow delete: if userIsOnline() && currentUserIsComplete() && isOwner(likerId);
+				}
+			}
+		}
+
+		// Posts.
+		match /{path=**}/posts/{postId} {
+			allow read;
+		}
+		// Likes.
+		match /{path=**}/likes/{likerId} {
+			allow read;
 		}
 		
 		// Hashtags.
 		match /hashtags/{hashtagId} {
 			allow read;
-			allow create: if userIsOnline() && userIsComplete() && hashtagDataCheck();
+			allow create: if userIsOnline() && currentUserIsComplete() && checkCreateHashtagData(request.resource.data);
 		}
 	
 	}

@@ -23,7 +23,7 @@ type ProfileProps =  {
  * Profile element.
  * 
  * @param props - Containing uid (user id.)
- * @returns 
+ * @returns a profile element.
  */
 const Profile: FunctionComponent<ProfileProps> = ({ uid }): JSX.Element=> {
 
@@ -41,7 +41,7 @@ const Profile: FunctionComponent<ProfileProps> = ({ uid }): JSX.Element=> {
 	return <>
 		{isLoading || <StyledProfile.Pic><img src={compressedProfilePicUrl ? compressedProfilePicUrl : anonymousAvatar} alt={`Profile pic of ${profileData.username}`} /></StyledProfile.Pic>}
 		<SC.Title>{isLoading ? <Loading/> : profileData && profileData.username}</SC.Title>
-		<StyledProfile.Bio>{isLoading && profileData && profileData.bio}</StyledProfile.Bio>
+		<StyledProfile.Bio>{isLoading ? 'Loading bio...' : profileData?.bio}</StyledProfile.Bio>
 	</>;
 
 }

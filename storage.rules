@@ -14,7 +14,7 @@ service firebase.storage {
 
 		// Check profile pic file-format.
 		function checkProfilePicFileFormat() {
-			return request.resource.contentType.matches('image/.*');
+			return request.resource.size < 10 * 1024 * 1024 && request.resource.contentType.matches('image/.*');
 		}
 
 

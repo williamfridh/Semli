@@ -18,25 +18,16 @@ const UserOnlineDependency: FunctionComponent<UserDependencyProps> = (props): JS
 	const { fallback, children } = props;
 	const { currentUserDocSnap, authInitilized } = useFirebase();
 
-	/**
-	 * Use predecided fallback.
-	 * 
-	 * @returns the result of the user check.
-	 */
-	const triggerFallback = (): JSX.Element => {
-		if (fallback) {
-			return <Redirect to={fallback} />;
-		} else {
-			return <></>; // Hide content.
-		}
-	}
-
 	if (!authInitilized) {
 		return <Loading />;
 	} else if (currentUserDocSnap) {
 		return <>{children}</>;
 	} else {
-		return triggerFallback();
+		if (fallback) {
+			return <Redirect to={fallback} />;
+		} else {
+			return <></>; // Hide content.
+		}
 	}
 
 }

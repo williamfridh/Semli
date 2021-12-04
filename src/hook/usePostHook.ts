@@ -1,10 +1,10 @@
 import {
 	collection,
+	collectionGroup,
+	doc,
 	DocumentData,
-	DocumentReference,
 	DocumentSnapshot,
 	Firestore,
-	getDoc,
 	getDocs,
 	limit,
 	orderBy,
@@ -23,11 +23,11 @@ import { useEffect, useState } from "react";
 type usePostHookType = (
 	firestoreDatabase	: Firestore,
 	orderByField		: string,
-	orderByKeyword		: OrderByDirection | undefined,
+	orderByDirection	: OrderByDirection | undefined,
 	runNumber			: number,
 	fetchLimit			: number,
-	userDocRef			?: DocumentReference<DocumentData>,
-	hashtagDocRef		?: DocumentReference<DocumentData>
+	uid					?: string,
+	hashtagName			?: string
 ) => usePostHookReturn;
 
 type usePostHookReturn = {
@@ -47,25 +47,22 @@ type getPostsType = () => Promise<void>;
  * 
  * @param firestoreDatabase - Firestore database session.
  * @param orderByField - order by this field.
- * @param orderByKeyword - order type (ASC|DESC).
+ * @param orderByDirection - order type (ASC|DESC).
  * @param runNumber - the run number, first time is 1, second 2, and so on.
  * @param fetchLimit - limit of docs to fetch.
  * @param userDocRef - used for finding docs by this user.
  * @param hashtagDocRef - used for finding docs with this hashtag.
  * @returns - a hook.
  */
-const usePostHook: usePostHookType = (firestoreDatabase, orderByField, orderByKeyword, runNumber, fetchLimit, userDocRef, hashtagDocRef) => {
+const usePostHook: usePostHookType = (firestoreDatabase, orderByField, orderByDirection, runNumber, fetchLimit, uid, hashtagName) => {
 	
 	const [postsData, setPostsData] 		= useState([] as DocumentSnapshot<DocumentData>[]);
 	const [isLoading, setIsLoading] 		= useState(false);
 	const [errorCode, setErrorCode] 		= useState<number|null>(null);
-
-	const firestoreCollection 				= collection(firestoreDatabase, 'posts');
-
 	
 
 	/**
-	 * This useEffect triggers the actions on mount, runNumber chnage or order change (orderByField & orderByKeyword).
+	 * This useEffect triggers the actions on mount, runNumber chnage or order change (orderByField & orderByDirection).
 	 */
 	useEffect(() => {
 
@@ -75,38 +72,36 @@ const usePostHook: usePostHookType = (firestoreDatabase, orderByField, orderByKe
 
 			try {
 
-				console.log(`usePostHook >> useEffect >> getPosts >> Running`);
+				if (!runNumber) setPostsData([]);
+				
 				setIsLoading(true);
 				setErrorCode(null);
-				const orderByShort = orderBy(orderByField, orderByKeyword);
+				const orderByShort = orderBy(orderByField, orderByDirection);
 				const limitShort = limit(fetchLimit);
 				
 				let postQuery;
-				if (userDocRef) {
-					postQuery = query(firestoreCollection, where("user", "==", userDocRef), orderByShort, limitShort);
-				} else if (hashtagDocRef) {
-					const hashtagDocSnap = await getDoc(hashtagDocRef);
-					if (!isMounted) return;
-					postQuery = query(firestoreCollection, where("hashtags", "array-contains", hashtagDocSnap.id), orderByShort, limitShort);
+				if (uid) {
+					postQuery = query(collection(firestoreDatabase, `users`, doc(firestoreDatabase, `users`, uid).id, `posts`), orderByShort, limitShort);
+				} else if (hashtagName) {
+					postQuery = query(collectionGroup(firestoreDatabase, `posts`), where("hashtags", "array-contains", doc(firestoreDatabase, `hashtags`, hashtagName).id), orderByShort, limitShort);
 				} else {
-					postQuery = query(firestoreCollection, orderByShort, limitShort);
+					postQuery = query(collectionGroup(firestoreDatabase, 'posts'), orderByShort, limitShort);
 				}
 
-				if (postsData.length) postQuery = query(postQuery, startAfter(postsData[postsData.length - 1]));
+				if (!isMounted) return;
+
+				if (runNumber) postQuery = query(postQuery, startAfter(postsData[(runNumber * fetchLimit)-1]));
 				
 				const querySnap = await getDocs(postQuery);
 
 				if (!isMounted) return;
 				
 				if (querySnap) {
-				
-					let newPostsData: DocumentSnapshot<DocumentData>[] = postsData;
-				
-					querySnap.forEach((post: DocumentSnapshot<DocumentData>) => {
-						newPostsData.push(post);
-					});
-				
-					setPostsData(newPostsData);
+
+					for (let i = 0; i < querySnap.size; i++) {
+						setPostsData(prev => [...prev, querySnap.docs[i]]);
+					}
+
 					console.log(`usePostHook >> useEffect >> getPosts >> Success`);
 
 				} else {
@@ -131,7 +126,7 @@ const usePostHook: usePostHookType = (firestoreDatabase, orderByField, orderByKe
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [orderByField, orderByKeyword, runNumber]);
+	}, [runNumber]);
 
 
 
